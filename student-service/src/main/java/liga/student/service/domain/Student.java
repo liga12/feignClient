@@ -1,29 +1,25 @@
 package liga.student.service.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Data
+@NoArgsConstructor
+@Builder
+@AllArgsConstructor
+@Document
 public class Student {
+    @Id
+    private String id;
     private String name;
-    private String className;
-
-    public Student(){}
-
-    public Student(String name, String className) {
-        this.name = name;
-        this.className = className;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getClassName() {
-        return className;
-    }
-
-    public void setClassName(String className) {
-        this.className = className;
-    }
+    private String surname;
+    private Integer age;
 }
+
+
+
+

@@ -1,33 +1,25 @@
 package liga.student.service.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class StudentDto {
-
+    private String id;
     private String name;
-    private String className;
+    private String surname;
+    private int age;
 
-    public StudentDto(){}
-
-    public StudentDto(String name, String className) {
+    public StudentDto(String name, String surname, int age) {
         this.name = name;
-        this.className = className;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getClassName() {
-        return className;
-    }
-
-    public void setClassName(String className) {
-        this.className = className;
+        this.surname = surname;
+        this.age = age;
     }
 }

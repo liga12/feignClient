@@ -1,40 +1,62 @@
 package liga.student.service.service;
 
 import liga.student.service.domain.Student;
-import liga.student.service.domain.StudentDao;
+import liga.student.service.domain.StudentRepository;
 import liga.student.service.dto.StudentDto;
 import liga.student.service.mapper.StudentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class StudentServiceImpl implements StudentService {
 
     @Autowired
-    StudentMapper studentMapper;
+    private StudentRepository studentRepository;
 
     @Autowired
-    StudentDao studentDao;
+    private StudentMapper mapper;
 
     @Override
-    public Map<String, List<StudentDto>> createStudentsDto() {
-        Map<String, List<StudentDto>> studentsDto = new HashMap<>();
-        Map<String, List<Student>> students = studentDao.getStudents();
-        List<StudentDto> lst;
-        for (Map.Entry<String, List<Student>> stringListEntry : students.entrySet()) {
-            lst=new ArrayList<>();
-            String shoolName = stringListEntry.getKey();
-            List<Student> value = stringListEntry.getValue();
-            for (Student student : value) {
-                lst.add(studentMapper.studentToStudentDTO(student));
-            }
-            studentsDto.put(shoolName,lst);
-        }
-        return studentsDto;
+    public List<StudentDto> getAll() {
+        return mapper.studentToStudentDto(studentRepository.findAll());
+    }
+
+    @Override
+    public StudentDto getById(String id) {
+        return mapper.studentToStudentDto(studentRepository.findById(id).get());
+    }
+
+    @Override
+    public List<StudentDto> getByName(String name) {
+        return mapper.studentToStudentDto(studentRepository.findByName(name));
+    }
+
+    @Override
+    public List<StudentDto> getBySurname(String surname) {
+        return mapper.studentToStudentDto(studentRepository.findBySurname(surname));
+    }
+
+    @Override
+    public List<StudentDto> getByAge(int age) {
+        return mapper.studentToStudentDto(studentRepository.findByAge(age));
+    }
+
+    @Override
+    public StudentDto create(StudentDto dto) {
+        Student student = mapper.studentDtotoStudent(dto);
+        Student save = studentRepository.save(student);
+        return mapper.studentToStudentDto(save);
+    }
+
+    @Override
+    public StudentDto update(StudentDto dto) {
+        return mapper.studentToStudentDto(studentRepository.save(mapper.studentDtotoStudent(dto)));
+    }
+
+    @Override
+    public void remove(StudentDto dto) {
+        studentRepository.delete(mapper.studentDtotoStudent(dto));
     }
 }

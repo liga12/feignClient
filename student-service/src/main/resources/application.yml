@@ -24,3 +24,5 @@ spring:
 logging:
   level:
     com.example.howtodoinjava: DEBUG
+
+spring:data.mongodb.uri: mongodb://localhost:27017/project
