@@ -30,7 +30,7 @@ public class StudentMapper {
         return students.stream().map(x->modelMapper.map(x,StudentDto.class)).collect(Collectors.toList());
     }
 
-    public Student studentDtotoStudent(StudentDto dto) {
+    public Student studentDtoToStudent(StudentDto dto) {
         return modelMapper.map(dto, Student.class);
     }
 

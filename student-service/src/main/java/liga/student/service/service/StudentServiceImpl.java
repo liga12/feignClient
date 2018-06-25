@@ -45,18 +45,18 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public StudentDto create(StudentDto dto) {
-        Student student = mapper.studentDtotoStudent(dto);
+        Student student = mapper.studentDtoToStudent(dto);
         Student save = studentRepository.save(student);
         return mapper.studentToStudentDto(save);
     }
 
     @Override
     public StudentDto update(StudentDto dto) {
-        return mapper.studentToStudentDto(studentRepository.save(mapper.studentDtotoStudent(dto)));
+        return mapper.studentToStudentDto(studentRepository.save(mapper.studentDtoToStudent(dto)));
     }
 
     @Override
     public void remove(StudentDto dto) {
-        studentRepository.delete(mapper.studentDtotoStudent(dto));
+        studentRepository.delete(mapper.studentDtoToStudent(dto));
     }
 }
