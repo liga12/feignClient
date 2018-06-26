@@ -1,17 +1,17 @@
 package liga.school.sevice.domain;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@NoArgsConstructor
-@Builder
-@AllArgsConstructor
 @Table(name = "school")
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
 public class School {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

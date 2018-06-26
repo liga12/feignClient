@@ -20,7 +20,7 @@ public class SchoolServiceImpl implements SchoolService {
 
     @Override
     public List<SchoolDto> getAll() {
-        return mapper.schoolToSchoolDto(schoolRepository.findAll());
+        return mapper.schoolToSchoolDto( schoolRepository.findAll());
     }
 
     @Override

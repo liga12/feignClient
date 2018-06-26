@@ -3,6 +3,7 @@ package liga.school.sevice.controller;
 import liga.school.sevice.api.SchoolApi;
 import liga.school.sevice.domain.Student;
 import liga.school.sevice.dto.SchoolDto;
+import liga.school.sevice.mapper.SchoolMapper;
 import liga.school.sevice.service.SchoolService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,15 +15,19 @@ import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/school")
-public class SchoolServiceController implements SchoolApi  {
+public class SchoolServiceController implements SchoolApi {
 
     @Autowired
     SchoolService schoolService;
+
+    @Autowired
+    SchoolMapper schoolMapper;
 
     @GetMapping("/")
     @Override
     public ResponseEntity getSchools() {
         List<SchoolDto> schoolDto = schoolService.getAll();
+        System.out.println();
         return schoolDto.isEmpty() ?
                 new ResponseEntity<>(HttpStatus.NOT_FOUND) : new ResponseEntity<>(schoolDto, HttpStatus.OK);
     }
@@ -60,7 +65,6 @@ public class SchoolServiceController implements SchoolApi  {
     @Override
     public SchoolDto createSchool(@RequestParam("name") String name,
                                   @RequestParam("address") String address) {
-        System.out.println();
         return schoolService.create(new SchoolDto(name, address));
     }
 
@@ -68,15 +72,15 @@ public class SchoolServiceController implements SchoolApi  {
     @Override
     public ResponseEntity updateSchool(@PathVariable("id") Long id,
                                        @RequestParam("name") String name,
-                                       @RequestParam("address") String address,
-                                       @RequestParam("studentsIds") List<Student> studentsIds) {
+                                       @RequestParam("address") String address) {
 
         try {
+            schoolService.getById(id);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(schoolService.update
-                (SchoolDto.builder().name(name).address(address).students(studentsIds).build()), HttpStatus.OK);
+                (new SchoolDto(id, name, address)), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

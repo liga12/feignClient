@@ -2,39 +2,40 @@ package liga.school.sevice.mapper;
 
 import liga.school.sevice.domain.School;
 import liga.school.sevice.dto.SchoolDto;
-import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
+import ma.glasnost.orika.MapperFacade;
+import ma.glasnost.orika.MapperFactory;
+import ma.glasnost.orika.impl.DefaultMapperFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
-@Data
 @NoArgsConstructor
 public class SchoolMapper {
 
-    @Autowired
-    private ModelMapper modelMapper;
+    private final static MapperFacade mapper;
 
-    public SchoolDto schoolToSchoolDto(School school) {
-        return modelMapper.map(school, SchoolDto.class);
+    static {
+        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        mapperFactory.classMap(SchoolDto.class, School.class)
+                .byDefault().register();
+        mapper = mapperFactory.getMapperFacade();
     }
 
-    public List<SchoolDto> schoolToSchoolDto(List<School> students) {
-        return students.stream().map(x->modelMapper.map(x,SchoolDto.class)).collect(Collectors.toList());
+    public SchoolDto schoolToSchoolDto(final School school) {
+        SchoolDto schoolDto = mapper.map(school, SchoolDto.class);
+        return schoolDto;
     }
 
-    public School schoolDtoToSchool(SchoolDto dto) {
-        return modelMapper.map(dto, School.class);
+    public List<SchoolDto> schoolToSchoolDto(final List<School> schools) {
+        List<SchoolDto> schoolDto = mapper.mapAsList(schools, SchoolDto.class);
+        return schoolDto;
     }
 
-    @Bean
-    ModelMapper modelMapper() {
-        return new ModelMapper();
+    public School schoolDtoToSchool(final SchoolDto dto) {
+        School school = mapper.map(dto, School.class);
+        return school;
     }
 }
 

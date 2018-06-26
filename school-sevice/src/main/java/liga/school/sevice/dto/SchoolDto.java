@@ -11,7 +11,6 @@ import java.util.List;
 
 @Component
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class SchoolDto {
@@ -24,10 +23,9 @@ public class SchoolDto {
         this.name = name;
         this.address = address;
     }
-
-    public SchoolDto(String name, String address, List<Student> students) {
+    public SchoolDto(Long id, String name, String address) {
         this.name = name;
         this.address = address;
-        this.students = students;
+        this.id = id;
     }
 }

@@ -20,10 +20,10 @@ public interface SchoolApi {
     @PutMapping("/")SchoolDto createSchool(@RequestParam("name") String name,
                                   @RequestParam("address") String address);
 
-    @PostMapping("/{id}") ResponseEntity updateSchool(@PathVariable("id") Long id,
-                                       @RequestParam("name") String name,
-                                       @RequestParam("address") String address,
-                                       @RequestParam("studentsIds") List<Student> studentsIds);
+    @PostMapping("/{id}")
+    ResponseEntity updateSchool(@PathVariable("id") Long id,
+                                @RequestParam("name") String name,
+                                @RequestParam("address") String address);
 
     @DeleteMapping("/{id}")ResponseEntity deleteSchool(@PathVariable("id") Long id);
 }
