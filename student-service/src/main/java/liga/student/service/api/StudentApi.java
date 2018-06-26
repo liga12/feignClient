@@ -4,7 +4,7 @@ import liga.student.service.dto.StudentDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-public interface StudentApi {
+public interface StudentApi extends StudentControllerApi {
     @GetMapping("/")
     ResponseEntity getStudents();
 

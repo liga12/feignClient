@@ -95,5 +95,7 @@ public class SchoolServiceController implements SchoolApi {
         schoolService.remove(studentDto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+
 }
 
