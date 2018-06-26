@@ -28,7 +28,7 @@ public class SchoolMapper {
         return students.stream().map(x->modelMapper.map(x,SchoolDto.class)).collect(Collectors.toList());
     }
 
-    public School schoolDtotoSchool(SchoolDto dto) {
+    public School schoolDtoToSchool(SchoolDto dto) {
         return modelMapper.map(dto, School.class);
     }
 

@@ -3,25 +3,27 @@ package liga.school.sevice.domain;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
+import javax.persistence.*;
 import java.util.List;
 
 @Entity
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
+@Table(name = "school")
 public class School {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "Id")
     private Long id;
-    @Column
+    @Column(name = "name")
     private String name;
-    @Column
+    @Column(name = "address")
     private String address;
-    @Column
-    private List<String> students;
+    @OneToMany(fetch = FetchType.LAZY,
+            mappedBy = "school",cascade = CascadeType.ALL)
+    private List<Student> students;
 
 
 }

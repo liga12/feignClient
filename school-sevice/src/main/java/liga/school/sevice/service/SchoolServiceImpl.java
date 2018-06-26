@@ -40,16 +40,18 @@ public class SchoolServiceImpl implements SchoolService {
 
     @Override
     public SchoolDto create(SchoolDto dto) {
-        return mapper.schoolToSchoolDto(schoolRepository.save(mapper.schoolDtotoSchool(dto)));
+        School school = mapper.schoolDtoToSchool(dto);
+        School save = schoolRepository.save(school);
+        return mapper.schoolToSchoolDto(save);
     }
 
     @Override
     public SchoolDto update(SchoolDto dto) {
-        return mapper.schoolToSchoolDto(schoolRepository.save(mapper.schoolDtotoSchool(dto)));
+        return mapper.schoolToSchoolDto(schoolRepository.save(mapper.schoolDtoToSchool(dto)));
     }
 
     @Override
     public void remove(SchoolDto dto) {
-        schoolRepository.delete(mapper.schoolDtotoSchool(dto));
+        schoolRepository.delete(mapper.schoolDtoToSchool(dto));
     }
 }

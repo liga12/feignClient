@@ -1,5 +1,6 @@
 package liga.school.sevice.dto;
 
+import liga.school.sevice.domain.Student;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,5 +18,16 @@ public class SchoolDto {
     private Long id;
     private String name;
     private String address;
-    private List<String> students;
+    private List<Student> students;
+
+    public SchoolDto(String name, String address) {
+        this.name = name;
+        this.address = address;
+    }
+
+    public SchoolDto(String name, String address, List<Student> students) {
+        this.name = name;
+        this.address = address;
+        this.students = students;
+    }
 }

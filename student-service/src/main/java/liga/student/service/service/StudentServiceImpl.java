@@ -1,6 +1,5 @@
 package liga.student.service.service;
 
-import liga.student.service.domain.Student;
 import liga.student.service.domain.StudentRepository;
 import liga.student.service.dto.StudentDto;
 import liga.student.service.mapper.StudentMapper;

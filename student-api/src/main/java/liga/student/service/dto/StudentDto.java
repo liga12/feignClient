@@ -12,12 +12,13 @@ import org.springframework.stereotype.Component;
 @NoArgsConstructor
 @AllArgsConstructor
 public class StudentDto {
+
     private String id;
     private String name;
     private String surname;
-    private int age;
+    private Integer age;
 
-    public StudentDto(String name, String surname, int age) {
+    public StudentDto(String name, String surname, Integer age) {
         this.name = name;
         this.surname = surname;
         this.age = age;

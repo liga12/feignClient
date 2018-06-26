@@ -1,19 +1,15 @@
 package liga.student.service.api;
 
 import liga.student.service.dto.StudentDto;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-
-public interface StudentApi<T> {
+public interface StudentApi {
     @GetMapping("/")
     ResponseEntity getStudents();
 
     @GetMapping("/id/{id}")
-    ResponseEntity getStudentById(@PathVariable("id") String id) throws NoSuchElementException;
+    ResponseEntity getStudentById(@PathVariable("id") String id);
 
     @GetMapping("/name/{name}")
     ResponseEntity getStudentByName(@PathVariable("name") String name);
@@ -33,8 +29,8 @@ public interface StudentApi<T> {
     ResponseEntity updateStudent(@PathVariable("id") String id,
                                  @RequestParam("name") String name,
                                  @RequestParam("surname") String surname,
-                                 @RequestParam("age") int age) throws NoSuchElementException;
+                                 @RequestParam("age") int age);
 
     @DeleteMapping("/{id}")
-    ResponseEntity deleteStudent(@PathVariable("id") String id) throws NoSuchElementException;
+    ResponseEntity deleteStudent(@PathVariable("id") String id);
 }
