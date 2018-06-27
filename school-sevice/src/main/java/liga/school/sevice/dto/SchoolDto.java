@@ -15,7 +15,7 @@ public class SchoolDto {
     private Long id;
     private String name;
     private String address;
-    private List<Long> studentIds;
+    private List<String> studentIds;
 
     public SchoolDto(String name, String address) {
         this.name = name;
@@ -25,5 +25,12 @@ public class SchoolDto {
         this.name = name;
         this.address = address;
         this.id = id;
+    }
+
+
+    public SchoolDto(String name, String address, List<String> studentIds) {
+        this.name = name;
+        this.address = address;
+        this.studentIds = studentIds;
     }
 }

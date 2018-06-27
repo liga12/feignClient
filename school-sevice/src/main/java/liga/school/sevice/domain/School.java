@@ -22,7 +22,8 @@ public class School {
     @Column(name = "address")
     private String address;
     @ElementCollection
-    private List<Long> studentIds;
+    @CollectionTable(name = "studentIds",joinColumns = @JoinColumn(name = "school_id"))
+    private List<String> studentIds;
 
 
 }

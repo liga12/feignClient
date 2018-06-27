@@ -24,7 +24,7 @@ public interface SchoolApi {
     SchoolDto createSchool(@RequestParam("name") String name,
                            @RequestParam("address") String address);
 
-    @PutMapping("/t")
+    @PutMapping("/stIds")
     SchoolDto createSchool(@RequestParam("name") String name,
                                 @RequestParam("address") String address,
                                 @RequestParam("stIds") List<String> stIds);

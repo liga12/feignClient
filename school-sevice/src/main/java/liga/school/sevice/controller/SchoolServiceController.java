@@ -59,16 +59,12 @@ public class SchoolServiceController implements SchoolApi {
     public SchoolDto createSchool(@RequestParam String name,
                                   @RequestParam String address,
                                   @RequestParam List<String> stIds) {
-        List<Long> studentIds = new ArrayList<>();
+
         for (String stId : stIds) {
-//            StudentDto studentById = studentFeingService.getStudentById(stId);
-//            if (studentById.equals(null)) {
-//                return null;
-//            }
-            studentIds.add(Long.valueOf(stId));
+            StudentDto studentById = studentFeingService.getStudentById(stId);
         }
-        SchoolDto schoolDto = schoolService.create(new SchoolDto(name, address));
-        schoolService.update(schoolDto);
+        SchoolDto schoolDto = schoolService.create(new SchoolDto(name, address,stIds));
+        schoolService.create(schoolDto);
         return  schoolDto;
     }
 
