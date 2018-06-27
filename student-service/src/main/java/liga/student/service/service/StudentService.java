@@ -5,6 +5,7 @@ import liga.student.service.dto.StudentDto;
 import java.util.List;
 
 public interface StudentService {
+
     List<StudentDto> getAll();
 
     StudentDto getById(String id);

@@ -1,20 +1,22 @@
 package liga.school.sevice.controller;
 
 import liga.school.sevice.api.SchoolApi;
-import liga.school.sevice.domain.Student;
 import liga.school.sevice.dto.SchoolDto;
 import liga.school.sevice.mapper.SchoolMapper;
 import liga.school.sevice.service.SchoolService;
+import liga.school.sevice.service.StudentService;
+import liga.student.service.dto.StudentDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 @RestController
-@RequestMapping("/school")
 public class SchoolServiceController implements SchoolApi {
 
     @Autowired
@@ -23,77 +25,82 @@ public class SchoolServiceController implements SchoolApi {
     @Autowired
     SchoolMapper schoolMapper;
 
+    @Autowired
+    StudentService studentFeingService;
+
     @GetMapping("/")
     @Override
-    public ResponseEntity getSchools() {
-        List<SchoolDto> schoolDto = schoolService.getAll();
-        System.out.println();
-        return schoolDto.isEmpty() ?
-                new ResponseEntity<>(HttpStatus.NOT_FOUND) : new ResponseEntity<>(schoolDto, HttpStatus.OK);
+    public List<SchoolDto> getSchools() {
+        return schoolService.getAll();
     }
 
-    @GetMapping("/id/{id}")
     @Override
-    public ResponseEntity getSchoolById(@PathVariable("id") Long id) {
+    public SchoolDto getSchoolById(@PathVariable Long id) {
         SchoolDto schoolDto;
         try {
             schoolDto = schoolService.getById(id);
         } catch (NoSuchElementException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return null;
         }
-        return new ResponseEntity<>(schoolDto, HttpStatus.OK);
+        return schoolDto;
     }
 
-    @GetMapping("/name/{name}")
     @Override
-    public ResponseEntity getSchoolByName(@PathVariable("name") String name) {
-        List<SchoolDto> schoolDto = schoolService.getByName(name);
-
-        return schoolDto.isEmpty() ?
-                new ResponseEntity<>(HttpStatus.NOT_FOUND) : new ResponseEntity<>(schoolDto, HttpStatus.OK);
+    public List<SchoolDto> getSchoolByName(@PathVariable String name) {
+       return schoolService.getByName(name);
     }
 
-    @GetMapping("/address/{address}")
     @Override
-    public ResponseEntity getSchoolByAddress(@PathVariable("address") String address) {
-        List<SchoolDto> schoolDto = schoolService.getByAddress(address);
-        return schoolDto.isEmpty() ?
-                new ResponseEntity<>(HttpStatus.NOT_FOUND) : new ResponseEntity<>(schoolDto, HttpStatus.OK);
+    public List<SchoolDto> getSchoolByAddress(@PathVariable String address) {
+        return schoolService.getByAddress(address);
     }
 
-    @PutMapping("/")
     @Override
-    public SchoolDto createSchool(@RequestParam("name") String name,
-                                  @RequestParam("address") String address) {
+    public SchoolDto createSchool(@RequestParam String name,
+                                  @RequestParam String address,
+                                  @RequestParam List<String> stIds) {
+        List<Long> studentIds = new ArrayList<>();
+        for (String stId : stIds) {
+//            StudentDto studentById = studentFeingService.getStudentById(stId);
+//            if (studentById.equals(null)) {
+//                return null;
+//            }
+            studentIds.add(Long.valueOf(stId));
+        }
+        SchoolDto schoolDto = schoolService.create(new SchoolDto(name, address));
+        schoolService.update(schoolDto);
+        return  schoolDto;
+    }
+
+    @Override
+    public SchoolDto createSchool(@RequestParam String name,
+                                  @RequestParam String address) {
         return schoolService.create(new SchoolDto(name, address));
     }
 
-    @PostMapping("/{id}")
     @Override
-    public ResponseEntity updateSchool(@PathVariable("id") Long id,
-                                       @RequestParam("name") String name,
-                                       @RequestParam("address") String address) {
-
+    public SchoolDto updateSchool(@PathVariable Long id,
+                                  @RequestParam String name,
+                                  @RequestParam String address) {
+        SchoolDto schoolDto;
         try {
-            schoolService.getById(id);
+            schoolDto= schoolService.getById(id);
         } catch (NoSuchElementException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return null;
         }
-        return new ResponseEntity<>(schoolService.update
-                (new SchoolDto(id, name, address)), HttpStatus.OK);
+        return schoolDto;
     }
 
-    @DeleteMapping("/{id}")
     @Override
-    public ResponseEntity deleteSchool(@PathVariable("id") Long id) {
-        SchoolDto studentDto;
+    public SchoolDto deleteSchool(@PathVariable Long id) {
+        SchoolDto schoolDto;
         try {
-            studentDto = schoolService.getById(id);
+            schoolDto = schoolService.getById(id);
         } catch (NoSuchElementException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return null;
         }
-        schoolService.remove(studentDto);
-        return new ResponseEntity<>(HttpStatus.OK);
+        schoolService.remove(schoolDto);
+        return schoolDto;
     }
 
 

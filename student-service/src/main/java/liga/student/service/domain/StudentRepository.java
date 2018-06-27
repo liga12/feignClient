@@ -6,6 +6,8 @@ import java.util.List;
 
 public interface StudentRepository extends MongoRepository<Student, String> {
 
+    Boolean existsAllById(String... strings);
+
     List<Student> findByName(String name);
 
     List<Student> findBySurname(String surname);

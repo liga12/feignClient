@@ -21,9 +21,8 @@ public class School {
     private String name;
     @Column(name = "address")
     private String address;
-    @OneToMany(fetch = FetchType.LAZY,
-            mappedBy = "school",cascade = CascadeType.ALL)
-    private List<Student> students;
+    @ElementCollection
+    private List<Long> studentIds;
 
 
 }

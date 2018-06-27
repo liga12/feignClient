@@ -1,8 +1,6 @@
 package liga.school.sevice.dto;
 
-import liga.school.sevice.domain.Student;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -17,7 +15,7 @@ public class SchoolDto {
     private Long id;
     private String name;
     private String address;
-    private List<Student> students;
+    private List<Long> studentIds;
 
     public SchoolDto(String name, String address) {
         this.name = name;
