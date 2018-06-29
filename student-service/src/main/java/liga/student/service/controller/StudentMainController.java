@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @RestController
 public class StudentMainController implements StudentMainApi {
@@ -29,7 +28,7 @@ public class StudentMainController implements StudentMainApi {
 
     @Override
     public List<StudentDto> getStudentBySurname(@PathVariable String surname) {
-        return  studentService.getBySurname(surname);
+        return studentService.getBySurname(surname);
     }
 
     @Override
@@ -44,27 +43,18 @@ public class StudentMainController implements StudentMainApi {
         return studentService.create(new StudentDto(name, surname, age));
     }
 
-     @Override
+    @Override
     public StudentDto updateStudent(@PathVariable String id,
-                                        @RequestParam String name,
-                                        @RequestParam String surname,
-                                        @RequestParam int age) {
-        try {
-            studentService.getById(id);
-        } catch (NoSuchElementException e) {
-            return null;
-        }
+                                    @RequestParam String name,
+                                    @RequestParam String surname,
+                                    @RequestParam int age) {
+        studentService.getById(id);
         return StudentDto.builder().id(id).name(name).surname(surname).age(age).build();
     }
 
     @Override
     public StudentDto deleteStudent(@PathVariable String id) {
-        StudentDto studentDto;
-        try {
-            studentDto = studentService.getById(id);
-        } catch (NoSuchElementException e) {
-            return null;
-        }
+        StudentDto studentDto = studentService.getById(id);
         studentService.remove(studentDto);
         return studentDto;
     }

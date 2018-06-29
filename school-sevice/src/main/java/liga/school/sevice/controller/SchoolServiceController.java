@@ -35,13 +35,7 @@ public class SchoolServiceController implements SchoolApi {
 
     @Override
     public SchoolDto getSchoolById(@PathVariable Long id) {
-        SchoolDto schoolDto;
-        try {
-            schoolDto = schoolService.getById(id);
-        } catch (NoSuchElementException e) {
-            return null;
-        }
-        return schoolDto;
+        return schoolService.getById(id);
     }
 
     @Override
@@ -60,13 +54,9 @@ public class SchoolServiceController implements SchoolApi {
                                   @RequestParam List<String> stIds) {
 
         for (String stId : stIds) {
-            StudentDto studentById = studentFeingService.getStudentById(stId);
-            if (null == studentById)
-                return null;
+            studentFeingService.getStudentById(stId);
         }
-        SchoolDto schoolDto = schoolService.create(new SchoolDto(name, address, stIds));
-        schoolService.create(schoolDto);
-        return schoolDto;
+        return schoolService.create(schoolService.create(new SchoolDto(name, address, stIds)));
     }
 
     @Override
@@ -75,31 +65,22 @@ public class SchoolServiceController implements SchoolApi {
                                   @RequestParam String address,
                                   @RequestParam List<String> stIds) {
         SchoolDto schoolDto;
-        try {
             schoolDto = schoolService.getById(id);
-        } catch (NoSuchElementException e) {
-            return null;
-        }
-        if (null!=stIds) {
+        if (null != stIds) {
             for (String stId : stIds) {
                 StudentDto studentById = studentFeingService.getStudentById(stId);
                 if (null == studentById)
                     return null;
             }
         }
-        schoolDto = schoolService.update(new SchoolDto(schoolDto.getId(),name, address, stIds));
+        schoolDto = schoolService.update(new SchoolDto(schoolDto.getId(), name, address, stIds));
         schoolService.update(schoolDto);
         return schoolDto;
     }
 
     @Override
     public SchoolDto deleteSchool(@PathVariable Long id) {
-        SchoolDto schoolDto;
-        try {
-            schoolDto = schoolService.getById(id);
-        } catch (NoSuchElementException e) {
-            return null;
-        }
+        SchoolDto schoolDto = schoolService.getById(id);
         schoolService.remove(schoolDto);
         return schoolDto;
     }
