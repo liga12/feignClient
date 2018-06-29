@@ -17,6 +17,12 @@ public class StudentRelationController implements StudentRelationApi {
 
     @Override
     public StudentDto getStudentById(@PathVariable String id) {
-        return  studentService.getById(id);
+        StudentDto dto;
+        try {
+            dto = studentService.getById(id);
+        } catch (NoSuchElementException e) {
+            return null;
+        }
+        return dto;
     }
 }

@@ -22,17 +22,14 @@ public interface SchoolApi {
 
     @PutMapping("/")
     SchoolDto createSchool(@RequestParam("name") String name,
-                           @RequestParam("address") String address);
-
-    @PutMapping("/stIds")
-    SchoolDto createSchool(@RequestParam("name") String name,
-                                @RequestParam("address") String address,
-                                @RequestParam("stIds") List<String> stIds);
+                           @RequestParam("address") String address,
+                           @RequestParam(value = "stIds", required = false) List<String> stIds);
 
     @PostMapping("/{id}")
     SchoolDto updateSchool(@PathVariable("id") Long id,
-                                @RequestParam("name") String name,
-                                @RequestParam("address") String address);
+                           @RequestParam("name") String name,
+                           @RequestParam("address") String address,
+                           @RequestParam(value = "stIds", required = false) List<String> stIds);
 
     @DeleteMapping("/{id}")
     SchoolDto deleteSchool(@PathVariable("id") Long id);
