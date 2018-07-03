@@ -2,7 +2,7 @@ package liga.student.service.service;
 
 import liga.student.service.domain.Student;
 import liga.student.service.domain.StudentRepository;
-import liga.student.service.dto.StudentDto;
+import liga.student.service.dto.StudentDTO;
 import liga.student.service.mapper.StudentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,43 +19,43 @@ public class StudentServiceImpl implements StudentService {
     private StudentMapper mapper;
 
     @Override
-    public List<StudentDto> getAll() {
-        return mapper.studentToStudentDto(studentRepository.findAll());
+    public List<StudentDTO> getAll() {
+        return mapper.studentToStudentDTO(studentRepository.findAll());
     }
 
     @Override
-    public StudentDto getById(String id) {
+    public StudentDTO getById(String id) {
         Student student = studentRepository.findById(id).get();
-        return mapper.studentToStudentDto(student);
+        return mapper.studentToStudentDTO(student);
     }
 
     @Override
-    public List<StudentDto> getByName(String name) {
-        return mapper.studentToStudentDto(studentRepository.findByName(name));
+    public List<StudentDTO> getByName(String name) {
+        return mapper.studentToStudentDTO(studentRepository.findByName(name));
     }
 
     @Override
-    public List<StudentDto> getBySurname(String surname) {
-        return mapper.studentToStudentDto(studentRepository.findBySurname(surname));
+    public List<StudentDTO> getBySurname(String surname) {
+        return mapper.studentToStudentDTO(studentRepository.findBySurname(surname));
     }
 
     @Override
-    public List<StudentDto> getByAge(int age) {
-        return mapper.studentToStudentDto(studentRepository.findByAge(age));
+    public List<StudentDTO> getByAge(int age) {
+        return mapper.studentToStudentDTO(studentRepository.findByAge(age));
     }
 
     @Override
-    public StudentDto create(StudentDto dto) {
-        return mapper.studentToStudentDto(studentRepository.save(mapper.studentDtoToStudent(dto)));
+    public StudentDTO create(StudentDTO dto) {
+        return mapper.studentToStudentDTO(studentRepository.save(mapper.studentDTOToStudent(dto)));
     }
 
     @Override
-    public StudentDto update(StudentDto dto) {
-        return mapper.studentToStudentDto(studentRepository.save(mapper.studentDtoToStudent(dto)));
+    public StudentDTO update(StudentDTO dto) {
+        return mapper.studentToStudentDTO(studentRepository.save(mapper.studentDTOToStudent(dto)));
     }
 
     @Override
-    public void remove(StudentDto dto) {
-        studentRepository.delete(mapper.studentDtoToStudent(dto));
+    public void remove(StudentDTO dto) {
+        studentRepository.delete(mapper.studentDTOToStudent(dto));
     }
 }

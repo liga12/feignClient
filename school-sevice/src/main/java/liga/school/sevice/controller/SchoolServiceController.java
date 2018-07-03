@@ -5,16 +5,13 @@ import liga.school.sevice.dto.SchoolDto;
 import liga.school.sevice.mapper.SchoolMapper;
 import liga.school.sevice.service.SchoolService;
 import liga.school.sevice.service.StudentService;
-import liga.student.service.dto.StudentDto;
+import liga.student.service.dto.StudentDTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @RestController
 public class SchoolServiceController implements SchoolApi {
@@ -68,7 +65,7 @@ public class SchoolServiceController implements SchoolApi {
             schoolDto = schoolService.getById(id);
         if (null != stIds) {
             for (String stId : stIds) {
-                StudentDto studentById = studentFeingService.getStudentById(stId);
+                StudentDTO studentById = studentFeingService.getStudentById(stId);
                 if (null == studentById)
                     return null;
             }

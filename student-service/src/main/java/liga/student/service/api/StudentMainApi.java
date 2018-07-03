@@ -1,6 +1,6 @@
 package liga.student.service.api;
 
-import liga.student.service.dto.StudentDto;
+import liga.student.service.dto.StudentDTO;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -8,28 +8,28 @@ import java.util.List;
 @RequestMapping("/student")
 public interface StudentMainApi {
     @GetMapping("/")
-    List<StudentDto> getStudents();
+    List<StudentDTO> getStudents();
 
     @GetMapping("/name/{name}")
-    List<StudentDto> getStudentByName(@PathVariable("name") String name);
+    List<StudentDTO> getStudentByName(@PathVariable("name") String name);
 
     @GetMapping("/surname/{surname}")
-    List<StudentDto> getStudentBySurname(@PathVariable("surname") String surname);
+    List<StudentDTO> getStudentBySurname(@PathVariable("surname") String surname);
 
     @GetMapping("/age/{age}")
-    List<StudentDto> getStudentBySurname(@PathVariable("age") int age);
+    List<StudentDTO> getStudentBySurname(@PathVariable("age") int age);
 
     @PutMapping("/")
-    StudentDto createStudent(@RequestParam("name") String name,
+    StudentDTO createStudent(@RequestParam("name") String name,
                              @RequestParam("surname") String surname,
                              @RequestParam("age") int age);
 
     @PostMapping("/{id}")
-    StudentDto updateStudent(@PathVariable("id") String id,
+    StudentDTO updateStudent(@PathVariable("id") String id,
                                  @RequestParam("name") String name,
                                  @RequestParam("surname") String surname,
                                  @RequestParam("age") int age);
 
     @DeleteMapping("/{id}")
-    StudentDto deleteStudent(@PathVariable("id") String id);
+    StudentDTO deleteStudent(@PathVariable("id") String id);
 }

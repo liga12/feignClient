@@ -1,7 +1,7 @@
 package liga.student.service.mapper;
 
 import liga.student.service.domain.Student;
-import liga.student.service.dto.StudentDto;
+import liga.student.service.dto.StudentDTO;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +24,8 @@ public class StudentMapperTest {
     @Test
     public void studentToStudentDto() {
         Student student = new Student("12", "name", "surname", 23);
-        StudentDto studentDto = mapper.studentToStudentDto(student);
-        studentData(student,studentDto);
+        StudentDTO studentDTO = mapper.studentToStudentDTO(student);
+        studentData(student, studentDTO);
     }
 
     @Test
@@ -33,25 +33,25 @@ public class StudentMapperTest {
         Student student = new Student("12", "name", "surname", 23);
         Student student2 = new Student("122", "name2", "surname2", 22);
         List<Student> students = new ArrayList<>(Arrays.asList(student, student2));
-        List<StudentDto> studentDtos = mapper.studentToStudentDto(students);
-        for (int i = 0; i < studentDtos.size(); i++) {
+        List<StudentDTO> studentDTOS = mapper.studentToStudentDTO(students);
+        for (int i = 0; i < studentDTOS.size(); i++) {
             Student currentStudent = students.get(i);
-            StudentDto studentDto = studentDtos.get(i);
-            studentData(currentStudent,studentDto);
+            StudentDTO studentDTO = studentDTOS.get(i);
+            studentData(currentStudent, studentDTO);
         }
     }
 
-    private void studentData(Student student, StudentDto studentDto){
-        assertEquals(student.getId(), studentDto.getId());
-        assertEquals(student.getName(), studentDto.getName());
-        assertEquals(student.getSurname(), studentDto.getSurname());
-        assertEquals(student.getAge(), studentDto.getAge());
+    private void studentData(Student student, StudentDTO studentDTO){
+        assertEquals(student.getId(), studentDTO.getId());
+        assertEquals(student.getName(), studentDTO.getName());
+        assertEquals(student.getSurname(), studentDTO.getSurname());
+        assertEquals(student.getAge(), studentDTO.getAge());
     }
 
     @Test
     public void studentDtoToStudent() {
-        StudentDto studentDto = new StudentDto("12", "name", "surname", 23);
-        Student student = mapper.studentDtoToStudent(studentDto);
-        studentData(student,studentDto);
+        StudentDTO studentDTO = new StudentDTO("12", "name", "surname", 23);
+        Student student = mapper.studentDTOToStudent(studentDTO);
+        studentData(student, studentDTO);
     }
 }

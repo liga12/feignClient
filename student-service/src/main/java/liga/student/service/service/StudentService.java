@@ -1,24 +1,24 @@
 package liga.student.service.service;
 
-import liga.student.service.dto.StudentDto;
+import liga.student.service.dto.StudentDTO;
 
 import java.util.List;
 
 public interface StudentService {
 
-    List<StudentDto> getAll();
+    List<StudentDTO> getAll();
 
-    StudentDto getById(String id);
+    StudentDTO getById(String id);
 
-    List<StudentDto> getByName(String name);
+    List<StudentDTO> getByName(String name);
 
-    List<StudentDto> getBySurname(String surname);
+    List<StudentDTO> getBySurname(String surname);
 
-    List<StudentDto> getByAge(int age);
+    List<StudentDTO> getByAge(int age);
 
-    StudentDto create(StudentDto dto);
+    StudentDTO create(StudentDTO dto);
 
-    StudentDto update(StudentDto dto);
+    StudentDTO update(StudentDTO dto);
 
-    void remove(StudentDto dto);
+    void remove(StudentDTO dto);
 }

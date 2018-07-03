@@ -1,7 +1,7 @@
 package liga.student.service.controller;
 
 import liga.student.service.api.StudentMainApi;
-import liga.student.service.dto.StudentDto;
+import liga.student.service.dto.StudentDTO;
 import liga.student.service.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,54 +18,54 @@ public class StudentMainController implements StudentMainApi {
     private StudentService studentService;
 
     @Override
-    public List<StudentDto> getStudents() {
+    public List<StudentDTO> getStudents() {
         return studentService.getAll();
     }
 
     @Override
-    public List<StudentDto> getStudentByName(@PathVariable String name) {
+    public List<StudentDTO> getStudentByName(@PathVariable String name) {
         return studentService.getByName(name);
     }
 
     @Override
-    public List<StudentDto> getStudentBySurname(@PathVariable String surname) {
+    public List<StudentDTO> getStudentBySurname(@PathVariable String surname) {
         return  studentService.getBySurname(surname);
     }
 
     @Override
-    public List<StudentDto> getStudentBySurname(@PathVariable int age) {
+    public List<StudentDTO> getStudentBySurname(@PathVariable int age) {
         return studentService.getByAge(age);
     }
 
     @Override
-    public StudentDto createStudent(@RequestParam String name,
+    public StudentDTO createStudent(@RequestParam String name,
                                     @RequestParam String surname,
                                     @RequestParam int age) {
-        return studentService.create(new StudentDto(name, surname, age));
+        return studentService.create(new StudentDTO(name, surname, age));
     }
 
      @Override
-    public StudentDto updateStudent(@PathVariable String id,
-                                        @RequestParam String name,
-                                        @RequestParam String surname,
-                                        @RequestParam int age) {
+    public StudentDTO updateStudent(@PathVariable String id,
+                                    @RequestParam String name,
+                                    @RequestParam String surname,
+                                    @RequestParam int age) {
         try {
             studentService.getById(id);
         } catch (NoSuchElementException e) {
             return null;
         }
-        return StudentDto.builder().id(id).name(name).surname(surname).age(age).build();
+        return StudentDTO.builder().id(id).name(name).surname(surname).age(age).build();
     }
 
     @Override
-    public StudentDto deleteStudent(@PathVariable String id) {
-        StudentDto studentDto;
+    public StudentDTO deleteStudent(@PathVariable String id) {
+        StudentDTO studentDTO;
         try {
-            studentDto = studentService.getById(id);
+            studentDTO = studentService.getById(id);
         } catch (NoSuchElementException e) {
             return null;
         }
-        studentService.remove(studentDto);
-        return studentDto;
+        studentService.remove(studentDTO);
+        return studentDTO;
     }
 }
