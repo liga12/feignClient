@@ -2,19 +2,17 @@ package liga.student.service.mapper;
 
 import liga.student.service.domain.Student;
 import liga.student.service.dto.StudentDto;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -23,13 +21,11 @@ public class StudentMapperTest {
     @Autowired
     private StudentMapper mapper;
 
-
     @Test
     public void studentToStudentDto() {
         Student student = new Student("12", "name", "surname", 23);
         StudentDto studentDto = mapper.studentToStudentDto(student);
         studentData(student,studentDto);
-
     }
 
     @Test
@@ -43,8 +39,6 @@ public class StudentMapperTest {
             StudentDto studentDto = studentDtos.get(i);
             studentData(currentStudent,studentDto);
         }
-
-
     }
 
     private void studentData(Student student, StudentDto studentDto){

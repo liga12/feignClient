@@ -1,5 +1,6 @@
 package liga.student.service.service;
 
+import liga.student.service.domain.Student;
 import liga.student.service.domain.StudentRepository;
 import liga.student.service.dto.StudentDto;
 import liga.student.service.mapper.StudentMapper;
@@ -24,7 +25,8 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public StudentDto getById(String id) {
-        return mapper.studentToStudentDto(studentRepository.findById(id).get());
+        Student student = studentRepository.findById(id).get();
+        return mapper.studentToStudentDto(student);
     }
 
     @Override
