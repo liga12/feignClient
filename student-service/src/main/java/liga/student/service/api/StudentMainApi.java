@@ -17,7 +17,7 @@ public interface StudentMainApi {
     List<StudentDTO> getStudentBySurname(@PathVariable("surname") String surname);
 
     @GetMapping("/age/{age}")
-    List<StudentDTO> getStudentBySurname(@PathVariable("age") int age);
+    List<StudentDTO> getStudentByAge(@PathVariable("age") int age);
 
     @PutMapping("/")
     StudentDTO createStudent(@RequestParam("name") String name,

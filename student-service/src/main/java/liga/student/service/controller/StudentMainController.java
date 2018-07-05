@@ -14,8 +14,12 @@ import java.util.NoSuchElementException;
 @RestController
 public class StudentMainController implements StudentMainApi {
 
+    private final StudentService studentService;
+
     @Autowired
-    private StudentService studentService;
+    public StudentMainController(StudentService studentService) {
+        this.studentService = studentService;
+    }
 
     @Override
     public List<StudentDTO> getStudents() {
@@ -33,7 +37,7 @@ public class StudentMainController implements StudentMainApi {
     }
 
     @Override
-    public List<StudentDTO> getStudentBySurname(@PathVariable int age) {
+    public List<StudentDTO> getStudentByAge(@PathVariable int age) {
         return studentService.getByAge(age);
     }
 

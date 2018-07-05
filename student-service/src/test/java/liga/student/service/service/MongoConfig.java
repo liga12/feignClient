@@ -1,4 +1,4 @@
-package liga.student.service;
+package liga.student.service.service;
 
 import cz.jirutka.spring.embedmongo.EmbeddedMongoFactoryBean;
 import org.springframework.context.annotation.Bean;

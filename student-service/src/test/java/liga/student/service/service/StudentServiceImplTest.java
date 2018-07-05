@@ -1,6 +1,5 @@
 package liga.student.service.service;
 
-import liga.student.service.MongoConfig;
 import liga.student.service.StudentClientService;
 import liga.student.service.domain.StudentRepository;
 import liga.student.service.dto.StudentDTO;
@@ -9,13 +8,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {MongoConfig.class, StudentClientService.class})
 public class StudentServiceImplTest {
 
