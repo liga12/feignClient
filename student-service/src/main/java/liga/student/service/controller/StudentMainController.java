@@ -5,7 +5,7 @@ import liga.student.service.dto.StudentDTO;
 import liga.student.service.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -33,7 +33,7 @@ public class StudentMainController implements StudentMainApi {
 
     @Override
     public List<StudentDTO> getStudentBySurname(@PathVariable String surname) {
-        return  studentService.getBySurname(surname);
+        return studentService.getBySurname(surname);
     }
 
     @Override
@@ -42,23 +42,21 @@ public class StudentMainController implements StudentMainApi {
     }
 
     @Override
-    public StudentDTO createStudent(@RequestParam String name,
-                                    @RequestParam String surname,
-                                    @RequestParam int age) {
-        return studentService.create(new StudentDTO(name, surname, age));
+    public StudentDTO createStudent(@RequestBody StudentDTO studentDTO) {
+        return studentService.create(studentDTO);
     }
 
-     @Override
+    @Override
     public StudentDTO updateStudent(@PathVariable String id,
-                                    @RequestParam String name,
-                                    @RequestParam String surname,
-                                    @RequestParam int age) {
+                                    @RequestBody StudentDTO studentDTO) {
+        StudentDTO dto;
         try {
-            studentService.getById(id);
+             dto = studentService.getById(id);
         } catch (NoSuchElementException e) {
             return null;
         }
-        return StudentDTO.builder().id(id).name(name).surname(surname).age(age).build();
+        studentDTO.setId(dto.getId());
+        return studentService.update(studentDTO);
     }
 
     @Override

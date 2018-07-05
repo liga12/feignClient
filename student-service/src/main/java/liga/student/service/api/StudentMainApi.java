@@ -20,15 +20,11 @@ public interface StudentMainApi {
     List<StudentDTO> getStudentByAge(@PathVariable("age") int age);
 
     @PutMapping("/")
-    StudentDTO createStudent(@RequestParam("name") String name,
-                             @RequestParam("surname") String surname,
-                             @RequestParam("age") int age);
+    StudentDTO createStudent(@RequestBody StudentDTO studentDTO);
 
     @PostMapping("/{id}")
     StudentDTO updateStudent(@PathVariable("id") String id,
-                                 @RequestParam("name") String name,
-                                 @RequestParam("surname") String surname,
-                                 @RequestParam("age") int age);
+                             @RequestBody StudentDTO studentDTO);
 
     @DeleteMapping("/{id}")
     StudentDTO deleteStudent(@PathVariable("id") String id);
