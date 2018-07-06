@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import liga.student.service.dto.StudentDTO;
 import liga.student.service.service.StudentService;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +22,8 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(value = StudentMainController.class, secure = false)
@@ -35,26 +35,32 @@ public class StudentMainControllerTest {
     @MockBean
     StudentService studentService;
 
-    @Test
-    public void getStudents() throws Exception {
-        StudentDTO first = StudentDTO.builder().id("1").name("n").surname("s").age(20).build();
-        StudentDTO second = StudentDTO.builder().id("2").name("n2").surname("s2").age(22).build();
-        List<StudentDTO> studentDTOS = new ArrayList<>(Arrays.asList(first, second));
-        when(studentService.getAll()).thenReturn(studentDTOS);
-        String URL = "/student/";
-        checkController(createMvcResultGet(URL), studentDTOS, true);
+    private final String DEFAULT_URL = "/student/";
+
+    private StudentDTO first;
+    private StudentDTO second;
+
+    @Before
+    public void setUp() {
+          first = StudentDTO.builder().id("1").name("n").surname("s").age(20).build();
+          second = StudentDTO.builder().id("2").name("n2").surname("s2").age(22).build();
     }
 
+    @Test
+    public void getStudents() throws Exception {
+
+        List<StudentDTO> studentDTOS = new ArrayList<>(Arrays.asList(first, second));
+        when(studentService.getAll()).thenReturn(studentDTOS);
+        checkController(createMvcResultGet(DEFAULT_URL), studentDTOS, true);
+    }
 
     @Test
     public void getStudentByName() throws Exception {
         StudentDTO first = StudentDTO.builder().id("1").name("n").surname("s").age(20).build();
         List<StudentDTO> studentDTOS = new ArrayList<>(Collections.singleton(first));
         when(studentService.getByName("n")).thenReturn(studentDTOS);
-        String URL = "/student/name/n";
-        checkController(createMvcResultGet(URL), studentDTOS, true);
-        URL = "/student/name/n2";
-        checkController(createMvcResultGet(URL), studentDTOS, false);
+        checkController(createMvcResultGet(DEFAULT_URL + "name/n"), studentDTOS, true);
+        checkController(createMvcResultGet(DEFAULT_URL + "name/n2"), studentDTOS, false);
     }
 
     @Test
@@ -62,49 +68,63 @@ public class StudentMainControllerTest {
         StudentDTO first = StudentDTO.builder().id("1").name("n").surname("s").age(20).build();
         List<StudentDTO> studentDTOS = new ArrayList<>(Collections.singleton(first));
         when(studentService.getBySurname("s")).thenReturn(studentDTOS);
-        String URL = "/student/surname/s";
-        checkController(createMvcResultGet(URL), studentDTOS, true);
-        URL = "/student/surname/s2";
-        checkController(createMvcResultGet(URL), studentDTOS, false);
+        checkController(createMvcResultGet(DEFAULT_URL + "surname/s"), studentDTOS, true);
+        checkController(createMvcResultGet(DEFAULT_URL + "surname/s2"), studentDTOS, false);
     }
 
     @Test
     public void getStudentByAge() throws Exception {
-        StudentDTO first = StudentDTO.builder().id("1").name("n").surname("s").age(20).build();
         List<StudentDTO> studentDTOS = new ArrayList<>(Collections.singleton(first));
         when(studentService.getByAge(20)).thenReturn(studentDTOS);
-        String URL = "/student/age/20";
-        checkController(createMvcResultGet(URL), studentDTOS, true);
-        URL = "/student/age/s2";
-        checkController(createMvcResultGet(URL), studentDTOS, false);
+        checkController(createMvcResultGet(DEFAULT_URL + "age/20"), studentDTOS, true);
+        checkController(createMvcResultGet(DEFAULT_URL + "age/25"), studentDTOS, false);
     }
 
     @Test
     public void createStudent() throws Exception {
-        StudentDTO first = StudentDTO.builder().id("1").name("n").surname("s").age(20).build();
         when(studentService.create(first)).thenReturn(first);
-        String URL = "/student/";
-        MvcResult mvcResult = mockMvc.perform(put(URL).content(this.mapToJson(first))
-                .accept(MediaType.APPLICATION_JSON))
+        MvcResult mvcResult = mockMvc.perform(put(DEFAULT_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.mapToJson(first)))
                 .andReturn();
         checkController(mvcResult, first, true);
+        mvcResult = mockMvc.perform(put(DEFAULT_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.mapToJson(second)))
+                .andExpect(status().isOk())
+                .andReturn();
+        checkController(mvcResult, second, false);
     }
 
     @Test
     public void updateStudent() throws Exception {
+        when(studentService.getById(first.getId())).thenReturn(first);
+        when(studentService.update(first)).thenReturn(first);
+        when(studentService.getById(second.getId())).thenReturn(first);
+        when(studentService.update(second)).thenReturn(first);
+        MvcResult mvcResult = mockMvc.perform(post(DEFAULT_URL + "1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.mapToJson(first)))
+                .andReturn();
+        checkController(mvcResult, first, true);
+        mvcResult = mockMvc.perform(post(DEFAULT_URL + "2")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.mapToJson(second)))
+                .andExpect(status().isOk())
+                .andReturn();
+        checkController(mvcResult, first, false);
     }
 
     @Test
     public void deleteStudent() throws Exception {
-        StudentDTO first = StudentDTO.builder().id("1").name("n").surname("s").age(20).build();
         when(studentService.getById("1")).thenReturn(first);
         String URL = "/student/1";
         MvcResult mvcResult = mockMvc.perform(delete(URL)
                 .accept(MediaType.APPLICATION_JSON))
                 .andReturn();
         checkController(mvcResult, first, true);
-         URL = "/student/2";
-         mvcResult = mockMvc.perform(delete(URL)
+        URL = "/student/2";
+        mvcResult = mockMvc.perform(delete(URL)
                 .accept(MediaType.APPLICATION_JSON))
                 .andReturn();
         checkController(mvcResult, first, false);
