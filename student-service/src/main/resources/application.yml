@@ -16,6 +16,7 @@ eureka:         #tells about the Eureka server details and its refresh time
 spring:
   application:
     name: student-service   #current service name to be used by the eureka server
+  data.mongodb.uri: mongodb://localhost:27017/project
 
 #management:
 #  security:
@@ -24,5 +25,3 @@ spring:
 logging:
   level:
     com.example.howtodoinjava: DEBUG
-
-spring:data.mongodb.uri: mongodb://localhost:27017/project

@@ -4,9 +4,7 @@ import liga.student.service.api.StudentMainApi;
 import liga.student.service.dto.StudentDTO;
 import liga.student.service.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -47,15 +45,13 @@ public class StudentMainController implements StudentMainApi {
     }
 
     @Override
-    public StudentDTO updateStudent(@PathVariable String id,
-                                    @RequestBody StudentDTO studentDTO) {
-        StudentDTO dto;
+    public StudentDTO updateStudent(@RequestBody StudentDTO studentDTO) {
+
         try {
-             dto = studentService.getById(id);
+            studentService.getById(studentDTO.getId());
         } catch (NoSuchElementException e) {
             return null;
         }
-        studentDTO.setId(dto.getId());
         return studentService.update(studentDTO);
     }
 

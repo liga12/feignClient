@@ -7,9 +7,7 @@ import liga.school.sevice.service.SchoolService;
 import liga.school.sevice.service.StudentService;
 import liga.student.service.dto.StudentDTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -17,13 +15,10 @@ import java.util.List;
 public class SchoolServiceController implements SchoolApi {
 
     @Autowired
-    SchoolService schoolService;
+    private SchoolService schoolService;
 
     @Autowired
-    SchoolMapper schoolMapper;
-
-    @Autowired
-    StudentService studentFeingService;
+    private StudentService studentFeingService;
 
     @Override
     public List<SchoolDto> getSchools() {
@@ -46,33 +41,25 @@ public class SchoolServiceController implements SchoolApi {
     }
 
     @Override
-    public SchoolDto createSchool(@RequestParam String name,
-                                  @RequestParam String address,
-                                  @RequestParam List<String> stIds) {
+    public SchoolDto createSchool(@RequestBody SchoolDto dto) {
 
-        for (String stId : stIds) {
+        for (String stId : dto.getStudentIds()) {
             studentFeingService.getStudentById(stId);
         }
-        return schoolService.create(schoolService.create(new SchoolDto(name, address, stIds)));
+        return schoolService.create(dto);
     }
 
     @Override
-    public SchoolDto updateSchool(@PathVariable Long id,
-                                  @RequestParam String name,
-                                  @RequestParam String address,
-                                  @RequestParam List<String> stIds) {
-        SchoolDto schoolDto;
-            schoolDto = schoolService.getById(id);
-        if (null != stIds) {
-            for (String stId : stIds) {
+    public SchoolDto updateSchool(@RequestBody SchoolDto dto) {
+        schoolService.getById(dto.getId());
+        if (null != dto.getStudentIds()) {
+            for (String stId : dto.getStudentIds()) {
                 StudentDTO studentById = studentFeingService.getStudentById(stId);
                 if (null == studentById)
                     return null;
             }
         }
-        schoolDto = schoolService.update(new SchoolDto(schoolDto.getId(), name, address, stIds));
-        schoolService.update(schoolDto);
-        return schoolDto;
+        return  schoolService.update(dto);
     }
 
     @Override

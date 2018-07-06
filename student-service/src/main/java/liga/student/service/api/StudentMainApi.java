@@ -22,9 +22,8 @@ public interface StudentMainApi {
     @PutMapping("/")
     StudentDTO createStudent(@RequestBody StudentDTO studentDTO);
 
-    @PostMapping("/{id}")
-    StudentDTO updateStudent(@PathVariable("id") String id,
-                             @RequestBody StudentDTO studentDTO);
+    @PostMapping("/")
+    StudentDTO updateStudent( @RequestBody StudentDTO studentDTO);
 
     @DeleteMapping("/{id}")
     StudentDTO deleteStudent(@PathVariable("id") String id);

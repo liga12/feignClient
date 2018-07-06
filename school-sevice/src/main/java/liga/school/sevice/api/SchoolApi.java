@@ -21,15 +21,10 @@ public interface SchoolApi {
     List<SchoolDto> getSchoolByAddress(@PathVariable("address") String address);
 
     @PutMapping("/")
-    SchoolDto createSchool(@RequestParam("name") String name,
-                           @RequestParam("address") String address,
-                           @RequestParam(value = "stIds", required = false) List<String> stIds);
+    SchoolDto createSchool(@RequestBody SchoolDto dto);
 
-    @PostMapping("/{id}")
-    SchoolDto updateSchool(@PathVariable("id") Long id,
-                           @RequestParam("name") String name,
-                           @RequestParam("address") String address,
-                           @RequestParam(value = "stIds", required = false) List<String> stIds);
+    @PostMapping("/")
+    SchoolDto updateSchool(@RequestBody SchoolDto dto);
 
     @DeleteMapping("/{id}")
     SchoolDto deleteSchool(@PathVariable("id") Long id);

@@ -100,17 +100,16 @@ public class StudentMainControllerTest {
     public void updateStudent() throws Exception {
         when(studentService.getById(first.getId())).thenReturn(first);
         when(studentService.update(first)).thenReturn(first);
-        when(studentService.getById(second.getId())).thenReturn(first);
-        when(studentService.update(second)).thenReturn(first);
-        MvcResult mvcResult = mockMvc.perform(post(DEFAULT_URL + "1")
+        when(studentService.getById(second.getId())).thenReturn(second);
+        when(studentService.update(second)).thenReturn(second);
+        MvcResult mvcResult = mockMvc.perform(post(DEFAULT_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(this.mapToJson(first)))
                 .andReturn();
         checkController(mvcResult, first, true);
-        mvcResult = mockMvc.perform(post(DEFAULT_URL + "2")
+        mvcResult = mockMvc.perform(post(DEFAULT_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(this.mapToJson(second)))
-                .andExpect(status().isOk())
                 .andReturn();
         checkController(mvcResult, first, false);
     }
