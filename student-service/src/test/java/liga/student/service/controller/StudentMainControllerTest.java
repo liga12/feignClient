@@ -100,8 +100,6 @@ public class StudentMainControllerTest {
     public void updateStudent() throws Exception {
         when(studentService.getById(first.getId())).thenReturn(first);
         when(studentService.update(first)).thenReturn(first);
-        when(studentService.getById(second.getId())).thenReturn(second);
-        when(studentService.update(second)).thenReturn(second);
         MvcResult mvcResult = mockMvc.perform(post(DEFAULT_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(this.mapToJson(first)))
@@ -111,7 +109,7 @@ public class StudentMainControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(this.mapToJson(second)))
                 .andReturn();
-        checkController(mvcResult, first, false);
+        assertThat("").isEqualTo(mvcResult.getResponse().getContentAsString());
     }
 
     @Test
@@ -126,7 +124,7 @@ public class StudentMainControllerTest {
         mvcResult = mockMvc.perform(delete(URL)
                 .accept(MediaType.APPLICATION_JSON))
                 .andReturn();
-        checkController(mvcResult, first, false);
+        assertThat("").isEqualTo(mvcResult.getResponse().getContentAsString());
     }
 
     private String mapToJson(Object object) throws JsonProcessingException {
