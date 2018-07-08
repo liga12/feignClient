@@ -1,6 +1,6 @@
 package liga.school.sevice.api;
 
-import liga.school.sevice.dto.SchoolDto;
+import liga.school.sevice.dto.SchoolDTO;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -9,23 +9,23 @@ import java.util.List;
 public interface SchoolApi {
 
     @GetMapping("/")
-    List<SchoolDto> getSchools();
+    List<SchoolDTO> getSchools();
 
     @GetMapping("/id/{id}")
-    SchoolDto getSchoolById(@PathVariable("id") Long id);
+    SchoolDTO getSchoolById(@PathVariable("id") Long id);
 
     @GetMapping("/name/{name}")
-    List<SchoolDto> getSchoolByName(@PathVariable("name") String name);
+    List<SchoolDTO> getSchoolByName(@PathVariable("name") String name);
 
     @GetMapping("/address/{address}")
-    List<SchoolDto> getSchoolByAddress(@PathVariable("address") String address);
+    List<SchoolDTO> getSchoolByAddress(@PathVariable("address") String address);
 
     @PutMapping("/")
-    SchoolDto createSchool(@RequestBody SchoolDto dto);
+    SchoolDTO createSchool(@RequestBody SchoolDTO dto);
 
     @PostMapping("/")
-    SchoolDto updateSchool(@RequestBody SchoolDto dto);
+    SchoolDTO updateSchool(@RequestBody SchoolDTO dto);
 
     @DeleteMapping("/{id}")
-    SchoolDto deleteSchool(@PathVariable("id") Long id);
+    SchoolDTO deleteSchool(@PathVariable("id") Long id);
 }

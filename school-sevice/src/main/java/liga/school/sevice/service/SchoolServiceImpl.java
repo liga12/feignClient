@@ -2,7 +2,7 @@ package liga.school.sevice.service;
 
 import liga.school.sevice.domain.School;
 import liga.school.sevice.domain.SchoolRepository;
-import liga.school.sevice.dto.SchoolDto;
+import liga.school.sevice.dto.SchoolDTO;
 import liga.school.sevice.mapper.SchoolMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,39 +19,39 @@ public class SchoolServiceImpl implements SchoolService {
     private SchoolMapper mapper;
 
     @Override
-    public List<SchoolDto> getAll() {
-        return mapper.schoolToSchoolDto( schoolRepository.findAll());
+    public List<SchoolDTO> getAll() {
+        return mapper.schoolToSchoolDTO( schoolRepository.findAll());
     }
 
     @Override
-    public SchoolDto getById(Long id) {
-        return mapper.schoolToSchoolDto(schoolRepository.findById(id).get());
+    public SchoolDTO getById(Long id) {
+        return mapper.schoolToSchoolDTO(schoolRepository.findById(id).get());
     }
 
     @Override
-    public List<SchoolDto> getByName(String name) {
-        return mapper.schoolToSchoolDto(schoolRepository.getByName(name));
+    public List<SchoolDTO> getByName(String name) {
+        return mapper.schoolToSchoolDTO(schoolRepository.getByName(name));
     }
 
     @Override
-    public List<SchoolDto> getByAddress(String address) {
-        return mapper.schoolToSchoolDto(schoolRepository.getByAddress(address));
+    public List<SchoolDTO> getByAddress(String address) {
+        return mapper.schoolToSchoolDTO(schoolRepository.getByAddress(address));
     }
 
     @Override
-    public SchoolDto create(SchoolDto dto) {
-        School school = mapper.schoolDtoToSchool(dto);
+    public SchoolDTO create(SchoolDTO dto) {
+        School school = mapper.schoolDTO_ToSchool(dto);
         School save = schoolRepository.save(school);
-        return mapper.schoolToSchoolDto(save);
+        return mapper.schoolToSchoolDTO(save);
     }
 
     @Override
-    public SchoolDto update(SchoolDto dto) {
-        return mapper.schoolToSchoolDto(schoolRepository.save(mapper.schoolDtoToSchool(dto)));
+    public SchoolDTO update(SchoolDTO dto) {
+        return mapper.schoolToSchoolDTO(schoolRepository.save(mapper.schoolDTO_ToSchool(dto)));
     }
 
     @Override
-    public void remove(SchoolDto dto) {
-        schoolRepository.delete(mapper.schoolDtoToSchool(dto));
+    public void remove(SchoolDTO dto) {
+        schoolRepository.delete(mapper.schoolDTO_ToSchool(dto));
     }
 }

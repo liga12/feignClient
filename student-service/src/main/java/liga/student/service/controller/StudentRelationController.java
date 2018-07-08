@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.NoSuchElementException;
+
 @RestController
 public class StudentRelationController implements StudentRelationApi {
 
@@ -15,6 +17,12 @@ public class StudentRelationController implements StudentRelationApi {
 
     @Override
     public StudentDTO getStudentById(@PathVariable String id) {
-        return studentService.getById(id);
+        StudentDTO studentDTO;
+        try {
+             studentDTO = studentService.getById(id);
+        }catch (NoSuchElementException e){
+            return null;
+        }
+        return studentDTO;
     }
 }

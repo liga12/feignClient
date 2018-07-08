@@ -33,19 +33,17 @@ public class StudentRelationControllerTest {
     @Test
     public void getStudentById() throws Exception {
         StudentDTO first = StudentDTO.builder().id("1").name("n").surname("s").age(20).build();
-        when(studentService.getById(Mockito.anyString())).thenReturn(first);
-
-        MvcResult mvcResult = mockMvc.perform(get("/student/id/1")
-                .accept(MediaType.APPLICATION_JSON))
-                .andReturn();
-        String expectedJson = mapToJson(first);
-        String outputInJson = mvcResult.getResponse().getContentAsString();
-        assertThat(outputInJson).isEqualTo(expectedJson);
-
+        when(studentService.getById("1")).thenReturn(first);
+        assertThat(  getMvcResult("/student/id/1").getResponse().getContentAsString()).isEqualTo(mapToJson(first));
+        assertThat( getMvcResult("/student/id/2").getResponse().getContentAsString()).isEqualTo("");
     }
 
     private String mapToJson(Object object) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.writeValueAsString(object);
+        return new ObjectMapper().writeValueAsString(object);
+    }
+    private MvcResult getMvcResult(String URL) throws Exception {
+        return  mockMvc.perform(get(URL)
+                .accept(MediaType.APPLICATION_JSON))
+                .andReturn();
     }
 }

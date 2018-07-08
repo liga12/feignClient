@@ -1,20 +1,20 @@
 package liga.school.sevice.service;
 
-import liga.school.sevice.dto.SchoolDto;
+import liga.school.sevice.dto.SchoolDTO;
 
 import java.util.List;
 
-public interface SchoolService {    List<SchoolDto> getAll();
+public interface SchoolService {    List<SchoolDTO> getAll();
 
-    SchoolDto getById(Long id);
+    SchoolDTO getById(Long id);
 
-    List<SchoolDto> getByName(String name);
+    List<SchoolDTO> getByName(String name);
 
-    List<SchoolDto> getByAddress(String address);
+    List<SchoolDTO> getByAddress(String address);
 
-    SchoolDto create(SchoolDto dto);
+    SchoolDTO create(SchoolDTO dto);
 
-    SchoolDto update(SchoolDto dto);
+    SchoolDTO update(SchoolDTO dto);
 
-    void remove(SchoolDto dto);
+    void remove(SchoolDTO dto);
 }

@@ -11,24 +11,24 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SchoolDto {
+public class SchoolDTO {
     private Long id;
     private String name;
     private String address;
     private List<String> studentIds;
 
-    public SchoolDto(String name, String address) {
+    public SchoolDTO(String name, String address) {
         this.name = name;
         this.address = address;
     }
-    public SchoolDto(Long id, String name, String address) {
+    public SchoolDTO(Long id, String name, String address) {
         this.name = name;
         this.address = address;
         this.id = id;
     }
 
 
-    public SchoolDto(String name, String address, List<String> studentIds) {
+    public SchoolDTO(String name, String address, List<String> studentIds) {
         this.name = name;
         this.address = address;
         this.studentIds = studentIds;
