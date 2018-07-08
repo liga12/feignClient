@@ -21,7 +21,7 @@ public class School {
     private String name;
     @Column(name = "address")
     private String address;
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "studentIds",joinColumns = @JoinColumn(name = "school_id"))
     private List<String> studentIds;
 

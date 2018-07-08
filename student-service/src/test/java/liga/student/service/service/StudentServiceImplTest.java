@@ -19,19 +19,23 @@ import static org.junit.Assert.assertEquals;
 public class StudentServiceImplTest {
 
     @Autowired
-    StudentService studentService;
+    private StudentService studentService;
 
     @Autowired
-    StudentRepository studentRepository;
+    private StudentRepository studentRepository;
+
+    private StudentDTO studentDTO;
 
     @Before
     public void setUp() {
         studentRepository.deleteAll();
+        studentDTO = studentService.
+                create(StudentDTO.builder().name("name").surname("surname").age(25).build());
     }
 
     @Test
     public void getAll() {
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 9; i++) {
             StudentDTO studentDTO = StudentDTO.builder()
                     .name("n").surname("s").age(25).build();
             studentService.create(studentDTO);
@@ -41,43 +45,31 @@ public class StudentServiceImplTest {
 
     @Test
     public void getById() {
-        StudentDTO studentDTO = studentService.
-                create(StudentDTO.builder().name("name").surname("surname").age(25).build());
         assertEquals(studentDTO, studentService.getById(studentDTO.getId()));
     }
 
     @Test
     public void getByName() {
-        StudentDTO studentDTO = studentService.
-                create(StudentDTO.builder().name("name").surname("surname").age(25).build());
         assertEquals(Collections.singletonList(studentDTO), studentService.getByName(studentDTO.getName()));
     }
 
     @Test
     public void getBySurname() {
-        StudentDTO studentDTO = studentService.
-                create(StudentDTO.builder().name("name").surname("surname").age(25).build());
         assertEquals(Collections.singletonList(studentDTO), studentService.getBySurname(studentDTO.getSurname()));
     }
 
     @Test
     public void getByAge() {
-        StudentDTO studentDTO = studentService.
-                create(StudentDTO.builder().name("name").surname("surname").age(25).build());
         assertEquals(Collections.singletonList(studentDTO), studentService.getByAge(studentDTO.getAge()));
     }
 
     @Test
     public void create() {
-        StudentDTO studentDTO = studentService.
-                create(StudentDTO.builder().name("name").surname("surname").age(25).build());
         assertEquals(studentDTO, studentService.getById(studentDTO.getId()));
     }
 
     @Test
     public void update() {
-        StudentDTO studentDTO = studentService.
-                create(StudentDTO.builder().name("name").surname("surname").age(25).build());
         studentDTO.setName("n");
         studentDTO.setSurname("s");
         studentDTO.setAge(20);
@@ -87,12 +79,12 @@ public class StudentServiceImplTest {
 
     @Test
     public void remove() {
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 9; i++) {
             StudentDTO studentDTO = StudentDTO.builder()
                     .name("n").surname("s").age(25).build();
-            StudentDTO studentDTOCreated = studentService.create(studentDTO);
-            if (i == 9)
-                studentService.remove(studentDTOCreated);
+            StudentDTO studentDTO1 = studentService.create(studentDTO);
+            if (i == 8)
+                studentService.remove(studentDTO1);
         }
         assertEquals(9, studentService.getAll().size());
     }
