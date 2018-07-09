@@ -6,6 +6,7 @@ import liga.school.sevice.dto.SchoolDTO;
 import liga.school.sevice.mapper.SchoolMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -19,26 +20,31 @@ public class SchoolServiceImpl implements SchoolService {
     private SchoolMapper mapper;
 
     @Override
+    @Transactional
     public List<SchoolDTO> getAll() {
         return mapper.schoolToSchoolDTO( schoolRepository.findAll());
     }
 
     @Override
+    @Transactional
     public SchoolDTO getById(Long id) {
         return mapper.schoolToSchoolDTO(schoolRepository.findById(id).get());
     }
 
     @Override
+    @Transactional
     public List<SchoolDTO> getByName(String name) {
         return mapper.schoolToSchoolDTO(schoolRepository.getByName(name));
     }
 
     @Override
+    @Transactional
     public List<SchoolDTO> getByAddress(String address) {
         return mapper.schoolToSchoolDTO(schoolRepository.getByAddress(address));
     }
 
     @Override
+    @Transactional
     public SchoolDTO create(SchoolDTO dto) {
         School school = mapper.schoolDTO_ToSchool(dto);
         School save = schoolRepository.save(school);
