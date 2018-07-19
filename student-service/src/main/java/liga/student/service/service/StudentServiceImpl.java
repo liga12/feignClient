@@ -1,8 +1,8 @@
 package liga.student.service.service;
 
-import liga.student.service.domain.Student;
 import liga.student.service.domain.StudentRepository;
 import liga.student.service.dto.StudentDTO;
+import liga.student.service.exception.StudentNotFoundException;
 import liga.student.service.mapper.StudentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,8 +25,9 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public StudentDTO getById(String id) {
-        Student student = studentRepository.findById(id).get();
-        return mapper.studentToStudentDTO(student);
+        return mapper.studentToStudentDTO(
+                studentRepository.findById(id).orElseThrow(StudentNotFoundException::new)
+        );
     }
 
     @Override

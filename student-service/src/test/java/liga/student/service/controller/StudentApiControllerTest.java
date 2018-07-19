@@ -12,15 +12,16 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(value = StudentRelationController.class, secure = false)
-public class StudentRelationControllerTest {
+@WebMvcTest(value = StudentApiController.class, secure = false)
+public class StudentApiControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -29,19 +30,23 @@ public class StudentRelationControllerTest {
     StudentService studentService;
 
     @Test
-    public void getStudentById() throws Exception {
+    public void testGetStudentById() throws Exception {
         StudentDTO first = StudentDTO.builder().id("1").name("n").surname("s").age(20).build();
-        when(studentService.getById("1")).thenReturn(first);
-        assertThat(  getMvcResult("/student/id/1").getResponse().getContentAsString()).isEqualTo(mapToJson(first));
-        assertThat( getMvcResult("/student/id/2").getResponse().getContentAsString()).isEqualTo("");
+        when(studentService.getById(first.getId())).thenReturn(first);
+
+        mockMvc.perform(get("/student-api/{id}", first.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapToJson(first)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(first.getId()))
+                .andExpect(jsonPath("$.name").value(first.getName()))
+                .andExpect(jsonPath("$.surname").value(first.getSurname()))
+                .andExpect(jsonPath("$.age").value(first.getAge()));
+
+        verify(studentService).getById(first.getId());
     }
 
     private String mapToJson(Object object) throws JsonProcessingException {
         return new ObjectMapper().writeValueAsString(object);
-    }
-    private MvcResult getMvcResult(String URL) throws Exception {
-        return  mockMvc.perform(get(URL)
-                .accept(MediaType.APPLICATION_JSON))
-                .andReturn();
     }
 }

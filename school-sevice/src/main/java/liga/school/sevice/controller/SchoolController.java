@@ -1,19 +1,16 @@
 package liga.school.sevice.controller;
 
-import liga.school.sevice.api.SchoolApi;
-import liga.school.sevice.domain.School;
 import liga.school.sevice.dto.SchoolDTO;
 import liga.school.sevice.service.SchoolService;
 import liga.school.sevice.service.StudentService;
-import liga.student.service.dto.StudentDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @RestController
-public class SchoolController implements SchoolApi {
+@RequestMapping("/school")
+public class SchoolController {
 
     @Autowired
     private SchoolService schoolService;
@@ -21,63 +18,48 @@ public class SchoolController implements SchoolApi {
     @Autowired
     private StudentService studentFeingService;
 
-    @Override
+    @GetMapping("/")
     public List<SchoolDTO> getSchools() {
         return schoolService.getAll();
     }
 
-    @Override
+    @GetMapping("/id/{id}")
     public SchoolDTO getSchoolById(@PathVariable Long id) {
-        SchoolDTO schoolDTO;
-        try {
-            schoolDTO = schoolService.getById(id);
-        }catch (NoSuchElementException e){
-            return null;
-        }
-        return schoolDTO;
+        return schoolService.getById(id);
     }
 
-    @Override
+    @GetMapping("/name/{name}")
     public List<SchoolDTO> getSchoolByName(@PathVariable String name) {
         return schoolService.getByName(name);
     }
 
-    @Override
+    @PutMapping("/address/{address}")
     public List<SchoolDTO> getSchoolByAddress(@PathVariable String address) {
         return schoolService.getByAddress(address);
     }
 
-    @Override
+    @PutMapping
     public SchoolDTO createSchool(@RequestBody SchoolDTO dto) {
-        if (null != dto.getStudentIds())
-            for (String stId : dto.getStudentIds()) {
-                StudentDTO studentById = studentFeingService.getStudentById(stId);
-                if (null==studentById)
-                    return null;
-            }
+        for (String stId : dto.getStudentIds()) {
+            studentFeingService.getStudentById(stId);
+        }
         return schoolService.create(dto);
     }
 
-    @Override
+    @PostMapping
     public SchoolDTO updateSchool(@RequestBody SchoolDTO dto) {
         schoolService.getById(dto.getId());
-        if (null != dto.getStudentIds()) {
-            for (String stId : dto.getStudentIds()) {
-                StudentDTO studentById = studentFeingService.getStudentById(stId);
-                if (null == studentById)
-                    return null;
-            }
+        for (String stId : dto.getStudentIds()) {
+            studentFeingService.getStudentById(stId);
         }
         return schoolService.update(dto);
     }
 
-    @Override
+    @DeleteMapping("/{id}")
     public SchoolDTO deleteSchool(@PathVariable Long id) {
         SchoolDTO schoolDTO = schoolService.getById(id);
         schoolService.remove(schoolDTO);
         return schoolDTO;
     }
-
-
 }
 

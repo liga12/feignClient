@@ -1,69 +1,62 @@
 package liga.student.service.controller;
 
-import liga.student.service.api.StudentMainApi;
 import liga.student.service.dto.StudentDTO;
 import liga.student.service.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @RestController
-public class StudentMainController implements StudentMainApi {
+@RequestMapping("/student")
+public class StudentController {
 
     private final StudentService studentService;
 
     @Autowired
-    public StudentMainController(StudentService studentService) {
+    public StudentController(StudentService studentService) {
         this.studentService = studentService;
     }
 
-    @Override
+    @GetMapping
     public List<StudentDTO> getStudents() {
         return studentService.getAll();
     }
 
-    @Override
+    @GetMapping("/{id}")
+    public StudentDTO getStudentById(@PathVariable String id) {
+        return studentService.getById(id);
+    }
+
+    @GetMapping("/name/{name}")
     public List<StudentDTO> getStudentByName(@PathVariable String name) {
         return studentService.getByName(name);
     }
 
-    @Override
+    @GetMapping("/surname/{surname}")
     public List<StudentDTO> getStudentBySurname(@PathVariable String surname) {
         return studentService.getBySurname(surname);
     }
 
-    @Override
+    @GetMapping("/age/{age}")
     public List<StudentDTO> getStudentByAge(@PathVariable int age) {
         return studentService.getByAge(age);
     }
 
-    @Override
+    @PutMapping
     public StudentDTO createStudent(@RequestBody StudentDTO studentDTO) {
         return studentService.create(studentDTO);
     }
 
-    @Override
+    @PostMapping
     public StudentDTO updateStudent(@RequestBody StudentDTO studentDTO) {
-
-        try {
-            studentService.getById(studentDTO.getId());
-        } catch (NoSuchElementException e) {
-            return null;
-        }
+        studentService.getById(studentDTO.getId());
         return studentService.update(studentDTO);
     }
 
-    @Override
-    public StudentDTO deleteStudent(@PathVariable String id) {
-        StudentDTO studentDTO;
-        try {
-            studentDTO = studentService.getById(id);
-        } catch (NoSuchElementException e) {
-            return null;
-        }
+    @DeleteMapping("/{id}")
+    public void deleteStudent(@PathVariable String id) {
+        StudentDTO studentDTO = studentService.getById(id);
         studentService.remove(studentDTO);
-        return studentDTO;
     }
 }
