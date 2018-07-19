@@ -1,10 +1,11 @@
-package liga.student.service.controller;
+package liga.school.sevice.controller;
 
-import liga.student.service.StudentClientService;
-import liga.student.service.domain.StudentRepository;
+import liga.school.sevice.SchoolClientService;
+import liga.school.sevice.domain.SchoolRepository;
+import liga.school.sevice.dto.SchoolDTO;
+import liga.school.sevice.service.SchoolService;
+import liga.school.sevice.service.StudentService;
 import liga.student.service.dto.StudentDTO;
-import liga.student.service.service.MongoConfig;
-import liga.student.service.service.StudentService;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
@@ -33,17 +35,21 @@ import java.util.*;
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {StudentClientService.class, MongoConfig.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = SchoolClientService.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-public class StudentMainControllerIntegrationTest {
+public class SchoolControllerIntegrationTest {
 
     @Autowired
-    private StudentRepository studentRepository;
+    private SchoolRepository schoolRepository;
+
+    @MockBean
+    private StudentService studentFeignService;
 
     @Autowired
-    private StudentService studentService;
+    private SchoolService schoolService;
     private static ConfigurableApplicationContext eurekaServer;
 
     @BeforeClass
@@ -51,7 +57,6 @@ public class StudentMainControllerIntegrationTest {
         eurekaServer = SpringApplication.run(EurekaServer.class,
                 "--server.port=8761",
                 "--eureka.instance.leaseRenewalIntervalInSeconds=1");
-
     }
 
     @AfterClass
@@ -64,19 +69,19 @@ public class StudentMainControllerIntegrationTest {
 
     @Autowired
     private TestRestTemplate testRestTemplate;
-    private ParameterizedTypeReference<List<StudentDTO>> studentDTOList = new ParameterizedTypeReference<List<StudentDTO>>() {
+    private ParameterizedTypeReference<List<SchoolDTO>> shoolDTOList = new ParameterizedTypeReference<List<SchoolDTO>>() {
     };
 
     @Before
     public void setUp() {
-        studentRepository.deleteAll();
+        schoolRepository.deleteAll();
     }
 
     @Test
     public void getStudents() {
-        StudentDTO first = createStudentDTO();
-        StudentDTO second = studentService.create(StudentDTO.builder().id("2").name("n2").surname("s2").age(22).build());
-        ResponseEntity<List<StudentDTO>> response = testRestTemplate.exchange(getURL(), HttpMethod.GET, null, studentDTOList);
+        SchoolDTO first = createSchoolDTO();
+        SchoolDTO second = schoolService.create(SchoolDTO.builder().name("n2").address("a2").studentIds(Collections.singletonList("2")).build());
+        ResponseEntity<List<SchoolDTO>> response = testRestTemplate.exchange(getURL(), HttpMethod.GET, null, shoolDTOList);
         then(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertEquals(response.getBody(), Arrays.asList(first, second));
         checkValueInDB(2);
@@ -84,12 +89,12 @@ public class StudentMainControllerIntegrationTest {
 
     @Test
     public void getStudentById() {
-        StudentDTO first = createStudentDTO();
-        ResponseEntity<StudentDTO> response = testRestTemplate
-                .exchange(getURL() + "id/" + first.getId(), HttpMethod.GET, null, StudentDTO.class);
+        SchoolDTO first = createSchoolDTO();
+        ResponseEntity<SchoolDTO> response = testRestTemplate
+                .exchange(getURL() + "id/" + first.getId(), HttpMethod.GET, null, SchoolDTO.class);
         then(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertEquals(response.getBody(), first);
-        response = testRestTemplate.exchange(getURL() + "id/2", HttpMethod.GET, null, StudentDTO.class);
+        response = testRestTemplate.exchange(getURL() + "id/2", HttpMethod.GET, null, SchoolDTO.class);
         then(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertNull(response.getBody());
         checkValueInDB(1);
@@ -97,28 +102,22 @@ public class StudentMainControllerIntegrationTest {
 
     @Test
     public void getStudentByName() {
-        StudentDTO first = createStudentDTO();
+        SchoolDTO first = createSchoolDTO();
         checkCollection(first, "name/" + first.getName(), "name/n3");
         checkValueInDB(1);
     }
 
     @Test
-    public void getStudentBySurname() {
-        StudentDTO first = createStudentDTO();
-        checkCollection(first, "surname/" + first.getSurname(), "surname/s3");
-        checkValueInDB(1);
-    }
-
-    @Test
-    public void getStudentByAge() {
-        StudentDTO first = createStudentDTO();
-        checkCollection(first, "age/" + first.getAge(), "age/21");
+    public void getStudentByAddress() {
+        SchoolDTO first = createSchoolDTO();
+        checkCollection(first, "address/" + first.getAddress(), "address/s3");
         checkValueInDB(1);
     }
 
     @Test
     public void createStudent() throws Exception {
-        StudentDTO first = createStudentDTO();
+        SchoolDTO first = createSchoolDTO();
+        when(studentFeignService.getStudentById(first.getStudentIds().get(0))).thenReturn(new StudentDTO());
         ResponseEntity<StudentDTO> response = testRestTemplate
                 .exchange(RequestEntity.put(new URI(getURL())).body(first), StudentDTO.class);
         ResponseEntity<StudentDTO> response2 = testRestTemplate.
@@ -131,16 +130,17 @@ public class StudentMainControllerIntegrationTest {
 
     @Test
     public void updateStudent() throws Exception {
-        StudentDTO first = createStudentDTO();
+        SchoolDTO first = createSchoolDTO();
         first.setName("n2");
-        ResponseEntity<StudentDTO> response = testRestTemplate
-                .exchange(RequestEntity.post(new URI(getURL())).body(first), StudentDTO.class);
-        ResponseEntity<List<StudentDTO>> response2 = testRestTemplate
-                .exchange(getURL() + "name/" + first.getName(), HttpMethod.GET, null, studentDTOList);
+        when(studentFeignService.getStudentById(first.getStudentIds().get(0))).thenReturn(new StudentDTO());
+        ResponseEntity<SchoolDTO> response = testRestTemplate
+                .exchange(RequestEntity.post(new URI(getURL())).body(first), SchoolDTO.class);
+        ResponseEntity<List<SchoolDTO>> response2 = testRestTemplate
+                .exchange(getURL() + "name/" + first.getName(), HttpMethod.GET, null, shoolDTOList);
         then(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertEquals(response.getBody(), Objects.requireNonNull(response2.getBody()).get(0));
         response2 = testRestTemplate
-                .exchange(getURL() + "name/n" + first.getName(), HttpMethod.GET, null, studentDTOList);
+                .exchange(getURL() + "name/n" + first.getName(), HttpMethod.GET, null, shoolDTOList);
         then(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertEquals(response2.getBody(), new ArrayList<>());
         checkValueInDB(1);
@@ -148,43 +148,43 @@ public class StudentMainControllerIntegrationTest {
 
     @Test
     public void deleteStudent() {
-        StudentDTO first = createStudentDTO();
-        ResponseEntity<StudentDTO> response = testRestTemplate
-                .exchange(getURL() + "/" + first.getId(), HttpMethod.DELETE, null, StudentDTO.class);
+        SchoolDTO first = createSchoolDTO();
+        ResponseEntity<SchoolDTO> response = testRestTemplate
+                .exchange(getURL() + "/" + first.getId(), HttpMethod.DELETE, null, SchoolDTO.class);
         then(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        ResponseEntity<StudentDTO> response2 = testRestTemplate.
-                exchange(getURL() + "id/" + first.getId(), HttpMethod.GET, null, StudentDTO.class);
+        ResponseEntity<SchoolDTO> response2 = testRestTemplate.
+                exchange(getURL() + "id/" + first.getId(), HttpMethod.GET, null, SchoolDTO.class);
         then(response2.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertNull(response2.getBody());
-        ResponseEntity<List<StudentDTO>> response3 = testRestTemplate.
-                exchange(getURL(), HttpMethod.GET, null, studentDTOList);
+        ResponseEntity<List<SchoolDTO>> response3 = testRestTemplate.
+                exchange(getURL(), HttpMethod.GET, null, shoolDTOList);
         then(response3.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertEquals(response3.getBody(), new ArrayList<>());
     }
 
     private void checkValueInDB(int size) {
-        ResponseEntity<List<StudentDTO>> response3 = testRestTemplate.
-                exchange(getURL(), HttpMethod.GET, null, studentDTOList);
+        ResponseEntity<List<SchoolDTO>> response3 = testRestTemplate.
+                exchange(getURL(), HttpMethod.GET, null, shoolDTOList);
         then(response3.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertEquals(Objects.requireNonNull(response3.getBody()).size(), size);
     }
 
-    private StudentDTO createStudentDTO() {
-        return studentService.create(StudentDTO.builder().name("n").surname("s").age(20).build());
+    private SchoolDTO createSchoolDTO() {
+        return schoolService.create(SchoolDTO.builder().name("n").address("a").studentIds(Collections.singletonList("1")).build());
     }
 
-    private void checkCollection(StudentDTO studentDTO, String firstURL, String secondURL) {
-        ResponseEntity<List<StudentDTO>> response = testRestTemplate
-                .exchange(getURL() + firstURL, HttpMethod.GET, null, studentDTOList);
+    private void checkCollection(SchoolDTO schoolDTO, String firstURL, String secondURL) {
+        ResponseEntity<List<SchoolDTO>> response = testRestTemplate
+                .exchange(getURL() + firstURL, HttpMethod.GET, null, shoolDTOList);
         then(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertEquals(response.getBody(), Collections.singletonList(studentDTO));
-        response = testRestTemplate.exchange(getURL() + secondURL, HttpMethod.GET, null, studentDTOList);
+        assertEquals(response.getBody(), Collections.singletonList(schoolDTO));
+        response = testRestTemplate.exchange(getURL() + secondURL, HttpMethod.GET, null, shoolDTOList);
         then(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertEquals(response.getBody(), new ArrayList<>());
     }
 
     private String getURL() {
-        return "http://localhost:" + port + "/student/";
+        return "http://localhost:" + port + "/school/";
     }
 
 
