@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import liga.student.service.StudentClientService;
 import liga.student.service.domain.StudentRepository;
 import liga.student.service.dto.StudentDTO;
-import liga.student.service.exception.StudentNotFoundException;
 import liga.student.service.service.MongoConfig;
 import liga.student.service.service.StudentService;
 import org.junit.AfterClass;
@@ -18,12 +17,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -34,7 +31,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {StudentClientService.class, MongoConfig.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-@ActiveProfiles("test")
 public class StudentControllerIntegrationTest {
 
     @Autowired
@@ -58,9 +54,6 @@ public class StudentControllerIntegrationTest {
     public static void closeEureka() {
         eurekaServer.close();
     }
-
-    @LocalServerPort
-    private int port;
 
     @Before
     public void setUp() {
@@ -108,13 +101,6 @@ public class StudentControllerIntegrationTest {
                 .andExpect(jsonPath("$.name").value(first.getName()))
                 .andExpect(jsonPath("$.surname").value(first.getSurname()))
                 .andExpect(jsonPath("$.age").value(first.getAge()));
-    }
-
-    @Test(expected = StudentNotFoundException.class)
-    public void testGetStudentByIdWithStudentNotFound() throws Exception {
-
-        mockMvc.perform(get("/student/2"))
-                .andExpect(status().isOk());
     }
 
     @Test

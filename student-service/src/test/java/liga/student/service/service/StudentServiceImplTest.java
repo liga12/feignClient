@@ -1,91 +1,82 @@
 package liga.student.service.service;
 
-import liga.student.service.StudentClientService;
-import liga.student.service.domain.StudentRepository;
 import liga.student.service.dto.StudentDTO;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
+import org.mockito.Mock;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {MongoConfig.class, StudentClientService.class})
 public class StudentServiceImplTest {
 
-    @Autowired
+    @Mock
     private StudentService studentService;
-
-    @Autowired
-    private StudentRepository studentRepository;
-
-    private StudentDTO studentDTO;
-
-    @Before
-    public void setUp() {
-        studentRepository.deleteAll();
-        studentDTO = studentService.
-                create(StudentDTO.builder().name("name").surname("surname").age(25).build());
-    }
 
     @Test
     public void getAll() {
-        for (int i = 0; i < 9; i++) {
-            StudentDTO studentDTO = StudentDTO.builder()
-                    .name("n").surname("s").age(25).build();
-            studentService.create(studentDTO);
-        }
-        assertEquals(10, studentService.getAll().size());
+        StudentDTO studentDTO = StudentDTO.builder().name("name").surname("surname").age(25).build();
+        when(studentService.getAll()).thenReturn(Collections.singletonList(studentDTO));
+        studentService.getAll();
+        verify(studentService).getAll();
     }
 
     @Test
     public void getById() {
-        assertEquals(studentDTO, studentService.getById(studentDTO.getId()));
+        StudentDTO studentDTO = StudentDTO.builder().name("name").surname("surname").age(25).build();
+        when(studentService.getById(studentDTO.getId())).thenReturn(studentDTO);
+        studentService.getById(studentDTO.getId());
+        verify(studentService).getById(studentDTO.getId());
     }
 
     @Test
     public void getByName() {
-        assertEquals(Collections.singletonList(studentDTO), studentService.getByName(studentDTO.getName()));
+        StudentDTO studentDTO = StudentDTO.builder().name("name").surname("surname").age(25).build();
+        when(studentService.getByName(studentDTO.getName())).thenReturn(Collections.singletonList(studentDTO));
+        studentService.getByName(studentDTO.getName());
+        verify(studentService).getByName(studentDTO.getName());
     }
 
     @Test
     public void getBySurname() {
-        assertEquals(Collections.singletonList(studentDTO), studentService.getBySurname(studentDTO.getSurname()));
+        StudentDTO studentDTO = StudentDTO.builder().name("name").surname("surname").age(25).build();
+        when(studentService.getBySurname(studentDTO.getSurname())).thenReturn(Collections.singletonList(studentDTO));
+        studentService.getBySurname(studentDTO.getSurname());
+        verify(studentService).getBySurname(studentDTO.getSurname());
     }
 
     @Test
     public void getByAge() {
-        assertEquals(Collections.singletonList(studentDTO), studentService.getByAge(studentDTO.getAge()));
+        StudentDTO studentDTO = StudentDTO.builder().name("name").surname("surname").age(25).build();
+        when(studentService.getByAge(studentDTO.getAge())).thenReturn(Collections.singletonList(studentDTO));
+        studentService.getByAge(studentDTO.getAge());
+        verify(studentService).getByAge(studentDTO.getAge());
     }
 
     @Test
     public void create() {
-        assertEquals(studentDTO, studentService.getById(studentDTO.getId()));
+        StudentDTO studentDTO = StudentDTO.builder().name("name").surname("surname").age(25).build();
+        when(studentService.create(studentDTO)).thenReturn(studentDTO);
+        studentService.create(studentDTO);
+        verify(studentService).create(studentDTO);
     }
 
     @Test
     public void update() {
-        studentDTO.setName("n");
-        studentDTO.setSurname("s");
-        studentDTO.setAge(20);
-        StudentDTO updatedStudentDTO = studentService.update(studentDTO);
-        assertEquals(studentDTO, updatedStudentDTO);
+        StudentDTO studentDTO = StudentDTO.builder().name("name").surname("surname").age(25).build();
+        when(studentService.update(studentDTO)).thenReturn(studentDTO);
+        studentService.update(studentDTO);
+        verify(studentService).update(studentDTO);
     }
 
     @Test
     public void remove() {
-        for (int i = 0; i < 9; i++) {
-            StudentDTO studentDTO = StudentDTO.builder()
-                    .name("n").surname("s").age(25).build();
-            StudentDTO studentDTO1 = studentService.create(studentDTO);
-            if (i == 8)
-                studentService.remove(studentDTO1);
-        }
-        assertEquals(9, studentService.getAll().size());
+        StudentDTO studentDTO = StudentDTO.builder().name("name").surname("surname").age(25).build();
+        doNothing().when(studentService).remove(studentDTO);
+        studentService.remove(studentDTO);
+        verify(studentService).remove(studentDTO);
     }
 }
