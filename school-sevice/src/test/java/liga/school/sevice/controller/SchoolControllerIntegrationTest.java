@@ -1,5 +1,7 @@
 package liga.school.sevice.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import liga.school.sevice.SchoolClientService;
 import liga.school.sevice.domain.SchoolRepository;
 import liga.school.sevice.dto.SchoolDTO;
@@ -14,6 +16,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -22,12 +25,10 @@ import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.MockMvc;
 
 import java.net.URI;
 import java.util.*;
@@ -35,11 +36,16 @@ import java.util.*;
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = SchoolClientService.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test")
+@AutoConfigureMockMvc
 public class SchoolControllerIntegrationTest {
 
     @Autowired
@@ -47,6 +53,9 @@ public class SchoolControllerIntegrationTest {
 
     @MockBean
     private StudentService studentFeignService;
+
+    @Autowired
+    private MockMvc mockMvc;
 
     @Autowired
     private SchoolService schoolService;
@@ -64,127 +73,106 @@ public class SchoolControllerIntegrationTest {
         eurekaServer.close();
     }
 
-    @LocalServerPort
-    private int port;
-
-    @Autowired
-    private TestRestTemplate testRestTemplate;
-    private ParameterizedTypeReference<List<SchoolDTO>> shoolDTOList = new ParameterizedTypeReference<List<SchoolDTO>>() {
-    };
-
     @Before
     public void setUp() {
         schoolRepository.deleteAll();
     }
 
     @Test
-    public void getStudents() {
-        SchoolDTO first = createSchoolDTO();
-        SchoolDTO second = schoolService.create(SchoolDTO.builder().name("n2").address("a2").studentIds(Collections.singletonList("2")).build());
-        ResponseEntity<List<SchoolDTO>> response = testRestTemplate.exchange(getURL(), HttpMethod.GET, null, shoolDTOList);
-        then(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertEquals(response.getBody(), Arrays.asList(first, second));
-        checkValueInDB(2);
+    public void testGetStudents() throws Exception {
+        SchoolDTO first = schoolService.create(SchoolDTO.builder().id(1L).
+                name("n").address("a").studentIds(Collections.singletonList("1")).build());
+        SchoolDTO second = schoolService.create(SchoolDTO.builder().id(2L).name("n1").
+                address("a1").studentIds(Collections.singletonList("2")).build());
+
+        mockMvc.perform(get("/school/"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(first.getId()))
+                .andExpect(jsonPath("$[0].name").value(first.getName()))
+                .andExpect(jsonPath("$[0].address").value(first.getAddress()))
+                .andExpect(jsonPath("$[0].studentIds[0]").value(first.getStudentIds().get(0)))
+                .andExpect(jsonPath("$[1].id").value(second.getId()))
+                .andExpect(jsonPath("$[1].name").value(second.getName()))
+                .andExpect(jsonPath("$[1].address").value(second.getAddress()))
+                .andExpect(jsonPath("$[1].studentIds[0]").value(second.getStudentIds().get(0)));
     }
 
     @Test
-    public void getStudentById() {
-        SchoolDTO first = createSchoolDTO();
-        ResponseEntity<SchoolDTO> response = testRestTemplate
-                .exchange(getURL() + "id/" + first.getId(), HttpMethod.GET, null, SchoolDTO.class);
-        then(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertEquals(response.getBody(), first);
-        response = testRestTemplate.exchange(getURL() + "id/2", HttpMethod.GET, null, SchoolDTO.class);
-        then(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertNull(response.getBody());
-        checkValueInDB(1);
+    public void testGetStudentById() throws Exception {
+        SchoolDTO first = schoolService.create(SchoolDTO.builder().id(1L).
+                name("n").address("a").studentIds(Collections.singletonList("1")).build());
+
+        mockMvc.perform(get("/school/{id}", first.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(first.getId()))
+                .andExpect(jsonPath("$.name").value(first.getName()))
+                .andExpect(jsonPath("$.address").value(first.getAddress()))
+                .andExpect(jsonPath("$.studentIds[0]").value(first.getStudentIds().get(0)));
     }
 
     @Test
-    public void getStudentByName() {
-        SchoolDTO first = createSchoolDTO();
-        checkCollection(first, "name/" + first.getName(), "name/n3");
-        checkValueInDB(1);
+    public void testGetStudentByName() throws Exception {
+        SchoolDTO first = schoolService.create(SchoolDTO.builder().id(1L).
+                name("n").address("a").studentIds(Collections.singletonList("1")).build());
+
+        mockMvc.perform(get("/school/name/{name}", first.getName()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(first.getId()))
+                .andExpect(jsonPath("$[0].name").value(first.getName()))
+                .andExpect(jsonPath("$[0].address").value(first.getAddress()))
+                .andExpect(jsonPath("$[0].studentIds[0]").value(first.getStudentIds().get(0)));
     }
 
     @Test
-    public void getStudentByAddress() {
-        SchoolDTO first = createSchoolDTO();
-        checkCollection(first, "address/" + first.getAddress(), "address/s3");
-        checkValueInDB(1);
+    public void testGetStudentByAddress() throws Exception {
+        SchoolDTO first = schoolService.create(SchoolDTO.builder().id(1L).
+                name("n").address("a").studentIds(Collections.singletonList("1")).build());
+
+        mockMvc.perform(get("/school/address/{address}", first.getAddress()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(first.getId()))
+                .andExpect(jsonPath("$[0].name").value(first.getName()))
+                .andExpect(jsonPath("$[0].address").value(first.getAddress()))
+                .andExpect(jsonPath("$[0].studentIds[0]").value(first.getStudentIds().get(0)));
     }
 
     @Test
-    public void createStudent() throws Exception {
-        SchoolDTO first = createSchoolDTO();
-        when(studentFeignService.getStudentById(first.getStudentIds().get(0))).thenReturn(new StudentDTO());
-        ResponseEntity<StudentDTO> response = testRestTemplate
-                .exchange(RequestEntity.put(new URI(getURL())).body(first), StudentDTO.class);
-        ResponseEntity<StudentDTO> response2 = testRestTemplate.
-                exchange(getURL() + "id/" + Objects
-                        .requireNonNull(response.getBody()).getId(), HttpMethod.GET, null, StudentDTO.class);
-        then(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertEquals(response.getBody(), response2.getBody());
-        checkValueInDB(1);
+    public void testCreateStudent() throws Exception {
+        SchoolDTO first = schoolService.create(SchoolDTO.builder().id(1L).
+                name("n").address("a").studentIds(Collections.singletonList("1")).build());
+
+        mockMvc.perform(put("/school").contentType(MediaType.APPLICATION_JSON).content(mapToJson(first)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(first.getId()))
+                .andExpect(jsonPath("$.name").value(first.getName()))
+                .andExpect(jsonPath("$.address").value(first.getAddress()))
+                .andExpect(jsonPath("$.studentIds[0]").value(first.getStudentIds().get(0)));
     }
 
     @Test
-    public void updateStudent() throws Exception {
-        SchoolDTO first = createSchoolDTO();
-        first.setName("n2");
-        when(studentFeignService.getStudentById(first.getStudentIds().get(0))).thenReturn(new StudentDTO());
-        ResponseEntity<SchoolDTO> response = testRestTemplate
-                .exchange(RequestEntity.post(new URI(getURL())).body(first), SchoolDTO.class);
-        ResponseEntity<List<SchoolDTO>> response2 = testRestTemplate
-                .exchange(getURL() + "name/" + first.getName(), HttpMethod.GET, null, shoolDTOList);
-        then(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertEquals(response.getBody(), Objects.requireNonNull(response2.getBody()).get(0));
-        response2 = testRestTemplate
-                .exchange(getURL() + "name/n" + first.getName(), HttpMethod.GET, null, shoolDTOList);
-        then(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertEquals(response2.getBody(), new ArrayList<>());
-        checkValueInDB(1);
+    public void testUpdateStudent() throws Exception {
+        SchoolDTO first = schoolService.create(SchoolDTO.builder().id(1L).
+                name("n").address("a").studentIds(Collections.singletonList("1")).build());
+
+        mockMvc.perform(post("/school").contentType(MediaType.APPLICATION_JSON).content(mapToJson(first)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(first.getId()))
+                .andExpect(jsonPath("$.name").value(first.getName()))
+                .andExpect(jsonPath("$.address").value(first.getAddress()))
+                .andExpect(jsonPath("$.studentIds[0]").value(first.getStudentIds().get(0)));
     }
 
     @Test
-    public void deleteStudent() {
-        SchoolDTO first = createSchoolDTO();
-        ResponseEntity<SchoolDTO> response = testRestTemplate
-                .exchange(getURL() + "/" + first.getId(), HttpMethod.DELETE, null, SchoolDTO.class);
-        then(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        ResponseEntity<SchoolDTO> response2 = testRestTemplate.
-                exchange(getURL() + "id/" + first.getId(), HttpMethod.GET, null, SchoolDTO.class);
-        then(response2.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertNull(response2.getBody());
-        ResponseEntity<List<SchoolDTO>> response3 = testRestTemplate.
-                exchange(getURL(), HttpMethod.GET, null, shoolDTOList);
-        then(response3.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertEquals(response3.getBody(), new ArrayList<>());
+    public void deleteStudent() throws Exception {
+        SchoolDTO first = schoolService.create(SchoolDTO.builder().id(1L).
+                name("n").address("a").studentIds(Collections.singletonList("1")).build());
+
+        mockMvc.perform(delete("/school/{id}", first.getId()))
+                .andExpect(status().isOk());
     }
 
-    private void checkValueInDB(int size) {
-        ResponseEntity<List<SchoolDTO>> response3 = testRestTemplate.
-                exchange(getURL(), HttpMethod.GET, null, shoolDTOList);
-        then(response3.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertEquals(Objects.requireNonNull(response3.getBody()).size(), size);
-    }
-
-    private SchoolDTO createSchoolDTO() {
-        return schoolService.create(SchoolDTO.builder().name("n").address("a").studentIds(Collections.singletonList("1")).build());
-    }
-
-    private void checkCollection(SchoolDTO schoolDTO, String firstURL, String secondURL) {
-        ResponseEntity<List<SchoolDTO>> response = testRestTemplate
-                .exchange(getURL() + firstURL, HttpMethod.GET, null, shoolDTOList);
-        then(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertEquals(response.getBody(), Collections.singletonList(schoolDTO));
-        response = testRestTemplate.exchange(getURL() + secondURL, HttpMethod.GET, null, shoolDTOList);
-        then(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertEquals(response.getBody(), new ArrayList<>());
-    }
-
-    private String getURL() {
-        return "http://localhost:" + port + "/school/";
+    private String mapToJson(Object object) throws JsonProcessingException {
+        return new ObjectMapper().writeValueAsString(object);
     }
 
 
@@ -194,3 +182,4 @@ public class SchoolControllerIntegrationTest {
     static class EurekaServer {
     }
 }
+

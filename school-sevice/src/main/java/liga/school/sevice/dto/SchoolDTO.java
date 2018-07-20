@@ -18,21 +18,4 @@ public class SchoolDTO {
     private String name;
     private String address;
     private List<String> studentIds;
-
-    public SchoolDTO(String name, String address) {
-        this.name = name;
-        this.address = address;
-    }
-    public SchoolDTO(Long id, String name, String address) {
-        this.name = name;
-        this.address = address;
-        this.id = id;
-    }
-
-
-    public SchoolDTO(String name, String address, List<String> studentIds) {
-        this.name = name;
-        this.address = address;
-        this.studentIds = studentIds;
-    }
 }

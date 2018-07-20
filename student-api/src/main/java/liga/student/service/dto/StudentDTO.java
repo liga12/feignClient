@@ -1,6 +1,9 @@
 package liga.student.service.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -14,10 +17,4 @@ public class StudentDTO {
     private String name;
     private String surname;
     private Integer age;
-
-    public StudentDTO(String name, String surname, Integer age) {
-        this.name = name;
-        this.surname = surname;
-        this.age = age;
-    }
 }

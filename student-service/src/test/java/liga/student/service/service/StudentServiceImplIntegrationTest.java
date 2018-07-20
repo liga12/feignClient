@@ -3,6 +3,7 @@ package liga.student.service.service;
 import liga.student.service.StudentClientService;
 import liga.student.service.domain.StudentRepository;
 import liga.student.service.dto.StudentDTO;
+import liga.student.service.exception.StudentNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,7 +31,7 @@ public class StudentServiceImplIntegrationTest {
     }
 
     @Test
-    public void getAll() {
+    public void testGetAll() {
         for (int i = 0; i < 10; i++) {
             StudentDTO studentDTO = StudentDTO.builder()
                     .name("n").surname("s").age(25).build();
@@ -40,42 +41,47 @@ public class StudentServiceImplIntegrationTest {
     }
 
     @Test
-    public void getById() {
+    public void testGetById() {
         StudentDTO studentDTO = studentService.
                 create(StudentDTO.builder().name("name").surname("surname").age(25).build());
         assertEquals(studentDTO, studentService.getById(studentDTO.getId()));
     }
 
+    @Test(expected = StudentNotFoundException.class)
+    public void testGetByIdWithStudentNotFound() {
+        studentService.getById("1");
+    }
+
     @Test
-    public void getByName() {
+    public void testGetByName() {
         StudentDTO studentDTO = studentService.
                 create(StudentDTO.builder().name("name").surname("surname").age(25).build());
         assertEquals(Collections.singletonList(studentDTO), studentService.getByName(studentDTO.getName()));
     }
 
     @Test
-    public void getBySurname() {
+    public void testGetBySurname() {
         StudentDTO studentDTO = studentService.
                 create(StudentDTO.builder().name("name").surname("surname").age(25).build());
         assertEquals(Collections.singletonList(studentDTO), studentService.getBySurname(studentDTO.getSurname()));
     }
 
     @Test
-    public void getByAge() {
+    public void testGetByAge() {
         StudentDTO studentDTO = studentService.
                 create(StudentDTO.builder().name("name").surname("surname").age(25).build());
         assertEquals(Collections.singletonList(studentDTO), studentService.getByAge(studentDTO.getAge()));
     }
 
     @Test
-    public void create() {
+    public void testCreate() {
         StudentDTO studentDTO = studentService.
                 create(StudentDTO.builder().name("name").surname("surname").age(25).build());
         assertEquals(studentDTO, studentService.getById(studentDTO.getId()));
     }
 
     @Test
-    public void update() {
+    public void testUpdate() {
         StudentDTO studentDTO = studentService.
                 create(StudentDTO.builder().name("name").surname("surname").age(25).build());
         studentDTO.setName("n");
@@ -86,7 +92,7 @@ public class StudentServiceImplIntegrationTest {
     }
 
     @Test
-    public void remove() {
+    public void testRemove() {
         for (int i = 0; i < 10; i++) {
             StudentDTO studentDTO = StudentDTO.builder()
                     .name("n").surname("s").age(25).build();

@@ -12,18 +12,22 @@ import java.util.List;
 @RequestMapping("/school")
 public class SchoolController {
 
-    @Autowired
-    private SchoolService schoolService;
+    private final SchoolService schoolService;
+
+    private final StudentService studentFeingService;
 
     @Autowired
-    private StudentService studentFeingService;
+    public SchoolController(SchoolService schoolService, StudentService studentFeingService) {
+        this.schoolService = schoolService;
+        this.studentFeingService = studentFeingService;
+    }
 
     @GetMapping("/")
     public List<SchoolDTO> getSchools() {
         return schoolService.getAll();
     }
 
-    @GetMapping("/id/{id}")
+    @GetMapping("/{id}")
     public SchoolDTO getSchoolById(@PathVariable Long id) {
         return schoolService.getById(id);
     }
@@ -33,7 +37,7 @@ public class SchoolController {
         return schoolService.getByName(name);
     }
 
-    @PutMapping("/address/{address}")
+    @GetMapping("/address/{address}")
     public List<SchoolDTO> getSchoolByAddress(@PathVariable String address) {
         return schoolService.getByAddress(address);
     }

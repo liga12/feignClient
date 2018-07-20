@@ -31,6 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {StudentClientService.class, MongoConfig.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
+
 public class StudentControllerIntegrationTest {
 
     @Autowired
@@ -93,9 +94,7 @@ public class StudentControllerIntegrationTest {
     public void testGetStudentByIdAPI() throws Exception {
         StudentDTO first = studentService.create(StudentDTO.builder().id("1").name("n").surname("s").age(20).build());
 
-        mockMvc.perform(get("/student-api/{id}", first.getId())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(mapToJson(first)))
+        mockMvc.perform(get("/student-api/{id}", first.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(first.getId()))
                 .andExpect(jsonPath("$.name").value(first.getName()))

@@ -2,6 +2,7 @@ package liga.school.sevice.service;
 
 import liga.school.sevice.domain.SchoolRepository;
 import liga.school.sevice.dto.SchoolDTO;
+import liga.school.sevice.exception.SchoolNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,7 +16,7 @@ import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class SchoolServiceImplTest {
+public class SchoolServiceImplIntegrationTest {
 
     @Autowired
     private SchoolService schoolService;
@@ -23,18 +24,14 @@ public class SchoolServiceImplTest {
     @Autowired
     private SchoolRepository schoolRepository;
 
-    private SchoolDTO schoolDTO;
-
     @Before
     public void setUp() {
         schoolRepository.deleteAll();
-        schoolDTO = schoolService.
-                create(SchoolDTO.builder().name("name").address("address").studentIds(Collections.singletonList("1")).build());
     }
 
     @Test
-    public void getAll() {
-        for (int i = 0; i < 9; i++) {
+    public void testGetAll() {
+        for (int i = 0; i < 10; i++) {
             schoolService.create(
                     SchoolDTO.builder().name("name").address("address").studentIds(Collections.singletonList("1")).build());
         }
@@ -42,27 +39,43 @@ public class SchoolServiceImplTest {
     }
 
     @Test
-    public void getById() {
+    public void testGetById() {
+        SchoolDTO schoolDTO = schoolService.
+                create(SchoolDTO.builder().name("name").address("address").studentIds(Collections.singletonList("1")).build());
         assertEquals(schoolDTO, schoolService.getById(schoolDTO.getId()));
     }
 
+    @Test(expected = SchoolNotFoundException.class)
+    public void testGetByIdWithSchoolNotFound() {
+        schoolService.getById(1L);
+    }
+
     @Test
-    public void getByName() {
+    public void testGetByName() {
+        SchoolDTO schoolDTO = schoolService.
+                create(SchoolDTO.builder().name("name").address("address").studentIds(Collections.singletonList("1")).build());
         assertEquals(Collections.singletonList(schoolDTO), schoolService.getByName(schoolDTO.getName()));
     }
 
     @Test
-    public void getByAddress() {
+    public void testGetByAddress() {
+        SchoolDTO schoolDTO = schoolService.
+                create(SchoolDTO.builder().name("name").address("address").studentIds(Collections.singletonList("1")).build());
         assertEquals(Collections.singletonList(schoolDTO), schoolService.getByAddress(schoolDTO.getAddress()));
     }
 
     @Test
-    public void create() {
+    public void testCreate() {
+        SchoolDTO schoolDTO = schoolService.
+                create(SchoolDTO.builder().name("name").address("address").studentIds(Collections.singletonList("1")).build());
         assertEquals(schoolDTO, schoolService.getById(schoolDTO.getId()));
     }
 
     @Test
-    public void update() {
+    public void testUpdate() {
+        SchoolDTO schoolDTO = schoolService.
+                create(SchoolDTO.builder().name("name").address("address").studentIds(Collections.singletonList("1")).build());
+        assertEquals(schoolDTO, schoolService.getById(schoolDTO.getId()));
         schoolDTO.setName("n");
         schoolDTO.setAddress("s");
         schoolDTO.setStudentIds(Collections.singletonList("2"));
@@ -71,11 +84,11 @@ public class SchoolServiceImplTest {
     }
 
     @Test
-    public void remove() {
-        for (int i = 0; i < 9; i++) {
+    public void testRemove() {
+        for (int i = 0; i < 10; i++) {
             SchoolDTO schoolDTO = schoolService.create(
                     SchoolDTO.builder().name("name").address("address").studentIds(Collections.singletonList("1")).build());
-            if (i == 8)
+            if (i == 9)
                 schoolService.remove(schoolDTO);
         }
         assertEquals(9, schoolService.getAll().size());

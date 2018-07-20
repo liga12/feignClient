@@ -17,7 +17,7 @@ public class StudentServiceImplTest {
     private StudentService studentService;
 
     @Test
-    public void getAll() {
+    public void testGetAll() {
         StudentDTO studentDTO = StudentDTO.builder().name("name").surname("surname").age(25).build();
         when(studentService.getAll()).thenReturn(Collections.singletonList(studentDTO));
         studentService.getAll();
@@ -25,7 +25,7 @@ public class StudentServiceImplTest {
     }
 
     @Test
-    public void getById() {
+    public void testGetById() {
         StudentDTO studentDTO = StudentDTO.builder().name("name").surname("surname").age(25).build();
         when(studentService.getById(studentDTO.getId())).thenReturn(studentDTO);
         studentService.getById(studentDTO.getId());
@@ -33,7 +33,7 @@ public class StudentServiceImplTest {
     }
 
     @Test
-    public void getByName() {
+    public void testGetByName() {
         StudentDTO studentDTO = StudentDTO.builder().name("name").surname("surname").age(25).build();
         when(studentService.getByName(studentDTO.getName())).thenReturn(Collections.singletonList(studentDTO));
         studentService.getByName(studentDTO.getName());
@@ -41,7 +41,7 @@ public class StudentServiceImplTest {
     }
 
     @Test
-    public void getBySurname() {
+    public void testGetBySurname() {
         StudentDTO studentDTO = StudentDTO.builder().name("name").surname("surname").age(25).build();
         when(studentService.getBySurname(studentDTO.getSurname())).thenReturn(Collections.singletonList(studentDTO));
         studentService.getBySurname(studentDTO.getSurname());
@@ -49,7 +49,7 @@ public class StudentServiceImplTest {
     }
 
     @Test
-    public void getByAge() {
+    public void testGetByAge() {
         StudentDTO studentDTO = StudentDTO.builder().name("name").surname("surname").age(25).build();
         when(studentService.getByAge(studentDTO.getAge())).thenReturn(Collections.singletonList(studentDTO));
         studentService.getByAge(studentDTO.getAge());
@@ -57,7 +57,7 @@ public class StudentServiceImplTest {
     }
 
     @Test
-    public void create() {
+    public void testCreate() {
         StudentDTO studentDTO = StudentDTO.builder().name("name").surname("surname").age(25).build();
         when(studentService.create(studentDTO)).thenReturn(studentDTO);
         studentService.create(studentDTO);
@@ -65,7 +65,7 @@ public class StudentServiceImplTest {
     }
 
     @Test
-    public void update() {
+    public void testUpdate() {
         StudentDTO studentDTO = StudentDTO.builder().name("name").surname("surname").age(25).build();
         when(studentService.update(studentDTO)).thenReturn(studentDTO);
         studentService.update(studentDTO);
@@ -73,7 +73,7 @@ public class StudentServiceImplTest {
     }
 
     @Test
-    public void remove() {
+    public void testRemove() {
         StudentDTO studentDTO = StudentDTO.builder().name("name").surname("surname").age(25).build();
         doNothing().when(studentService).remove(studentDTO);
         studentService.remove(studentDTO);
