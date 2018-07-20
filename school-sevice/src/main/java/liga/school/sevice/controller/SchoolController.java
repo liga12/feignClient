@@ -3,26 +3,21 @@ package liga.school.sevice.controller;
 import liga.school.sevice.dto.SchoolDTO;
 import liga.school.sevice.service.SchoolService;
 import liga.school.sevice.service.StudentService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/school")
+@RequiredArgsConstructor
 public class SchoolController {
 
     private final SchoolService schoolService;
 
     private final StudentService studentFeignService;
 
-    @Autowired
-    public SchoolController(SchoolService schoolService, StudentService studentFeignService) {
-        this.schoolService = schoolService;
-        this.studentFeignService = studentFeignService;
-    }
-
-    @GetMapping("/")
+    @GetMapping
     public List<SchoolDTO> getSchools() {
         return schoolService.getAll();
     }
