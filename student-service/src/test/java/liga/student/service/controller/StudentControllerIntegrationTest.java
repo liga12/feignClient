@@ -91,18 +91,6 @@ public class StudentControllerIntegrationTest {
     }
 
     @Test
-    public void testGetStudentByIdAPI() throws Exception {
-        StudentDTO first = studentService.create(StudentDTO.builder().id("1").name("n").surname("s").age(20).build());
-
-        mockMvc.perform(get("/student-api/{id}", first.getId()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(first.getId()))
-                .andExpect(jsonPath("$.name").value(first.getName()))
-                .andExpect(jsonPath("$.surname").value(first.getSurname()))
-                .andExpect(jsonPath("$.age").value(first.getAge()));
-    }
-
-    @Test
     public void testGetStudentByName() throws Exception {
         StudentDTO first = studentService.create(StudentDTO.builder().id("1").name("n").surname("s").age(20).build());
 

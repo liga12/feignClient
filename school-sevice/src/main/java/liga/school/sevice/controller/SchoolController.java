@@ -14,12 +14,12 @@ public class SchoolController {
 
     private final SchoolService schoolService;
 
-    private final StudentService studentFeingService;
+    private final StudentService studentFeignService;
 
     @Autowired
-    public SchoolController(SchoolService schoolService, StudentService studentFeingService) {
+    public SchoolController(SchoolService schoolService, StudentService studentFeignService) {
         this.schoolService = schoolService;
-        this.studentFeingService = studentFeingService;
+        this.studentFeignService = studentFeignService;
     }
 
     @GetMapping("/")
@@ -45,7 +45,7 @@ public class SchoolController {
     @PutMapping
     public SchoolDTO createSchool(@RequestBody SchoolDTO dto) {
         for (String stId : dto.getStudentIds()) {
-            studentFeingService.getStudentById(stId);
+            studentFeignService.getStudentById(stId);
         }
         return schoolService.create(dto);
     }
@@ -54,7 +54,7 @@ public class SchoolController {
     public SchoolDTO updateSchool(@RequestBody SchoolDTO dto) {
         schoolService.getById(dto.getId());
         for (String stId : dto.getStudentIds()) {
-            studentFeingService.getStudentById(stId);
+            studentFeignService.getStudentById(stId);
         }
         return schoolService.update(dto);
     }
