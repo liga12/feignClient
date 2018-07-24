@@ -4,19 +4,17 @@ import liga.student.service.domain.StudentRepository;
 import liga.student.service.dto.StudentDTO;
 import liga.student.service.exception.StudentNotFoundException;
 import liga.student.service.mapper.StudentMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class StudentServiceImpl implements StudentService {
-
-    @Autowired
-    private StudentRepository studentRepository;
-
-    @Autowired
-    private StudentMapper mapper;
+    private final StudentRepository studentRepository;
+    private final StudentMapper mapper;
 
     @Override
     public List<StudentDTO> getAll() {
@@ -26,8 +24,7 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public StudentDTO getById(String id) {
         return mapper.studentToStudentDTO(
-                studentRepository.findById(id).orElseThrow(StudentNotFoundException::new)
-        );
+                studentRepository.findById(id).orElseThrow(StudentNotFoundException::new));
     }
 
     @Override

@@ -24,10 +24,14 @@
         <java.version>1.8</java.version>
         <spring-cloud.version>Finchley.RELEASE</spring-cloud.version>
         <m2e.apt.activation>jdt_apt</m2e.apt.activation>
-
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>liga.com</groupId>
+            <artifactId>student-api</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
@@ -74,12 +78,6 @@
             <artifactId>mapstruct-processor</artifactId>
             <version>1.2.0.Final</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>liga.com</groupId>
-            <artifactId>student-api</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
         <!--test-->
         <dependency>
