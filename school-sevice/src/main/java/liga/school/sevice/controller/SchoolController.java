@@ -1,6 +1,7 @@
 package liga.school.sevice.controller;
 
 import liga.school.sevice.dto.SchoolDTO;
+import liga.school.sevice.exception.StudentNotFoundException;
 import liga.school.sevice.service.SchoolService;
 import liga.school.sevice.service.StudentService;
 import lombok.RequiredArgsConstructor;
@@ -39,8 +40,9 @@ public class SchoolController {
 
     @PutMapping
     public SchoolDTO createSchool(@RequestBody SchoolDTO dto) {
-        for (String stId : dto.getStudentIds()) {
-            studentFeignService.getStudentById(stId);
+        for (String id : dto.getStudentIds()) {
+            if (studentFeignService.getStudentById(id).equals("{\"error\":\"Student not found\"}"))
+                throw new StudentNotFoundException();
         }
         return schoolService.create(dto);
     }
@@ -48,8 +50,9 @@ public class SchoolController {
     @PostMapping
     public SchoolDTO updateSchool(@RequestBody SchoolDTO dto) {
         schoolService.getById(dto.getId());
-        for (String stId : dto.getStudentIds()) {
-            studentFeignService.getStudentById(stId);
+        for (String id : dto.getStudentIds()) {
+            if (studentFeignService.getStudentById(id).equals("{\"error\":\"Student not found\"}"))
+            throw new StudentNotFoundException();
         }
         return schoolService.update(dto);
     }

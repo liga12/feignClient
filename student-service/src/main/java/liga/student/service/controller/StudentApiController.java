@@ -1,7 +1,6 @@
 package liga.student.service.controller;
 
 import liga.student.service.api.StudentApi;
-import liga.student.service.dto.StudentDTO;
 import liga.student.service.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,7 +17,7 @@ public class StudentApiController implements StudentApi {
     }
 
     @Override
-    public StudentDTO getStudentById(@PathVariable String id) {
-        return studentService.getById(id);
+    public String getStudentById(@PathVariable String id) {
+          return studentService.getById(id).getId();
     }
 }

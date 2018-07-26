@@ -79,6 +79,13 @@ public class StudentControllerIntegrationTest {
     }
 
     @Test
+    public void testGetStudentsWithNull() throws Exception {
+        mockMvc.perform(get("/student/"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isEmpty());
+    }
+
+    @Test
     public void testGetStudentById() throws Exception {
         StudentDTO first = studentService.create(StudentDTO.builder().id("1").name("n").surname("s").age(20).build());
 
@@ -88,6 +95,15 @@ public class StudentControllerIntegrationTest {
                 .andExpect(jsonPath("$.name").value(first.getName()))
                 .andExpect(jsonPath("$.surname").value(first.getSurname()))
                 .andExpect(jsonPath("$.age").value(first.getAge()));
+    }
+
+    @Test
+    public void testGetStudentByIdWithStudentNotFoundException() throws Exception {
+        StudentDTO first = StudentDTO.builder().id("1").name("n").surname("s").age(20).build();
+
+        mockMvc.perform(get("/student/{id}", first.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.error").value("Student not found"));
     }
 
     @Test
@@ -103,6 +119,13 @@ public class StudentControllerIntegrationTest {
     }
 
     @Test
+    public void testGetStudentByNameWithNull() throws Exception {
+        mockMvc.perform(get("/student/name/{name}", "n"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isEmpty());
+    }
+
+    @Test
     public void testGetStudentBySurname() throws Exception {
         StudentDTO first = studentService.create(StudentDTO.builder().id("1").name("n").surname("s").age(20).build());
 
@@ -115,6 +138,14 @@ public class StudentControllerIntegrationTest {
     }
 
     @Test
+    public void testGetStudentBySurnameWithNull() throws Exception {
+        mockMvc.perform(get("/student/surname/{surname}", "s"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isEmpty());
+    }
+
+
+    @Test
     public void testGetStudentByAge() throws Exception {
         StudentDTO first = studentService.create(StudentDTO.builder().id("1").name("n").surname("s").age(20).build());
 
@@ -124,6 +155,13 @@ public class StudentControllerIntegrationTest {
                 .andExpect(jsonPath("$[0].name").value(first.getName()))
                 .andExpect(jsonPath("$[0].surname").value(first.getSurname()))
                 .andExpect(jsonPath("$[0].age").value(first.getAge()));
+    }
+
+    @Test
+    public void testGetStudentByAgeWithNull() throws Exception {
+        mockMvc.perform(get("/student/age/{age}", "23"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isEmpty());
     }
 
     @Test
@@ -151,11 +189,27 @@ public class StudentControllerIntegrationTest {
     }
 
     @Test
+    public void testUpdateStudentWithStudentNotFoundException() throws Exception {
+        StudentDTO first = StudentDTO.builder().id("1").name("n").surname("s").age(20).build();
+
+        mockMvc.perform(post("/student").contentType(MediaType.APPLICATION_JSON).content(mapToJson(first)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.error").value("Student not found"));
+    }
+
+    @Test
     public void testDeleteStudent() throws Exception {
         StudentDTO first = studentService.create(StudentDTO.builder().id("1").name("n").surname("s").age(20).build());
 
         mockMvc.perform(delete("/student/{id}", first.getId()))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testDeleteStudentWithStudentNotFoundException() throws Exception {
+        mockMvc.perform(delete("/student/{id}", "1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.error").value("Student not found"));
     }
 
     private String mapToJson(Object object) throws JsonProcessingException {

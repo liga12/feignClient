@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import liga.school.sevice.dto.SchoolDTO;
 import liga.school.sevice.service.SchoolService;
 import liga.school.sevice.service.StudentService;
+import liga.student.service.dto.StudentDTO;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -112,6 +113,8 @@ public class SchoolControllerTest {
         SchoolDTO first = SchoolDTO.builder().id(1L).
                 name("n").address("a").studentIds(Collections.singletonList("1")).build();
         when(schoolService.create(first)).thenReturn(first);
+        when(studentService.getStudentById(first.getStudentIds().get(0))).
+                thenReturn("1");
 
         mockMvc.perform(put("/school").contentType(MediaType.APPLICATION_JSON).content(mapToJson(first)))
                 .andExpect(status().isOk())
@@ -127,6 +130,8 @@ public class SchoolControllerTest {
         SchoolDTO first = SchoolDTO.builder().id(1L).
                 name("n").address("a").studentIds(Collections.singletonList("1")).build();
         when(schoolService.update(first)).thenReturn(first);
+        when(studentService.getStudentById(first.getStudentIds().get(0))).
+                thenReturn("1");
 
         mockMvc.perform(post("/school").contentType(MediaType.APPLICATION_JSON).content(mapToJson(first)))
                 .andExpect(status().isOk())

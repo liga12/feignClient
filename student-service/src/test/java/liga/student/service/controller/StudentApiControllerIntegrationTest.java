@@ -3,6 +3,7 @@ package liga.student.service.controller;
 import liga.student.service.StudentClientService;
 import liga.student.service.domain.StudentRepository;
 import liga.student.service.dto.StudentDTO;
+import liga.student.service.exception.StudentNotFoundException;
 import liga.student.service.service.MongoConfig;
 import liga.student.service.service.StudentService;
 import org.junit.AfterClass;
@@ -21,6 +22,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -59,14 +62,20 @@ public class StudentApiControllerIntegrationTest {
 
     @Test
     public void testGetStudentById() throws Exception {
-        StudentDTO first = studentService.create(StudentDTO.builder().id("1").name("n").surname("s").age(20).build());
+        StudentDTO first = studentService.create(StudentDTO.builder().name("n").surname("s").age(20).build());
 
         mockMvc.perform(get("/student-api/{id}", first.getId()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(first.getId()))
-                .andExpect(jsonPath("$.name").value(first.getName()))
-                .andExpect(jsonPath("$.surname").value(first.getSurname()))
-                .andExpect(jsonPath("$.age").value(first.getAge()));
+                .andExpect(jsonPath("$").isNotEmpty());
+    }
+
+    @Test
+    public void testGetStudentByIdWithStudentNotFoundException() throws Exception {
+        StudentDTO first = StudentDTO.builder().id("1").name("n").surname("s").age(20).build();
+
+        mockMvc.perform(get("/student-api/{id}", first.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.error").value("Student not found"));
     }
 
     @Configuration
