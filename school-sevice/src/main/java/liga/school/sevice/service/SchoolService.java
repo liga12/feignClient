@@ -4,7 +4,9 @@ import liga.school.sevice.dto.SchoolDTO;
 
 import java.util.List;
 
-public interface SchoolService {    List<SchoolDTO> getAll();
+public interface SchoolService {
+
+    List<SchoolDTO> getAll();
 
     SchoolDTO getById(Long id);
 

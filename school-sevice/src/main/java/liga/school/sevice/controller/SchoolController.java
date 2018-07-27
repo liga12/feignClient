@@ -40,20 +40,16 @@ public class SchoolController {
 
     @PutMapping
     public SchoolDTO createSchool(@RequestBody SchoolDTO dto) {
-        for (String id : dto.getStudentIds()) {
-            if (studentFeignService.getStudentById(id).equals("{\"error\":\"Student not found\"}"))
-                throw new StudentNotFoundException();
-        }
+        if (studentFeignService.getStudentById(dto.getStudentIds()))
+            throw new StudentNotFoundException();
         return schoolService.create(dto);
     }
 
     @PostMapping
     public SchoolDTO updateSchool(@RequestBody SchoolDTO dto) {
         schoolService.getById(dto.getId());
-        for (String id : dto.getStudentIds()) {
-            if (studentFeignService.getStudentById(id).equals("{\"error\":\"Student not found\"}"))
+        if (studentFeignService.getStudentById(dto.getStudentIds()))
             throw new StudentNotFoundException();
-        }
         return schoolService.update(dto);
     }
 

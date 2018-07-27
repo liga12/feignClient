@@ -50,7 +50,7 @@ public class StudentController {
 
     @PostMapping
     public StudentDTO updateStudent(@RequestBody StudentDTO studentDTO) {
-        studentService.getById(studentDTO.getId());
+        studentService.existsById(studentDTO.getId());
         return studentService.update(studentDTO);
     }
 

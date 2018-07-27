@@ -23,11 +23,20 @@ public class StudentServiceImpl implements StudentService {
         return mapper.studentToStudentDTO(studentRepository.findAll());
     }
 
+
     @Override
     public StudentDTO getById(String id) {
-        return mapper.studentToStudentDTO(
-                studentRepository.findById(id).orElseThrow(StudentNotFoundException::new)
-        );
+        return mapper.studentToStudentDTO(studentRepository.findById(id).orElseThrow(StudentNotFoundException::new));
+    }
+
+    @Override
+    public boolean existsById(String id) {
+        return studentRepository.existsById(id);
+    }
+
+    @Override
+    public boolean existsByIds(List<String> ids) {
+        return ids.stream().map(id -> studentRepository.existsById(id)).filter(exist -> !exist).findFirst().orElse(true);
     }
 
     @Override

@@ -29,12 +29,12 @@ public class StudentApiControllerTest {
     @Test
     public void testGetStudentById() throws Exception {
         StudentDTO first = StudentDTO.builder().id("1").name("n").surname("s").age(20).build();
-        when(studentService.getById(first.getId())).thenReturn(first);
+        when(studentService.existsById(first.getId())).thenReturn(first);
 
         mockMvc.perform(get("/student-api/{id}", first.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").value("1"));
 
-        verify(studentService).getById(first.getId());
+        verify(studentService).existsById(first.getId());
     }
 }

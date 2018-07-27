@@ -10,6 +10,10 @@ public interface StudentService {
 
     StudentDTO getById(String id);
 
+    boolean existsByIds(List<String> ids);
+
+    boolean existsById(String id);
+
     List<StudentDTO> getByName(String name);
 
     List<StudentDTO> getBySurname(String surname);

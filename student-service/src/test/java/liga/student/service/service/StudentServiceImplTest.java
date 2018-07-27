@@ -27,9 +27,9 @@ public class StudentServiceImplTest {
     @Test
     public void testGetById() {
         StudentDTO studentDTO = StudentDTO.builder().name("name").surname("surname").age(25).build();
-        when(studentService.getById(studentDTO.getId())).thenReturn(studentDTO);
-        studentService.getById(studentDTO.getId());
-        verify(studentService).getById(studentDTO.getId());
+        when(studentService.existsById(studentDTO.getId())).thenReturn(studentDTO);
+        studentService.existsById(studentDTO.getId());
+        verify(studentService).existsById(studentDTO.getId());
     }
 
     @Test

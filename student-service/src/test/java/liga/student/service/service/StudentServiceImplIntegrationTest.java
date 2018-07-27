@@ -44,12 +44,12 @@ public class StudentServiceImplIntegrationTest {
     public void testGetById() {
         StudentDTO studentDTO = studentService.
                 create(StudentDTO.builder().name("name").surname("surname").age(25).build());
-        assertEquals(studentDTO, studentService.getById(studentDTO.getId()));
+        assertEquals(studentDTO, studentService.existsById(studentDTO.getId()));
     }
 
     @Test(expected = StudentNotFoundException.class)
     public void testGetByIdWithStudentNotFound() {
-        studentService.getById("1");
+        studentService.existsById("1");
     }
 
     @Test
@@ -77,7 +77,7 @@ public class StudentServiceImplIntegrationTest {
     public void testCreate() {
         StudentDTO studentDTO = studentService.
                 create(StudentDTO.builder().name("name").surname("surname").age(25).build());
-        assertEquals(studentDTO, studentService.getById(studentDTO.getId()));
+        assertEquals(studentDTO, studentService.existsById(studentDTO.getId()));
     }
 
     @Test

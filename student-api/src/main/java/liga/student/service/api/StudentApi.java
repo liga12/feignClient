@@ -1,12 +1,12 @@
 package liga.student.service.api;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequestMapping("/student-api")
 public interface StudentApi {
-    @GetMapping("/{id}")
-    String getStudentById(@PathVariable("id") String id);
+    @PostMapping("/id")
+    Boolean getStudentById(@RequestBody List<String> ids);
 
 }

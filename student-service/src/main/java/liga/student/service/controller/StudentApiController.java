@@ -2,22 +2,21 @@ package liga.student.service.controller;
 
 import liga.student.service.api.StudentApi;
 import liga.student.service.service.StudentService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
+@RequiredArgsConstructor
 public class StudentApiController implements StudentApi {
 
     private final StudentService studentService;
 
-    @Autowired
-    public StudentApiController(StudentService studentService) {
-        this.studentService = studentService;
-    }
-
     @Override
-    public String getStudentById(@PathVariable String id) {
-          return studentService.getById(id).getId();
+    public Boolean getStudentById(@RequestBody List<String> ids) {
+        boolean b = studentService.existsByIds(ids);
+        return studentService.existsByIds(ids);
     }
 }
