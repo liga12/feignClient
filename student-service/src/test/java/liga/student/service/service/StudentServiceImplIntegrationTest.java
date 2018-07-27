@@ -41,6 +41,11 @@ public class StudentServiceImplIntegrationTest {
     }
 
     @Test
+    public void testGetAllWithNull() {
+        assertEquals(0, studentService.getAll().size());
+    }
+
+    @Test
     public void testGetById() {
         StudentDTO studentDTO = studentService.
                 create(StudentDTO.builder().name("name").surname("surname").age(25).build());
@@ -60,6 +65,12 @@ public class StudentServiceImplIntegrationTest {
     }
 
     @Test
+    public void testGetByNameWithNull() {
+        studentService.create(StudentDTO.builder().name("name").surname("surname").age(25).build());
+        assertEquals(Collections.emptyList(), studentService.getByName("name2"));
+    }
+
+    @Test
     public void testGetBySurname() {
         StudentDTO studentDTO = studentService.
                 create(StudentDTO.builder().name("name").surname("surname").age(25).build());
@@ -67,10 +78,22 @@ public class StudentServiceImplIntegrationTest {
     }
 
     @Test
+    public void testGetBySurnameWithNull() {
+        studentService.create(StudentDTO.builder().name("name").surname("surname").age(25).build());
+        assertEquals(Collections.emptyList(), studentService.getBySurname("s2"));
+    }
+
+    @Test
     public void testGetByAge() {
         StudentDTO studentDTO = studentService.
                 create(StudentDTO.builder().name("name").surname("surname").age(25).build());
         assertEquals(Collections.singletonList(studentDTO), studentService.getByAge(studentDTO.getAge()));
+    }
+
+    @Test
+    public void testGetByAgeWithNull() {
+        studentService.create(StudentDTO.builder().name("name").surname("surname").age(25).build());
+        assertEquals(Collections.emptyList(), studentService.getByAge(20));
     }
 
     @Test
