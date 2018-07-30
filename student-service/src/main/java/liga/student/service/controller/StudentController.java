@@ -1,6 +1,7 @@
 package liga.student.service.controller;
 
 import liga.student.service.dto.StudentDTO;
+import liga.student.service.exception.StudentNotFoundException;
 import liga.student.service.service.StudentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -46,7 +47,8 @@ public class StudentController {
 
     @PostMapping
     public StudentDTO updateStudent(@RequestBody StudentDTO studentDTO) {
-        studentService.existsById(studentDTO.getId());
+        if (!studentService.existsById(studentDTO.getId()))
+            throw new StudentNotFoundException();
         return studentService.update(studentDTO);
     }
 

@@ -6,7 +6,7 @@ import java.util.List;
 
 @RequestMapping("/student-api")
 public interface StudentApi {
-    @PostMapping("/id")
+    @PostMapping
     Boolean getStudentById(@RequestBody List<String> ids);
 
 }

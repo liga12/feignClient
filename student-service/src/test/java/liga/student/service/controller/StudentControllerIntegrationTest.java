@@ -216,7 +216,6 @@ public class StudentControllerIntegrationTest {
         return new ObjectMapper().writeValueAsString(object);
     }
 
-
     @Configuration
     @EnableAutoConfiguration
     @EnableEurekaServer

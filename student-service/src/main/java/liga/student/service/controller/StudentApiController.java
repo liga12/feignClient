@@ -16,7 +16,6 @@ public class StudentApiController implements StudentApi {
 
     @Override
     public Boolean getStudentById(@RequestBody List<String> ids) {
-        boolean b = studentService.existsByIds(ids);
         return studentService.existsByIds(ids);
     }
 }

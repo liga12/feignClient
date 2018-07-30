@@ -56,7 +56,7 @@ public class StudentControllerTest {
     @Test
     public void testGetStudentById() throws Exception {
         StudentDTO first = StudentDTO.builder().id("1").name("n").surname("s").age(20).build();
-        when(studentService.existsById(first.getId())).thenReturn(first);
+        when(studentService.getById(first.getId())).thenReturn(first);
 
         mockMvc.perform(get("/student/{id}", first.getId()))
                 .andExpect(status().isOk())
@@ -65,7 +65,7 @@ public class StudentControllerTest {
                 .andExpect(jsonPath("$.surname").value(first.getSurname()))
                 .andExpect(jsonPath("$.age").value(first.getAge()));
 
-        verify(studentService).existsById(first.getId());
+        verify(studentService).getById(first.getId());
     }
 
     @Test
@@ -131,7 +131,7 @@ public class StudentControllerTest {
     @Test
     public void testUpdateStudent() throws Exception {
         StudentDTO first = StudentDTO.builder().id("1").name("n").surname("s").age(20).build();
-        when(studentService.existsById(first.getId())).thenReturn(first);
+        when(studentService.existsById(first.getId())).thenReturn(true);
         when(studentService.update(first)).thenReturn(first);
 
         mockMvc.perform(post("/student").contentType(MediaType.APPLICATION_JSON).content(mapToJson(first)))
@@ -148,13 +148,13 @@ public class StudentControllerTest {
     @Test
     public void testDeleteStudent() throws Exception {
         StudentDTO first = StudentDTO.builder().id("1").name("n").surname("s").age(20).build();
-        when(studentService.existsById(first.getId())).thenReturn(first);
+        when(studentService.getById(first.getId())).thenReturn(first);
         doNothing().when(studentService).remove(first);
 
         mockMvc.perform(delete("/student/{id}", first.getId()))
                 .andExpect(status().isOk());
 
-        verify(studentService).existsById(first.getId());
+        verify(studentService).getById(first.getId());
         verify(studentService).remove(first);
     }
 

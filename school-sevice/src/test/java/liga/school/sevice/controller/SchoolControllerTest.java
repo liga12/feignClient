@@ -113,8 +113,8 @@ public class SchoolControllerTest {
         SchoolDTO first = SchoolDTO.builder().id(1L).
                 name("n").address("a").studentIds(Collections.singletonList("1")).build();
         when(schoolService.create(first)).thenReturn(first);
-        when(studentService.getStudentById(first.getStudentIds().get(0))).
-                thenReturn("1");
+        when(studentService.getStudentById(first.getStudentIds())).
+                thenReturn(true);
 
         mockMvc.perform(put("/school").contentType(MediaType.APPLICATION_JSON).content(mapToJson(first)))
                 .andExpect(status().isOk())
@@ -130,8 +130,8 @@ public class SchoolControllerTest {
         SchoolDTO first = SchoolDTO.builder().id(1L).
                 name("n").address("a").studentIds(Collections.singletonList("1")).build();
         when(schoolService.update(first)).thenReturn(first);
-        when(studentService.getStudentById(first.getStudentIds().get(0))).
-                thenReturn("1");
+        when(studentService.getStudentById(first.getStudentIds())).
+                thenReturn(true);
 
         mockMvc.perform(post("/school").contentType(MediaType.APPLICATION_JSON).content(mapToJson(first)))
                 .andExpect(status().isOk())

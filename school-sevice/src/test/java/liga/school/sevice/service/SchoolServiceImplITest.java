@@ -19,8 +19,8 @@ public class SchoolServiceImplITest {
     @Mock
     private SchoolService schoolService;
 
-    @MockBean
-    private StudentService studentFeignService;
+//    @MockBean
+//    private StudentService studentFeignService;
 
 
     @Test
@@ -64,7 +64,6 @@ public class SchoolServiceImplITest {
         SchoolDTO schoolDTO = SchoolDTO
                 .builder().id(1L).name("name").address("address").studentIds(Collections.singletonList("1")).build();
         when(schoolService.create(schoolDTO)).thenReturn(schoolDTO);
-        when(studentFeignService.getStudentById("1")).thenReturn("1");
         schoolService.create(schoolDTO);
         verify(schoolService).create(schoolDTO);
     }
@@ -74,7 +73,6 @@ public class SchoolServiceImplITest {
         SchoolDTO schoolDTO = SchoolDTO
                 .builder().name("name").address("address").studentIds(Collections.singletonList("1")).build();
         when(schoolService.update(schoolDTO)).thenReturn(schoolDTO);
-        when(studentFeignService.getStudentById("1")).thenReturn("1");
         schoolService.update(schoolDTO);
         verify(schoolService).update(schoolDTO);
     }

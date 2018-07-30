@@ -6,6 +6,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 import static org.mockito.Mockito.*;
@@ -27,9 +28,25 @@ public class StudentServiceImplTest {
     @Test
     public void testGetById() {
         StudentDTO studentDTO = StudentDTO.builder().name("name").surname("surname").age(25).build();
-        when(studentService.existsById(studentDTO.getId())).thenReturn(studentDTO);
+        when(studentService.getById(studentDTO.getId())).thenReturn(studentDTO);
+        studentService.getById(studentDTO.getId());
+        verify(studentService).getById(studentDTO.getId());
+    }
+
+    @Test
+    public void testExistById() {
+        StudentDTO studentDTO = StudentDTO.builder().name("name").surname("surname").age(25).build();
+        when(studentService.existsById(studentDTO.getId())).thenReturn(true);
         studentService.existsById(studentDTO.getId());
         verify(studentService).existsById(studentDTO.getId());
+    }
+
+    @Test
+    public void testExistByIdS() {
+        StudentDTO studentDTO = StudentDTO.builder().name("name").surname("surname").age(25).build();
+        when(studentService.existsByIds(Collections.singletonList(studentDTO.getId()))).thenReturn(true);
+        studentService.existsByIds(Collections.singletonList(studentDTO.getId()));
+        verify(studentService).existsByIds(Collections.singletonList(studentDTO.getId()));
     }
 
     @Test

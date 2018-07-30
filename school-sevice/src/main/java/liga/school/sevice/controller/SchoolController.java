@@ -40,7 +40,7 @@ public class SchoolController {
 
     @PutMapping
     public SchoolDTO createSchool(@RequestBody SchoolDTO dto) {
-        if (studentFeignService.getStudentById(dto.getStudentIds()))
+        if (!studentFeignService.getStudentById(dto.getStudentIds()))
             throw new StudentNotFoundException();
         return schoolService.create(dto);
     }
@@ -48,7 +48,7 @@ public class SchoolController {
     @PostMapping
     public SchoolDTO updateSchool(@RequestBody SchoolDTO dto) {
         schoolService.getById(dto.getId());
-        if (studentFeignService.getStudentById(dto.getStudentIds()))
+        if (!studentFeignService.getStudentById(dto.getStudentIds()))
             throw new StudentNotFoundException();
         return schoolService.update(dto);
     }

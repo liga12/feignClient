@@ -160,7 +160,7 @@ public class SchoolControllerIntegrationTest {
     public void testCreateStudent() throws Exception {
         SchoolDTO school = SchoolDTO.builder().
                 name("n").address("a").studentIds(Collections.singletonList("1")).build();
-        when(studentFeignService.getStudentById("1")).thenReturn("1");
+        when(studentFeignService.getStudentById(Collections.singletonList("1"))).thenReturn(true);
 
         mockMvc.perform(put("/school").contentType(MediaType.APPLICATION_JSON).content(mapToJson(school)))
                 .andExpect(status().isOk())
@@ -171,10 +171,10 @@ public class SchoolControllerIntegrationTest {
     }
 
     @Test
-    public void testCreateStudentWithStudentNotFoundException() throws Exception {
+    public void testCreateStudentWithFalse() throws Exception {
         SchoolDTO school = SchoolDTO.builder().
                 name("n").address("a").studentIds(Collections.singletonList("1")).build();
-        when(studentFeignService.getStudentById("1")).thenReturn("{\"error\":\"Student not found\"}");
+        when(studentFeignService.getStudentById(Collections.singletonList("1"))).thenReturn(false);
 
         mockMvc.perform(put("/school").contentType(MediaType.APPLICATION_JSON).content(mapToJson(school)))
                 .andExpect(status().isOk())
@@ -186,7 +186,7 @@ public class SchoolControllerIntegrationTest {
         SchoolDTO school = schoolService.create(SchoolDTO.builder().id(1L).
                 name("n").address("a").studentIds(Collections.singletonList("1")).build());
         school.setAddress("aaa");
-        when(studentFeignService.getStudentById("1")).thenReturn("1");
+        when(studentFeignService.getStudentById(Collections.singletonList("1"))).thenReturn(true);
 
         mockMvc.perform(post("/school").contentType(MediaType.APPLICATION_JSON).content(mapToJson(school)))
                 .andExpect(status().isOk())
@@ -201,7 +201,7 @@ public class SchoolControllerIntegrationTest {
         SchoolDTO school = SchoolDTO.builder().id(1L).
                 name("n").address("a").studentIds(Collections.singletonList("1")).build();
         school.setId(23L);
-        when(studentFeignService.getStudentById("1")).thenReturn("1");
+        when(studentFeignService.getStudentById(Collections.singletonList("1"))).thenReturn(true);
         mockMvc.perform(post("/school").contentType(MediaType.APPLICATION_JSON).content(mapToJson(school)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.error").value("School not found"));
@@ -211,7 +211,7 @@ public class SchoolControllerIntegrationTest {
     public void testUpdateStudentWithStudentNotFoundException() throws Exception {
         SchoolDTO school = schoolService.create(SchoolDTO.builder().id(1L).
                 name("n").address("a").studentIds(Collections.singletonList("1")).build());
-        when(studentFeignService.getStudentById("1")).thenReturn("{\"error\":\"Student not found\"}");
+        when(studentFeignService.getStudentById(Collections.singletonList("1"))).thenReturn(false);
         mockMvc.perform(post("/school").contentType(MediaType.APPLICATION_JSON).content(mapToJson(school)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.error").value("Student not found"));

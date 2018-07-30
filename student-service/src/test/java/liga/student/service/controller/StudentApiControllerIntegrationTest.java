@@ -1,5 +1,7 @@
 package liga.student.service.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import liga.student.service.StudentClientService;
 import liga.student.service.domain.StudentRepository;
 import liga.student.service.dto.StudentDTO;
@@ -19,12 +21,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.Collections;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -64,18 +70,24 @@ public class StudentApiControllerIntegrationTest {
     public void testGetStudentById() throws Exception {
         StudentDTO first = studentService.create(StudentDTO.builder().name("n").surname("s").age(20).build());
 
-        mockMvc.perform(get("/student-api/{id}", first.getId()))
+        mockMvc.perform(post("/student-api").contentType(MediaType.APPLICATION_JSON)
+                .content(mapToJson(Collections.singletonList(first.getId()))))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isNotEmpty());
+                .andExpect(jsonPath("$").value(true));
     }
 
     @Test
-    public void testGetStudentByIdWithStudentNotFoundException() throws Exception {
+    public void testGetStudentByIdWithFalse() throws Exception {
         StudentDTO first = StudentDTO.builder().id("1").name("n").surname("s").age(20).build();
 
-        mockMvc.perform(get("/student-api/{id}", first.getId()))
+        mockMvc.perform(post("/student-api/").contentType(MediaType.APPLICATION_JSON)
+                .content(mapToJson(Collections.singletonList(first.getId()))))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.error").value("Student not found"));
+                .andExpect(jsonPath("$").value(false));
+    }
+
+    private String mapToJson(Object object) throws JsonProcessingException {
+        return new ObjectMapper().writeValueAsString(object);
     }
 
     @Configuration

@@ -13,7 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {MongoConfig.class, StudentClientService.class})
@@ -49,12 +49,36 @@ public class StudentServiceImplIntegrationTest {
     public void testGetById() {
         StudentDTO studentDTO = studentService.
                 create(StudentDTO.builder().name("name").surname("surname").age(25).build());
-        assertEquals(studentDTO, studentService.existsById(studentDTO.getId()));
+        assertEquals(studentDTO, studentService.getById(studentDTO.getId()));
     }
 
     @Test(expected = StudentNotFoundException.class)
     public void testGetByIdWithStudentNotFound() {
-        studentService.existsById("1");
+        studentService.getById("1");
+    }
+
+    @Test
+    public void testExistById() {
+        StudentDTO studentDTO = studentService.
+                create(StudentDTO.builder().name("name").surname("surname").age(25).build());
+        assertTrue(studentService.existsById(studentDTO.getId()));
+    }
+
+    @Test
+    public void testExistByIdWithFalse() {
+        assertFalse(studentService.existsById("1"));
+    }
+
+    @Test
+    public void testExistByIds() {
+        StudentDTO studentDTO = studentService.
+                create(StudentDTO.builder().name("name").surname("surname").age(25).build());
+        assertTrue(studentService.existsByIds(Collections.singletonList(studentDTO.getId())));
+    }
+
+    @Test
+    public void testExistByIdsWithFalse() {
+        assertFalse(studentService.existsByIds(Collections.singletonList("1")));
     }
 
     @Test
@@ -100,7 +124,7 @@ public class StudentServiceImplIntegrationTest {
     public void testCreate() {
         StudentDTO studentDTO = studentService.
                 create(StudentDTO.builder().name("name").surname("surname").age(25).build());
-        assertEquals(studentDTO, studentService.existsById(studentDTO.getId()));
+        assertTrue(studentService.existsById(studentDTO.getId()));
     }
 
     @Test
