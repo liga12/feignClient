@@ -1,11 +1,13 @@
 package liga.school.sevice.service;
 
+import liga.school.sevice.dto.PaginationSchoolDto;
 import liga.school.sevice.dto.SchoolDTO;
+import liga.school.sevice.dto.Sorter;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Collections;
@@ -19,17 +21,16 @@ public class SchoolServiceImplITest {
     @Mock
     private SchoolService schoolService;
 
-//    @MockBean
-//    private StudentService studentFeignService;
-
 
     @Test
     public void testGetAll() {
         SchoolDTO schoolDTO = SchoolDTO
                 .builder().name("name").address("address").studentIds(Collections.singletonList("1")).build();
-        when(schoolService.getAll()).thenReturn(Collections.singletonList(schoolDTO));
-        schoolService.getAll();
-        verify(schoolService).getAll();
+        Sorter sorter = new Sorter(0, 1, Sort.Direction.ASC, "id");
+        PaginationSchoolDto paginationSchoolDto = new PaginationSchoolDto(sorter);
+        when(schoolService.getAll(paginationSchoolDto)).thenReturn(Collections.singletonList(schoolDTO));
+        schoolService.getAll(paginationSchoolDto);
+        verify(schoolService).getAll(paginationSchoolDto);
     }
 
     @Test
@@ -42,22 +43,13 @@ public class SchoolServiceImplITest {
     }
 
     @Test
-    public void testGetByName() {
-        SchoolDTO schoolDTO = SchoolDTO
-                .builder().name("name").address("address").studentIds(Collections.singletonList("1")).build();
-        when(schoolService.getByName(schoolDTO.getName())).thenReturn(Collections.singletonList(schoolDTO));
-        schoolService.getByName(schoolDTO.getName());
-        verify(schoolService).getByName(schoolDTO.getName());
+    public void testExistById() {
+        Long id = 1L;
+        when(schoolService.existById(id)).thenReturn(true);
+        schoolService.existById(id);
+        verify(schoolService).existById(id);
     }
 
-    @Test
-    public void testGetByAddress() {
-        SchoolDTO schoolDTO = SchoolDTO
-                .builder().name("name").address("address").studentIds(Collections.singletonList("1")).build();
-        when(schoolService.getByAddress(schoolDTO.getAddress())).thenReturn(Collections.singletonList(schoolDTO));
-        schoolService.getByAddress(schoolDTO.getAddress());
-        verify(schoolService).getByAddress(schoolDTO.getAddress());
-    }
 
     @Test
     public void testCreate() {
@@ -79,10 +71,9 @@ public class SchoolServiceImplITest {
 
     @Test
     public void testRemove() {
-        SchoolDTO schoolDTO = SchoolDTO
-                .builder().id(1L).name("name").address("address").studentIds(Collections.singletonList("1")).build();
-        doNothing().when(schoolService).remove(schoolDTO);
-        schoolService.remove(schoolDTO);
-        verify(schoolService).remove(schoolDTO);
+        Long id = 1L;
+        doNothing().when(schoolService).remove(id);
+        schoolService.remove(id);
+        verify(schoolService).remove(id);
     }
 }

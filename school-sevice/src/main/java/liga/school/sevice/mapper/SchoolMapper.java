@@ -23,15 +23,15 @@ public class SchoolMapper {
         mapper = mapperFactory.getMapperFacade();
     }
 
-    public SchoolDTO schoolToSchoolDto(final School school) {
+    public SchoolDTO toDto(final School school) {
         return mapper.map(school, SchoolDTO.class);
     }
 
-    public List<SchoolDTO> schoolToSchoolDto(final List<School> schools) {
+    public List<SchoolDTO> toDto(final List<School> schools) {
         return mapper.mapAsList(schools, SchoolDTO.class);
     }
 
-    public School schoolDtoToSchool(final SchoolDTO dto) {
+    public School toEntity(final SchoolDTO dto) {
         return mapper.map(dto, School.class);
     }
 }

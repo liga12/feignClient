@@ -5,10 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import liga.school.sevice.SchoolClientService;
 import liga.school.sevice.domain.SchoolRepository;
 import liga.school.sevice.dto.SchoolDTO;
-import liga.school.sevice.exception.StudentNotFoundException;
 import liga.school.sevice.service.SchoolService;
 import liga.school.sevice.service.StudentService;
-import liga.student.service.dto.StudentDTO;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -28,6 +26,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Collections;
+import java.util.List;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -69,36 +68,39 @@ public class SchoolControllerIntegrationTest {
         schoolRepository.deleteAll();
     }
 
-    @Test
-    public void testGetStudents() throws Exception {
-        SchoolDTO first = schoolService.create(SchoolDTO.builder().id(1L).
-                name("n").address("a").studentIds(Collections.singletonList("1")).build());
-        SchoolDTO second = schoolService.create(SchoolDTO.builder().id(2L).name("n1").
-                address("a1").studentIds(Collections.singletonList("2")).build());
-
-        mockMvc.perform(get("/school/"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(first.getId()))
-                .andExpect(jsonPath("$[0].name").value(first.getName()))
-                .andExpect(jsonPath("$[0].address").value(first.getAddress()))
-                .andExpect(jsonPath("$[0].studentIds[0]").value(first.getStudentIds().get(0)))
-                .andExpect(jsonPath("$[1].id").value(second.getId()))
-                .andExpect(jsonPath("$[1].name").value(second.getName()))
-                .andExpect(jsonPath("$[1].address").value(second.getAddress()))
-                .andExpect(jsonPath("$[1].studentIds[0]").value(second.getStudentIds().get(0)));
-    }
-
-    @Test
-    public void testGetStudentsWithNull() throws Exception {
-        mockMvc.perform(get("/school/"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isEmpty());
-    }
+//    @Test
+//    public void testGetStudents() throws Exception {
+//        SchoolDTO first = schoolService.create(SchoolDTO.builder().id(1L).
+//                name("n").address("a").studentIds(Collections.singletonList("1")).build());
+//        SchoolDTO second = schoolService.create(SchoolDTO.builder().id(2L).name("n1").
+//                address("a1").studentIds(Collections.singletonList("2")).build());
+//
+//        mockMvc.perform(get("/school/"))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$[0].id").value(first.getId()))
+//                .andExpect(jsonPath("$[0].name").value(first.getName()))
+//                .andExpect(jsonPath("$[0].address").value(first.getAddress()))
+//                .andExpect(jsonPath("$[0].studentIds[0]").value(first.getStudentIds().get(0)))
+//                .andExpect(jsonPath("$[1].id").value(second.getId()))
+//                .andExpect(jsonPath("$[1].name").value(second.getName()))
+//                .andExpect(jsonPath("$[1].address").value(second.getAddress()))
+//                .andExpect(jsonPath("$[1].studentIds[0]").value(second.getStudentIds().get(0)));
+//    }
+//
+//    @Test
+//    public void testGetStudentsWithNull() throws Exception {
+//        mockMvc.perform(get("/school/"))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$").isEmpty());
+//    }
 
     @Test
     public void testGetStudentById() throws Exception {
+        List<String> studentIds = Collections.singletonList("1");
+        when(studentFeignService.existsStudentsByIds(studentIds)).thenReturn(true);
         SchoolDTO first = schoolService.create(SchoolDTO.builder().id(1L).
-                name("n").address("a").studentIds(Collections.singletonList("1")).build());
+                name("n").address("a").studentIds(studentIds).build());
+
 
         mockMvc.perform(get("/school/{id}", first.getId()))
                 .andExpect(status().isOk())
@@ -116,51 +118,11 @@ public class SchoolControllerIntegrationTest {
     }
 
     @Test
-    public void testGetStudentByName() throws Exception {
-        SchoolDTO first = schoolService.create(SchoolDTO.builder().id(1L).
-                name("n").address("a").studentIds(Collections.singletonList("1")).build());
-
-        mockMvc.perform(get("/school/name/{name}", first.getName()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(first.getId()))
-                .andExpect(jsonPath("$[0].name").value(first.getName()))
-                .andExpect(jsonPath("$[0].address").value(first.getAddress()))
-                .andExpect(jsonPath("$[0].studentIds[0]").value(first.getStudentIds().get(0)));
-    }
-
-    @Test
-    public void testGetStudentByNameWithNull() throws Exception {
-        mockMvc.perform(get("/school/name/{name}", "n"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isEmpty());
-    }
-
-    @Test
-    public void testGetStudentByAddress() throws Exception {
-        SchoolDTO first = schoolService.create(SchoolDTO.builder().id(1L).
-                name("n").address("a").studentIds(Collections.singletonList("1")).build());
-
-        mockMvc.perform(get("/school/address/{address}", first.getAddress()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(first.getId()))
-                .andExpect(jsonPath("$[0].name").value(first.getName()))
-                .andExpect(jsonPath("$[0].address").value(first.getAddress()))
-                .andExpect(jsonPath("$[0].studentIds[0]").value(first.getStudentIds().get(0)));
-    }
-
-    @Test
-    public void testGetStudentByAddressWithNull() throws Exception {
-
-        mockMvc.perform(get("/school/address/{address}", "a"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isEmpty());
-    }
-
-    @Test
     public void testCreateStudent() throws Exception {
+        List<String> studentIds = Collections.singletonList("1");
         SchoolDTO school = SchoolDTO.builder().
-                name("n").address("a").studentIds(Collections.singletonList("1")).build();
-        when(studentFeignService.getStudentById(Collections.singletonList("1"))).thenReturn(true);
+                name("n").address("a").studentIds(studentIds).build();
+        when(studentFeignService.existsStudentsByIds(studentIds)).thenReturn(true);
 
         mockMvc.perform(put("/school").contentType(MediaType.APPLICATION_JSON).content(mapToJson(school)))
                 .andExpect(status().isOk())
@@ -172,9 +134,10 @@ public class SchoolControllerIntegrationTest {
 
     @Test
     public void testCreateStudentWithFalse() throws Exception {
+        List<String> studentIds = Collections.singletonList("1");
         SchoolDTO school = SchoolDTO.builder().
-                name("n").address("a").studentIds(Collections.singletonList("1")).build();
-        when(studentFeignService.getStudentById(Collections.singletonList("1"))).thenReturn(false);
+                name("n").address("a").studentIds(studentIds).build();
+        when(studentFeignService.existsStudentsByIds(studentIds)).thenReturn(false);
 
         mockMvc.perform(put("/school").contentType(MediaType.APPLICATION_JSON).content(mapToJson(school)))
                 .andExpect(status().isOk())
@@ -183,10 +146,11 @@ public class SchoolControllerIntegrationTest {
 
     @Test
     public void testUpdateStudent() throws Exception {
+        List<String> studentIds = Collections.singletonList("1");
+        when(studentFeignService.existsStudentsByIds(studentIds)).thenReturn(true);
         SchoolDTO school = schoolService.create(SchoolDTO.builder().id(1L).
                 name("n").address("a").studentIds(Collections.singletonList("1")).build());
         school.setAddress("aaa");
-        when(studentFeignService.getStudentById(Collections.singletonList("1"))).thenReturn(true);
 
         mockMvc.perform(post("/school").contentType(MediaType.APPLICATION_JSON).content(mapToJson(school)))
                 .andExpect(status().isOk())
@@ -198,10 +162,10 @@ public class SchoolControllerIntegrationTest {
 
     @Test
     public void testUpdateStudentWithSchoolNotFoundException() throws Exception {
+        List<String> studentIds = Collections.singletonList("1");
         SchoolDTO school = SchoolDTO.builder().id(1L).
-                name("n").address("a").studentIds(Collections.singletonList("1")).build();
-        school.setId(23L);
-        when(studentFeignService.getStudentById(Collections.singletonList("1"))).thenReturn(true);
+                name("n").address("a").studentIds( studentIds).build();
+        school.setAddress("dd");
         mockMvc.perform(post("/school").contentType(MediaType.APPLICATION_JSON).content(mapToJson(school)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.error").value("School not found"));
@@ -209,19 +173,25 @@ public class SchoolControllerIntegrationTest {
 
     @Test
     public void testUpdateStudentWithStudentNotFoundException() throws Exception {
+        List<String> studentIds = Collections.singletonList("1");
+        List<String> studentIdsUpdate = Collections.singletonList("2");
+        when(studentFeignService.existsStudentsByIds(studentIds)).thenReturn(true);
+        when(studentFeignService.existsStudentsByIds(studentIdsUpdate)).thenReturn(false);
         SchoolDTO school = schoolService.create(SchoolDTO.builder().id(1L).
-                name("n").address("a").studentIds(Collections.singletonList("1")).build());
-        when(studentFeignService.getStudentById(Collections.singletonList("1"))).thenReturn(false);
+                name("n").address("a").studentIds(studentIds).build());
+        school.setStudentIds(studentIdsUpdate);
+
         mockMvc.perform(post("/school").contentType(MediaType.APPLICATION_JSON).content(mapToJson(school)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.error").value("Student not found"));
     }
 
-
     @Test
     public void deleteStudent() throws Exception {
+        List<String> studentIds = Collections.singletonList("1");
+        when(studentFeignService.existsStudentsByIds(studentIds)).thenReturn(true);
         SchoolDTO first = schoolService.create(SchoolDTO.builder().id(1L).
-                name("n").address("a").studentIds(Collections.singletonList("1")).build());
+                name("n").address("a").studentIds(studentIds).build());
 
         mockMvc.perform(delete("/school/{id}", first.getId()))
                 .andExpect(status().isOk());
@@ -237,7 +207,6 @@ public class SchoolControllerIntegrationTest {
     private String mapToJson(Object object) throws JsonProcessingException {
         return new ObjectMapper().writeValueAsString(object);
     }
-
 
     @Configuration
     @EnableAutoConfiguration

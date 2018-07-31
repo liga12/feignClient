@@ -28,14 +28,14 @@ public class SchoolMapperTest {
 
     @Test
     public void schoolToSchoolDto() {
-        checkStudentData(school, schoolMapper.schoolToSchoolDto(school));
+        checkStudentData(school, schoolMapper.toDto(school));
     }
 
     @Test
     public void schoolToSchoolDtoList() {
         School school = new School(2L, "name2", "address2", new ArrayList<>(Collections.singleton("2")));
         List<School> schools = new ArrayList<>(Arrays.asList(school, this.school));
-        List<SchoolDTO> schoolDTOs = schoolMapper.schoolToSchoolDto(schools);
+        List<SchoolDTO> schoolDTOs = schoolMapper.toDto(schools);
         for (int i = 0; i < schoolDTOs.size(); i++) {
             checkStudentData(schools.get(i), schoolDTOs.get(i));
         }
@@ -44,7 +44,7 @@ public class SchoolMapperTest {
     @Test
     public void schoolDtoToSchool() {
         SchoolDTO schoolDTO = new SchoolDTO(1L, "name", "address", new ArrayList<>(Collections.singleton("1")));
-        checkStudentData(schoolMapper.schoolDtoToSchool(schoolDTO), schoolDTO);
+        checkStudentData(schoolMapper.toEntity(schoolDTO), schoolDTO);
     }
 
     private void checkStudentData(School school, SchoolDTO schoolDTO) {

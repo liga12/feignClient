@@ -12,6 +12,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Collections;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -78,7 +79,11 @@ public class StudentServiceImplIntegrationTest {
 
     @Test
     public void testExistByIdsWithFalse() {
-        assertFalse(studentService.existsByIds(Collections.singletonList("1")));
+        List<String> ids = Collections.singletonList("1");
+
+        boolean result = studentService.existsByIds(ids);
+
+        assertFalse(result);
     }
 
     @Test

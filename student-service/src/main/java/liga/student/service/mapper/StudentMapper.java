@@ -6,6 +6,7 @@ import org.mapstruct.Mapper;
 
 import java.util.List;
 
+// TODO: 30.07.18 check without brackets in annotation
 @Mapper(componentModel = "spring")
 public interface StudentMapper {
 
