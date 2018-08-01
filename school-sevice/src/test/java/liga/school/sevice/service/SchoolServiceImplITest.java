@@ -27,7 +27,7 @@ public class SchoolServiceImplITest {
         SchoolDTO schoolDTO = SchoolDTO
                 .builder().name("name").address("address").studentIds(Collections.singletonList("1")).build();
         Sorter sorter = new Sorter(0, 1, Sort.Direction.ASC, "id");
-        PaginationSchoolDto paginationSchoolDto = new PaginationSchoolDto(sorter);
+        PaginationSchoolDto paginationSchoolDto = PaginationSchoolDto.builder().sorter(sorter).build();
         when(schoolService.getAll(paginationSchoolDto)).thenReturn(Collections.singletonList(schoolDTO));
         schoolService.getAll(paginationSchoolDto);
         verify(schoolService).getAll(paginationSchoolDto);
