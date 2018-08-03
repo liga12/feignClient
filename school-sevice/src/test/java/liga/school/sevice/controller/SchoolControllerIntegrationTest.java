@@ -68,31 +68,25 @@ public class SchoolControllerIntegrationTest {
         schoolRepository.deleteAll();
     }
 
-//    @Test
-//    public void testGetStudents() throws Exception {
-//        SchoolDTO first = schoolService.create(SchoolDTO.builder().id(1L).
-//                name("n").address("a").studentIds(Collections.singletonList("1")).build());
-//        SchoolDTO second = schoolService.create(SchoolDTO.builder().id(2L).name("n1").
-//                address("a1").studentIds(Collections.singletonList("2")).build());
-//
-//        mockMvc.perform(get("/school/"))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$[0].id").value(first.getId()))
-//                .andExpect(jsonPath("$[0].name").value(first.getName()))
-//                .andExpect(jsonPath("$[0].address").value(first.getAddress()))
-//                .andExpect(jsonPath("$[0].studentIds[0]").value(first.getStudentIds().get(0)))
-//                .andExpect(jsonPath("$[1].id").value(second.getId()))
-//                .andExpect(jsonPath("$[1].name").value(second.getName()))
-//                .andExpect(jsonPath("$[1].address").value(second.getAddress()))
-//                .andExpect(jsonPath("$[1].studentIds[0]").value(second.getStudentIds().get(0)));
-//    }
-//
-//    @Test
-//    public void testGetStudentsWithNull() throws Exception {
-//        mockMvc.perform(get("/school/"))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$").isEmpty());
-//    }
+    @Test
+    public void testGetStudents() throws Exception {
+        SchoolDTO first = schoolService.create(SchoolDTO.builder().id(1L).
+                name("n").address("a").studentIds(Collections.singletonList("1")).build());
+        SchoolDTO second = schoolService.create(SchoolDTO.builder().id(2L).name("n1").
+                address("a1").studentIds(Collections.singletonList("2")).build());
+
+        mockMvc.perform(get("/school/"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(first.getId()))
+                .andExpect(jsonPath("$[0].name").value(first.getName()))
+                .andExpect(jsonPath("$[0].address").value(first.getAddress()))
+                .andExpect(jsonPath("$[0].studentIds[0]").value(first.getStudentIds().get(0)))
+                .andExpect(jsonPath("$[1].id").value(second.getId()))
+                .andExpect(jsonPath("$[1].name").value(second.getName()))
+                .andExpect(jsonPath("$[1].address").value(second.getAddress()))
+                .andExpect(jsonPath("$[1].studentIds[0]").value(second.getStudentIds().get(0)));
+    }
+
 
     @Test
     public void testGetStudentById() throws Exception {

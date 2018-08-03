@@ -2,7 +2,9 @@ package liga.school.sevice.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import liga.school.sevice.dto.PaginationSchoolDto;
 import liga.school.sevice.dto.SchoolDTO;
+import liga.school.sevice.dto.Sorter;
 import liga.school.sevice.service.SchoolService;
 import liga.school.sevice.service.StudentService;
 import org.junit.Test;
@@ -10,11 +12,14 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -34,31 +39,31 @@ public class SchoolControllerTest {
     @MockBean
     private StudentService studentService;
 
-//    @Test
-//    public void testGetSchools() throws Exception {
-//        SchoolDTO first = SchoolDTO.builder().id(1L).
-//                name("n").address("a").studentIds(Collections.singletonList("1")).build();
-//        SchoolDTO second = SchoolDTO.builder().id(2L).name("n1").
-//                address("a1").studentIds(Collections.singletonList("2")).build();
-//        List<SchoolDTO> schoolDTOS = Arrays.asList(first, second);
-//        Sorter sorter = new Sorter(1,10, Sort.Direction.ASC,"id");
-//        PaginationSchoolDto paginationSchoolDto = new PaginationSchoolDto(sorter);
-//        when(schoolService.getAll(paginationSchoolDto)).thenReturn(schoolDTOS);
-//
-//        mockMvc.perform(post("/school/").contentType(MediaType.APPLICATION_JSON).content("{\"sorter\":{\"page\":1,\"size\":10,\"sortDirection\":\"ASC\",\"sortBy\":\"id\"}"))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$[0].id").value(first.getId()))
-//                .andExpect(jsonPath("$[0].name").value(first.getName()))
-//                .andExpect(jsonPath("$[0].address").value(first.getAddress()))
-//                .andExpect(jsonPath("$[0].studentIds[0]").value(first.getStudentIds().get(0)))
-//                .andExpect(jsonPath("$[1].id").value(second.getId()))
-//                .andExpect(jsonPath("$[1].name").value(second.getName()))
-//                .andExpect(jsonPath("$[1].address").value(second.getAddress()))
-//                .andExpect(jsonPath("$[1].studentIds[0]").value(second.getStudentIds().get(0)));
-//
-//        verify(schoolService).getAll(paginationSchoolDto);
-//    }
-//
+    @Test
+    public void testGetSchools() throws Exception {
+        SchoolDTO first = SchoolDTO.builder().id(1L).
+                name("n").address("a").studentIds(Collections.singletonList("1")).build();
+        SchoolDTO second = SchoolDTO.builder().id(2L).name("n1").
+                address("a1").studentIds(Collections.singletonList("2")).build();
+        List<SchoolDTO> schoolDTOS = Arrays.asList(first, second);
+        Sorter sorter = new Sorter(1, 10, Sort.Direction.ASC, "id");
+        PaginationSchoolDto paginationSchoolDto = PaginationSchoolDto.builder().sorter(sorter).build();
+        when(schoolService.getAll(paginationSchoolDto)).thenReturn(schoolDTOS);
+
+        mockMvc.perform(post("/school/").contentType(MediaType.APPLICATION_JSON).content(mapToJson(paginationSchoolDto)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(first.getId()))
+                .andExpect(jsonPath("$[0].name").value(first.getName()))
+                .andExpect(jsonPath("$[0].address").value(first.getAddress()))
+                .andExpect(jsonPath("$[0].studentIds[0]").value(first.getStudentIds().get(0)))
+                .andExpect(jsonPath("$[1].id").value(second.getId()))
+                .andExpect(jsonPath("$[1].name").value(second.getName()))
+                .andExpect(jsonPath("$[1].address").value(second.getAddress()))
+                .andExpect(jsonPath("$[1].studentIds[0]").value(second.getStudentIds().get(0)));
+
+        verify(schoolService).getAll(paginationSchoolDto);
+    }
+
     @Test
     public void testGetSchoolById() throws Exception {
         SchoolDTO first = SchoolDTO.builder().id(1L).

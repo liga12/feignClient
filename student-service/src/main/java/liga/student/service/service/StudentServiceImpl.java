@@ -1,25 +1,26 @@
 package liga.student.service.service;
 
 import liga.student.service.domain.StudentRepository;
+import liga.student.service.dto.PaginationStudentDto;
 import liga.student.service.dto.StudentDTO;
 import liga.student.service.exception.StudentNotFoundException;
 import liga.student.service.mapper.StudentMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.querydsl.QPageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class StudentServiceImpl implements StudentService {
 
-    @Autowired
-    private StudentRepository studentRepository;
-
-    @Autowired
-    private StudentMapper mapper;
+    private final StudentRepository studentRepository;
+    private final StudentMapper mapper;
 
     @Override
-    public List<StudentDTO> getAll() {
+    public List<StudentDTO> getAll(PaginationStudentDto dto) {
         return mapper.studentToStudentDTO(studentRepository.findAll());
     }
 
@@ -31,27 +32,17 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public boolean existsById(String id) {
-        return studentRepository.existsById(id);
+        boolean result = studentRepository.existsById(id);
+
+        if (!result) {
+            throw new StudentNotFoundException();
+        }
+        return true;
     }
 
     @Override
     public boolean existsByIds(List<String> ids) {
-        return ids.stream().map(id -> studentRepository.existsById(id)).filter(exist -> !exist).findFirst().orElse(true);
-    }
-
-    @Override
-    public List<StudentDTO> getByName(String name) {
-        return mapper.studentToStudentDTO(studentRepository.findByName(name));
-    }
-
-    @Override
-    public List<StudentDTO> getBySurname(String surname) {
-        return mapper.studentToStudentDTO(studentRepository.findBySurname(surname));
-    }
-
-    @Override
-    public List<StudentDTO> getByAge(int age) {
-        return mapper.studentToStudentDTO(studentRepository.findByAge(age));
+        return ids.stream().map(studentRepository::existsById).filter(exist -> !exist).findFirst().orElse(true);
     }
 
     @Override
@@ -61,11 +52,13 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public StudentDTO update(StudentDTO dto) {
+        existsById(dto.getId());
         return mapper.studentToStudentDTO(studentRepository.save(mapper.studentDTOToStudent(dto)));
     }
 
     @Override
-    public void remove(StudentDTO dto) {
-        studentRepository.delete(mapper.studentDTOToStudent(dto));
+    public void remove(String id) {
+        existsById(id);
+        studentRepository.deleteById(id);
     }
 }

@@ -11,6 +11,7 @@ import java.util.List;
 @Data
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class PaginationSchoolDto {
     Sorter sorter;
     private Long id;
