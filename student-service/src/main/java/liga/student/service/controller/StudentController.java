@@ -1,9 +1,14 @@
 package liga.student.service.controller;
 
+import liga.student.service.dto.PaginationStudentSearchTextDto;
+import liga.student.service.entity.Student;
+import liga.student.service.repository.StudentRepository;
 import liga.student.service.dto.PaginationStudentDto;
+import liga.student.service.dto.Sorter;
 import liga.student.service.dto.StudentDTO;
 import liga.student.service.service.StudentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,13 +25,18 @@ public class StudentController {
         return studentService.getAll(dto);
     }
 
+    @PostMapping("/textSearch")
+    public List<StudentDTO> getStudentsTextSearch(@RequestBody PaginationStudentSearchTextDto dto) {
+        return studentService.getAll(dto);
+    }
+
     @GetMapping("/{id}")
     public StudentDTO getStudentById(@PathVariable String id) {
         return studentService.getById(id);
     }
 
     @PutMapping
-    public StudentDTO createStudent(@RequestBody StudentDTO studentDTO){
+    public StudentDTO createStudent(@RequestBody StudentDTO studentDTO) {
         return studentService.create(studentDTO);
     }
 
@@ -34,6 +44,7 @@ public class StudentController {
     public StudentDTO updateStudent(@RequestBody StudentDTO studentDTO) {
         return studentService.update(studentDTO);
     }
+
     @DeleteMapping("/{id}")
     public void deleteStudent(@PathVariable String id) {
         studentService.remove(id);

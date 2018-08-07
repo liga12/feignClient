@@ -1,6 +1,6 @@
 package liga.school.sevice.service;
 
-import liga.school.sevice.domain.SchoolRepository;
+import liga.school.sevice.repository.SchoolRepository;
 import liga.school.sevice.dto.PaginationSchoolDto;
 import liga.school.sevice.dto.SchoolDTO;
 import liga.school.sevice.dto.Sorter;

@@ -1,4 +1,4 @@
-package liga.school.sevice.domain;
+package liga.school.sevice.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,20 +1,18 @@
 package liga.school.sevice.service;
 
-import liga.school.sevice.domain.School;
-import liga.school.sevice.domain.SchoolRepository;
+import liga.school.sevice.entity.School;
+import liga.school.sevice.repository.SchoolRepository;
 import liga.school.sevice.dto.PaginationSchoolDto;
 import liga.school.sevice.dto.SchoolDTO;
 import liga.school.sevice.dto.Sorter;
 import liga.school.sevice.exception.SchoolNotFoundException;
 import liga.school.sevice.exception.StudentNotFoundException;
 import liga.school.sevice.mapper.SchoolMapper;
-import liga.school.sevice.util.SchoolSearcher;
+import liga.school.sevice.util.SchoolSearchSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,7 +35,7 @@ public class SchoolServiceImpl implements SchoolService {
         Sort.Direction sortDirection = sorter.getSortDirection();
         String sortBy = sorter.getSortBy();
         PageRequest pageRequest = PageRequest.of(page, size, sortDirection, sortBy);
-        Page<School> result = schoolRepository.findAll(SchoolSearcher.schoolFilter(dto),pageRequest);
+        Page<School> result = schoolRepository.findAll(SchoolSearchSpecification.schoolFilter(dto),pageRequest);
         return mapper.toDto(result.getContent());
     }
 

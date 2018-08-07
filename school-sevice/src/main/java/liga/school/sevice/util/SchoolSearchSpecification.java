@@ -1,13 +1,13 @@
 package liga.school.sevice.util;
 
-import liga.school.sevice.domain.School;
+import liga.school.sevice.entity.School;
 import liga.school.sevice.dto.PaginationSchoolDto;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.*;
 import java.util.*;
 
-public class SchoolSearcher {
+public class SchoolSearchSpecification {
     public static Specification<School> schoolFilter(PaginationSchoolDto dto) {
         return (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();

@@ -1,6 +1,6 @@
 package liga.school.sevice.mapper;
 
-import liga.school.sevice.domain.School;
+import liga.school.sevice.entity.School;
 import liga.school.sevice.dto.SchoolDTO;
 import lombok.NoArgsConstructor;
 import ma.glasnost.orika.MapperFacade;

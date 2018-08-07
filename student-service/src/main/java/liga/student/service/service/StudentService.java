@@ -2,11 +2,14 @@ package liga.student.service.service;
 
 
 import liga.student.service.dto.PaginationStudentDto;
+import liga.student.service.dto.PaginationStudentSearchTextDto;
 import liga.student.service.dto.StudentDTO;
 
 import java.util.List;
 
 public interface StudentService {
+
+    List<StudentDTO> getAll(PaginationStudentSearchTextDto dto);
 
     List<StudentDTO> getAll(PaginationStudentDto dto);
 

@@ -3,7 +3,7 @@ package liga.school.sevice.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import liga.school.sevice.SchoolClientService;
-import liga.school.sevice.domain.SchoolRepository;
+import liga.school.sevice.repository.SchoolRepository;
 import liga.school.sevice.dto.SchoolDTO;
 import liga.school.sevice.service.SchoolService;
 import liga.school.sevice.service.StudentService;

@@ -1,20 +1,9 @@
 package liga.student.service.service;
 
 import liga.student.service.StudentClientService;
-import liga.student.service.domain.StudentRepository;
-import liga.student.service.dto.StudentDTO;
-import liga.student.service.exception.StudentNotFoundException;
-import org.junit.Before;
-import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import java.util.Collections;
-import java.util.List;
-
-import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {MongoConfig.class, StudentClientService.class})

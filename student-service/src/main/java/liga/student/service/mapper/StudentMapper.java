@@ -1,6 +1,6 @@
 package liga.student.service.mapper;
 
-import liga.student.service.domain.Student;
+import liga.student.service.entity.Student;
 import liga.student.service.dto.StudentDTO;
 import org.mapstruct.Mapper;
 
