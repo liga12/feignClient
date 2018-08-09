@@ -1,7 +1,7 @@
 package liga.school.sevice.controller;
 
-import liga.school.sevice.dto.PaginationSchoolDto;
-import liga.school.sevice.dto.SchoolDTO;
+import liga.school.sevice.transport.dto.PaginationSchoolDto;
+import liga.school.sevice.transport.dto.SchoolDTO;
 import liga.school.sevice.service.SchoolService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

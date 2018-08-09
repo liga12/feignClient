@@ -1,14 +1,10 @@
 package liga.student.service.controller;
 
-import liga.student.service.dto.PaginationStudentSearchTextDto;
-import liga.student.service.entity.Student;
-import liga.student.service.repository.StudentRepository;
-import liga.student.service.dto.PaginationStudentDto;
-import liga.student.service.dto.Sorter;
-import liga.student.service.dto.StudentDTO;
+import liga.student.service.transport.dto.PaginationStudentSearchTextDto;
+import liga.student.service.transport.dto.PaginationStudentDto;
+import liga.student.service.transport.dto.StudentDTO;
 import liga.student.service.service.StudentService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

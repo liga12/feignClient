@@ -3,10 +3,12 @@ package liga.school.sevice.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import liga.school.sevice.SchoolClientService;
-import liga.school.sevice.repository.SchoolRepository;
-import liga.school.sevice.dto.SchoolDTO;
+import liga.school.sevice.domain.repository.SchoolRepository;
+import liga.school.sevice.transport.dto.PaginationSchoolDto;
+import liga.school.sevice.transport.dto.SchoolDTO;
 import liga.school.sevice.service.SchoolService;
 import liga.school.sevice.service.StudentService;
+import liga.school.sevice.transport.dto.Sorter;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -21,13 +23,17 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -70,12 +76,17 @@ public class SchoolControllerIntegrationTest {
 
     @Test
     public void testGetStudents() throws Exception {
-        SchoolDTO first = schoolService.create(SchoolDTO.builder().id(1L).
+        when(studentFeignService.existsStudentsByIds(any())).thenReturn(true);
+        SchoolDTO first = schoolService.create(SchoolDTO.builder().
                 name("n").address("a").studentIds(Collections.singletonList("1")).build());
-        SchoolDTO second = schoolService.create(SchoolDTO.builder().id(2L).name("n1").
+        SchoolDTO second = schoolService.create(SchoolDTO.builder().name("n1").
                 address("a1").studentIds(Collections.singletonList("2")).build());
+        List<SchoolDTO> schoolDTOS = Arrays.asList(first, second);
 
-        mockMvc.perform(get("/school/"))
+        Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
+        PaginationSchoolDto paginationSchoolDto = PaginationSchoolDto.builder().sorter(sorter).build();
+
+        mockMvc.perform(post("/school/").contentType(MediaType.APPLICATION_JSON).content(mapToJson(paginationSchoolDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(first.getId()))
                 .andExpect(jsonPath("$[0].name").value(first.getName()))
@@ -86,7 +97,6 @@ public class SchoolControllerIntegrationTest {
                 .andExpect(jsonPath("$[1].address").value(second.getAddress()))
                 .andExpect(jsonPath("$[1].studentIds[0]").value(second.getStudentIds().get(0)));
     }
-
 
     @Test
     public void testGetStudentById() throws Exception {

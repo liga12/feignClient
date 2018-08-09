@@ -1,13 +1,13 @@
 package liga.student.service.service;
 
-import liga.student.service.dto.PaginationStudentSearchTextDto;
-import liga.student.service.entity.Student;
-import liga.student.service.repository.StudentRepository;
-import liga.student.service.dto.PaginationStudentDto;
-import liga.student.service.dto.Sorter;
-import liga.student.service.dto.StudentDTO;
+import liga.student.service.transport.dto.PaginationStudentSearchTextDto;
+import liga.student.service.domain.entity.Student;
+import liga.student.service.domain.repository.StudentRepository;
+import liga.student.service.transport.dto.PaginationStudentDto;
+import liga.student.service.transport.dto.Sorter;
+import liga.student.service.transport.dto.StudentDTO;
 import liga.student.service.exception.StudentNotFoundException;
-import liga.student.service.mapper.StudentMapper;
+import liga.student.service.transport.mapper.StudentMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -43,12 +42,16 @@ public class StudentServiceImpl implements StudentService {
                 .of(sorter.getPage(), sorter.getSize(), sorter.getSortDirection(), sorter.getSortBy());
         Query query = new Query();
         query.with(pageRequest);
-        List<Criteria> criterias = new ArrayList<>();
-        criterias.add(toEquals("id", dto.getId()));
-        criterias.add(toLike("name", dto.getName()));
-        criterias.add(toLike("surname", dto.getSurname()));
-        criterias.add(toBetween("age", dto.getStartAge(), dto.getEndAge()));
-        criterias.stream().filter(Objects::nonNull).forEach(query::addCriteria);
+        List<Criteria> criteriaList = new ArrayList<>();
+        criteriaList.add(toEquals("id", dto.getId()));
+        criteriaList.add(toLike("name", dto.getName()));
+        criteriaList.add(toLike("surname", dto.getSurname()));
+        criteriaList.add(toBetween("age", dto.getStartAge(), dto.getEndAge()));
+        criteriaList.forEach(q -> {
+            if (q != null) {
+                query.addCriteria(q);
+            }
+        });
         List<Student> students = mongoTemplate.find(query, Student.class);
         return mapper.studentToStudentDTO(students);
     }
@@ -84,7 +87,6 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public boolean existsById(String id) {
         boolean result = studentRepository.existsById(id);
-
         if (!result) {
             throw new StudentNotFoundException();
         }

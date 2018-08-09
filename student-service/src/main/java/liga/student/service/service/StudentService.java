@@ -1,9 +1,9 @@
 package liga.student.service.service;
 
 
-import liga.student.service.dto.PaginationStudentDto;
-import liga.student.service.dto.PaginationStudentSearchTextDto;
-import liga.student.service.dto.StudentDTO;
+import liga.student.service.transport.dto.PaginationStudentDto;
+import liga.student.service.transport.dto.PaginationStudentSearchTextDto;
+import liga.student.service.transport.dto.StudentDTO;
 
 import java.util.List;
 

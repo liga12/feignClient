@@ -1,99 +1,155 @@
 package liga.student.service.service;
 
-import liga.student.service.dto.StudentDTO;
+import liga.student.service.domain.entity.Student;
+import liga.student.service.domain.repository.StudentRepository;
+import liga.student.service.transport.dto.PaginationStudentDto;
+import liga.student.service.transport.dto.PaginationStudentSearchTextDto;
+import liga.student.service.transport.dto.Sorter;
+import liga.student.service.transport.dto.StudentDTO;
+import liga.student.service.transport.mapper.StudentMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.mockito.Spy;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import static org.mockito.Mockito.*;
 
-@RunWith(SpringRunner.class)
+@RunWith(MockitoJUnitRunner.class)
+@SpringBootTest
 public class StudentServiceImplTest {
 
-//    @Mock
-//    private StudentService studentService;
-//
-//    @Test
-//    public void testGetAll() {
-//        StudentDTO studentDTO = StudentDTO.builder().name("name").surname("surname").age(25).build();
-//        when(studentService.getAll()).thenReturn(Collections.singletonList(studentDTO));
-//        studentService.getAll();
-//        verify(studentService).getAll();
-//    }
-//
-//    @Test
-//    public void testGetById() {
-//        StudentDTO studentDTO = StudentDTO.builder().name("name").surname("surname").age(25).build();
-//        when(studentService.getById(studentDTO.getId())).thenReturn(studentDTO);
-//        studentService.getById(studentDTO.getId());
-//        verify(studentService).getById(studentDTO.getId());
-//    }
-//
-//    @Test
-//    public void testExistById() {
-//        StudentDTO studentDTO = StudentDTO.builder().name("name").surname("surname").age(25).build();
-//        when(studentService.existsById(studentDTO.getId())).thenReturn(true);
-//        studentService.existsById(studentDTO.getId());
-//        verify(studentService).existsById(studentDTO.getId());
-//    }
-//
-//    @Test
-//    public void testExistByIdS() {
-//        StudentDTO studentDTO = StudentDTO.builder().name("name").surname("surname").age(25).build();
-//        when(studentService.existsByIds(Collections.singletonList(studentDTO.getId()))).thenReturn(true);
-//        studentService.existsByIds(Collections.singletonList(studentDTO.getId()));
-//        verify(studentService).existsByIds(Collections.singletonList(studentDTO.getId()));
-//    }
-//
-//    @Test
-//    public void testGetByName() {
-//        StudentDTO studentDTO = StudentDTO.builder().name("name").surname("surname").age(25).build();
-//        when(studentService.getByName(studentDTO.getName())).thenReturn(Collections.singletonList(studentDTO));
-//        studentService.getByName(studentDTO.getName());
-//        verify(studentService).getByName(studentDTO.getName());
-//    }
-//
-//    @Test
-//    public void testGetBySurname() {
-//        StudentDTO studentDTO = StudentDTO.builder().name("name").surname("surname").age(25).build();
-//        when(studentService.getBySurname(studentDTO.getSurname())).thenReturn(Collections.singletonList(studentDTO));
-//        studentService.getBySurname(studentDTO.getSurname());
-//        verify(studentService).getBySurname(studentDTO.getSurname());
-//    }
-//
-//    @Test
-//    public void testGetByAge() {
-//        StudentDTO studentDTO = StudentDTO.builder().name("name").surname("surname").age(25).build();
-//        when(studentService.getByAge(studentDTO.getAge())).thenReturn(Collections.singletonList(studentDTO));
-//        studentService.getByAge(studentDTO.getAge());
-//        verify(studentService).getByAge(studentDTO.getAge());
-//    }
-//
-//    @Test
-//    public void testCreate() {
-//        StudentDTO studentDTO = StudentDTO.builder().name("name").surname("surname").age(25).build();
-//        when(studentService.create(studentDTO)).thenReturn(studentDTO);
-//        studentService.create(studentDTO);
-//        verify(studentService).create(studentDTO);
-//    }
-//
-//    @Test
-//    public void testUpdate() {
-//        StudentDTO studentDTO = StudentDTO.builder().name("name").surname("surname").age(25).build();
-//        when(studentService.update(studentDTO)).thenReturn(studentDTO);
-//        studentService.update(studentDTO);
-//        verify(studentService).update(studentDTO);
-//    }
-//
-//    @Test
-//    public void testRemove() {
-//        StudentDTO studentDTO = StudentDTO.builder().name("name").surname("surname").age(25).build();
-//        doNothing().when(studentService).remove(studentDTO);
-//        studentService.remove(studentDTO);
-//        verify(studentService).remove(studentDTO);
-//    }
+    @Spy
+    @InjectMocks
+    private StudentServiceImpl studentService;
+    @Mock
+    private StudentRepository studentRepository;
+    @Mock
+    private StudentMapper mapper;
+    @Mock
+    private MongoTemplate mongoTemplate;
+
+    @Test
+    public void testGetAllTextSearch() {
+        Student student = Student.builder().name("n").surname("s").age(1).build();
+        StudentDTO studentDTO = StudentDTO.builder().name("n").surname("s").age(1).build();
+        Sorter sorter = new Sorter(0, 1, Sort.Direction.ASC, "id");
+        int page = sorter.getPage();
+        int size = sorter.getSize();
+        Sort.Direction sortDirection = sorter.getSortDirection();
+        String sortBy = sorter.getSortBy();
+        PageRequest pageRequest = PageRequest.of(page, size, sortDirection, sortBy);
+        PaginationStudentSearchTextDto paginationSearch = PaginationStudentSearchTextDto.builder()
+                .sorter(sorter).caseSensitive(false).text("n").build();
+        List<Student> studentPage = Collections.singletonList(student);
+        when(studentRepository.
+                searchByNamesAndSurname(paginationSearch.getText(), paginationSearch.getCaseSensitive(), pageRequest)).
+                thenReturn(Collections.singletonList(student));
+        when(mapper.studentToStudentDTO(studentPage)).thenReturn(Collections.singletonList(studentDTO));
+
+        studentService.getAll(paginationSearch);
+
+        verify(studentRepository, times(1)).
+                searchByNamesAndSurname(paginationSearch.getText(), paginationSearch.getCaseSensitive(), pageRequest);
+        verify(mapper, times(1)).studentToStudentDTO(Collections.singletonList(student));
+    }
+
+    @Test
+    public void testGetAll() {
+        Student student = Student.builder().name("n").surname("s").age(1).build();
+        StudentDTO studentDTO = StudentDTO.builder().name("n").surname("s").age(1).build();
+        Sorter sorter = new Sorter(0, 1, Sort.Direction.ASC, "id");
+        PaginationStudentDto pagination = PaginationStudentDto.builder().sorter(sorter).build();
+        List<Student> studentPage = Collections.singletonList(student);
+        when(mongoTemplate.find(any(), any())).thenReturn(Collections.singletonList(student));
+        when(mapper.studentToStudentDTO(studentPage)).thenReturn(Collections.singletonList(studentDTO));
+
+        studentService.getAll(pagination);
+
+        verify(mongoTemplate, times(1)).
+                find(any(), any());
+        verify(mapper, times(1)).studentToStudentDTO(Collections.singletonList(student));
+    }
+
+
+    @Test
+    public void testGetById() {
+        StudentDTO studentDTO = StudentDTO.builder().id("1").name("n").surname("s").age(1).build();
+        Student student = Student.builder().id("1").name("n").surname("s").age(1).build();
+        when(studentRepository.findById("1")).thenReturn(java.util.Optional.ofNullable(student));
+        when(mapper.studentToStudentDTO(student)).thenReturn(studentDTO);
+
+        studentService.getById(studentDTO.getId());
+
+        verify(studentService, times(1)).getById(studentDTO.getId());
+        verify(mapper, times(1)).studentToStudentDTO(student);
+    }
+
+    @Test
+    public void testExistById() {
+        when(studentRepository.existsById("1")).thenReturn(true);
+
+        studentService.existsById("1");
+
+        verify(studentRepository, times(1)).existsById("1");
+    }
+
+    @Test
+    public void testExistByIds() {
+        when(studentRepository.existsById(any())).thenReturn(true);
+
+        studentService.existsByIds(Arrays.asList("1","2"));
+
+        verify(studentRepository, times(2)).existsById(any());
+    }
+
+    @Test
+    public void testCreate() {
+        StudentDTO studentDTO = StudentDTO.builder().name("name").surname("surname").age(25).build();
+        Student student = Student.builder().id("1").name("n").surname("s").age(1).build();
+        when(mapper.studentDTOToStudent(studentDTO)).thenReturn(student);
+        when(studentRepository.save(student)).thenReturn(student);
+        when(mapper.studentToStudentDTO(student)).thenReturn(studentDTO);
+
+        studentService.create(studentDTO);
+
+        verify(mapper, times(1)).studentDTOToStudent(studentDTO);
+        verify(studentRepository, times(1)).save(student);
+        verify(mapper, times(1)).studentToStudentDTO(student);
+    }
+
+    @Test
+    public void testUpdate() {
+        StudentDTO studentDTO = StudentDTO.builder().name("name").surname("surname").age(25).build();
+        Student student = Student.builder().id("1").name("n").surname("s").age(1).build();
+        doReturn(true).when(studentService).existsById(any());
+        when(mapper.studentDTOToStudent(studentDTO)).thenReturn(student);
+        when(studentRepository.save(student)).thenReturn(student);
+        when(mapper.studentToStudentDTO(student)).thenReturn(studentDTO);
+
+        studentService.update(studentDTO);
+
+        verify(studentService, times(1)).existsById(any());
+        verify(mapper, times(1)).studentDTOToStudent(studentDTO);
+        verify(studentRepository, times(1)).save(student);
+        verify(mapper, times(1)).studentToStudentDTO(student);
+    }
+
+    @Test
+    public void testRemove() {
+        doReturn(true).when(studentService).existsById(any());
+
+        studentService.remove("1");
+
+        verify(studentService, times(1)).existsById(any());
+    }
 }

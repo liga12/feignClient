@@ -1,14 +1,13 @@
 package liga.school.sevice.service;
 
-import liga.school.sevice.entity.School;
-import liga.school.sevice.repository.SchoolRepository;
-import liga.school.sevice.dto.PaginationSchoolDto;
-import liga.school.sevice.dto.SchoolDTO;
-import liga.school.sevice.dto.Sorter;
+import liga.school.sevice.domain.entity.School;
+import liga.school.sevice.domain.repository.SchoolRepository;
+import liga.school.sevice.transport.dto.PaginationSchoolDto;
+import liga.school.sevice.transport.dto.SchoolDTO;
+import liga.school.sevice.transport.dto.Sorter;
 import liga.school.sevice.exception.SchoolNotFoundException;
 import liga.school.sevice.exception.StudentNotFoundException;
-import liga.school.sevice.mapper.SchoolMapper;
-import liga.school.sevice.util.SchoolSearchSpecification;
+import liga.school.sevice.transport.mapper.SchoolMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

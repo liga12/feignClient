@@ -2,9 +2,9 @@ package liga.school.sevice.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import liga.school.sevice.dto.PaginationSchoolDto;
-import liga.school.sevice.dto.SchoolDTO;
-import liga.school.sevice.dto.Sorter;
+import liga.school.sevice.transport.dto.PaginationSchoolDto;
+import liga.school.sevice.transport.dto.SchoolDTO;
+import liga.school.sevice.transport.dto.Sorter;
 import liga.school.sevice.service.SchoolService;
 import liga.school.sevice.service.StudentService;
 import org.junit.Test;
@@ -94,6 +94,7 @@ public class SchoolControllerTest {
                 .andExpect(jsonPath("$.name").value(first.getName()))
                 .andExpect(jsonPath("$.address").value(first.getAddress()))
                 .andExpect(jsonPath("$.studentIds[0]").value(first.getStudentIds().get(0)));
+
         verify(schoolService).create(first);
     }
 

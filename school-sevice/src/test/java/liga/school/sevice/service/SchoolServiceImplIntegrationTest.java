@@ -1,9 +1,9 @@
 package liga.school.sevice.service;
 
-import liga.school.sevice.repository.SchoolRepository;
-import liga.school.sevice.dto.PaginationSchoolDto;
-import liga.school.sevice.dto.SchoolDTO;
-import liga.school.sevice.dto.Sorter;
+import liga.school.sevice.domain.repository.SchoolRepository;
+import liga.school.sevice.transport.dto.PaginationSchoolDto;
+import liga.school.sevice.transport.dto.SchoolDTO;
+import liga.school.sevice.transport.dto.Sorter;
 import liga.school.sevice.exception.SchoolNotFoundException;
 import liga.school.sevice.exception.StudentNotFoundException;
 import org.junit.Before;
@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
@@ -50,7 +51,10 @@ public class SchoolServiceImplIntegrationTest {
         Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
         PaginationSchoolDto paginationSchoolDto = PaginationSchoolDto
                 .builder().sorter(sorter).build();
-        assertEquals(Arrays.asList(schoolDTO, schoolDTO2), schoolService.getAll(paginationSchoolDto));
+
+        List<SchoolDTO> schools = schoolService.getAll(paginationSchoolDto);
+
+        assertEquals(Arrays.asList(schoolDTO, schoolDTO2), schools);
     }
 
     @Test
@@ -63,7 +67,10 @@ public class SchoolServiceImplIntegrationTest {
         Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
         PaginationSchoolDto paginationSchoolDto = PaginationSchoolDto
                 .builder().sorter(sorter).id(schoolDTO.getId()).build();
-        assertEquals(Collections.singletonList(schoolDTO), schoolService.getAll(paginationSchoolDto));
+
+        List<SchoolDTO> schools = schoolService.getAll(paginationSchoolDto);
+
+        assertEquals(Collections.singletonList(schoolDTO), schools);
     }
 
 
@@ -76,7 +83,10 @@ public class SchoolServiceImplIntegrationTest {
         Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
         PaginationSchoolDto paginationSchoolDto = PaginationSchoolDto
                 .builder().sorter(sorter).id(3L).build();
-        assertEquals(Collections.emptyList(), schoolService.getAll(paginationSchoolDto));
+
+        List<SchoolDTO> schools = schoolService.getAll(paginationSchoolDto);
+
+        assertEquals(Collections.emptyList(), schools);
     }
 
     @Test
@@ -89,7 +99,10 @@ public class SchoolServiceImplIntegrationTest {
         Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
         PaginationSchoolDto paginationSchoolDto = PaginationSchoolDto
                 .builder().sorter(sorter).name(schoolDTO.getName()).build();
-        assertEquals(Collections.singletonList(schoolDTO), schoolService.getAll(paginationSchoolDto));
+
+        List<SchoolDTO> schools = schoolService.getAll(paginationSchoolDto);
+
+        assertEquals(Collections.singletonList(schoolDTO), schools);
     }
 
     @Test
@@ -103,7 +116,10 @@ public class SchoolServiceImplIntegrationTest {
         Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
         PaginationSchoolDto paginationSchoolDto = PaginationSchoolDto
                 .builder().sorter(sorter).name("name").build();
-        assertEquals(Arrays.asList(schoolDTO, schoolDTO2), schoolService.getAll(paginationSchoolDto));
+
+        List<SchoolDTO> schools = schoolService.getAll(paginationSchoolDto);
+
+        assertEquals(Arrays.asList(schoolDTO, schoolDTO2), schools);
     }
 
     @Test
@@ -115,7 +131,10 @@ public class SchoolServiceImplIntegrationTest {
         Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
         PaginationSchoolDto paginationSchoolDto = PaginationSchoolDto
                 .builder().sorter(sorter).name("2").build();
-        assertEquals(Collections.emptyList(), schoolService.getAll(paginationSchoolDto));
+
+        List<SchoolDTO> schools = schoolService.getAll(paginationSchoolDto);
+
+        assertEquals(Collections.emptyList(), schools);
     }
 
     @Test
@@ -129,7 +148,10 @@ public class SchoolServiceImplIntegrationTest {
         Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
         PaginationSchoolDto paginationSchoolDto = PaginationSchoolDto
                 .builder().sorter(sorter).address("2").build();
-        assertEquals(Collections.singletonList(schoolDTO), schoolService.getAll(paginationSchoolDto));
+
+        List<SchoolDTO> schools = schoolService.getAll(paginationSchoolDto);
+
+        assertEquals(Collections.singletonList(schoolDTO), schools);
     }
 
     @Test
@@ -143,7 +165,10 @@ public class SchoolServiceImplIntegrationTest {
         Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
         PaginationSchoolDto paginationSchoolDto = PaginationSchoolDto
                 .builder().sorter(sorter).address("address").build();
-        assertEquals(Arrays.asList(schoolDTO, schoolDTO2), schoolService.getAll(paginationSchoolDto));
+
+        List<SchoolDTO> schools = schoolService.getAll(paginationSchoolDto);
+
+        assertEquals(Arrays.asList(schoolDTO, schoolDTO2), schools);
     }
 
     @Test
@@ -155,7 +180,10 @@ public class SchoolServiceImplIntegrationTest {
         Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
         PaginationSchoolDto paginationSchoolDto = PaginationSchoolDto
                 .builder().sorter(sorter).address("y").build();
-        assertEquals(Collections.emptyList(), schoolService.getAll(paginationSchoolDto));
+
+        List<SchoolDTO> schools = schoolService.getAll(paginationSchoolDto);
+
+        assertEquals(Collections.emptyList(), schools);
     }
 
     @Test
@@ -171,7 +199,10 @@ public class SchoolServiceImplIntegrationTest {
         PaginationSchoolDto paginationSchoolDto = PaginationSchoolDto
                 .builder().sorter(sorter).studentIds(studentIds).build();
         paginationSchoolDto.setName(schoolDTO.getName());
-        assertEquals(Collections.singletonList(schoolDTO), schoolService.getAll(paginationSchoolDto));
+
+        List<SchoolDTO> schools = schoolService.getAll(paginationSchoolDto);
+
+        assertEquals(Collections.singletonList(schoolDTO), schools);
     }
 
     @Test
@@ -187,7 +218,10 @@ public class SchoolServiceImplIntegrationTest {
         Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
         PaginationSchoolDto paginationSchoolDto = PaginationSchoolDto
                 .builder().sorter(sorter).studentIds(studentIds2).build();
-        assertEquals(Arrays.asList(schoolDTO, schoolDTO2), schoolService.getAll(paginationSchoolDto));
+
+        List<SchoolDTO> schools = schoolService.getAll(paginationSchoolDto);
+
+        assertEquals(Arrays.asList(schoolDTO, schoolDTO2), schools);
     }
 
     @Test
@@ -201,7 +235,10 @@ public class SchoolServiceImplIntegrationTest {
         Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
         PaginationSchoolDto paginationSchoolDto = PaginationSchoolDto
                 .builder().sorter(sorter).studentIds(studentIds2).build();
-        assertEquals(Collections.emptyList(), schoolService.getAll(paginationSchoolDto));
+
+        List<SchoolDTO> schools = schoolService.getAll(paginationSchoolDto);
+
+        assertEquals(Collections.emptyList(), schools);
     }
 
     @Test
@@ -214,7 +251,10 @@ public class SchoolServiceImplIntegrationTest {
         Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
         PaginationSchoolDto paginationSchoolDto = PaginationSchoolDto
                 .builder().sorter(sorter).name("name").id(schoolDTO.getId()).build();
-        assertEquals(Collections.singletonList(schoolDTO), schoolService.getAll(paginationSchoolDto));
+
+        List<SchoolDTO> schools = schoolService.getAll(paginationSchoolDto);
+
+        assertEquals(Collections.singletonList(schoolDTO), schools);
     }
 
     @Test
@@ -227,7 +267,10 @@ public class SchoolServiceImplIntegrationTest {
         Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
         PaginationSchoolDto paginationSchoolDto = PaginationSchoolDto
                 .builder().sorter(sorter).name("sa").id(schoolDTO.getId()).build();
-        assertEquals(Collections.emptyList(), schoolService.getAll(paginationSchoolDto));
+
+        List<SchoolDTO> schools = schoolService.getAll(paginationSchoolDto);
+
+        assertEquals(Collections.emptyList(), schools);
     }
 
     @Test
@@ -240,7 +283,10 @@ public class SchoolServiceImplIntegrationTest {
         Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
         PaginationSchoolDto paginationSchoolDto = PaginationSchoolDto
                 .builder().sorter(sorter).id(schoolDTO.getId()).address("dr").build();
-        assertEquals(Collections.singletonList(schoolDTO), schoolService.getAll(paginationSchoolDto));
+
+        List<SchoolDTO> schools = schoolService.getAll(paginationSchoolDto);
+
+        assertEquals(Collections.singletonList(schoolDTO), schools);
     }
 
     @Test
@@ -253,7 +299,10 @@ public class SchoolServiceImplIntegrationTest {
         Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
         PaginationSchoolDto paginationSchoolDto = PaginationSchoolDto
                 .builder().sorter(sorter).id(schoolDTO.getId()).address("sa").build();
-        assertEquals(Collections.emptyList(), schoolService.getAll(paginationSchoolDto));
+
+        List<SchoolDTO> schools = schoolService.getAll(paginationSchoolDto);
+
+        assertEquals(Collections.emptyList(), schools);
     }
 
     @Test
@@ -268,7 +317,10 @@ public class SchoolServiceImplIntegrationTest {
         Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
         PaginationSchoolDto paginationSchoolDto = PaginationSchoolDto
                 .builder().sorter(sorter).id(schoolDTO.getId()).studentIds(studentIds).build();
-        assertEquals(Collections.singletonList(schoolDTO), schoolService.getAll(paginationSchoolDto));
+
+        List<SchoolDTO> schools = schoolService.getAll(paginationSchoolDto);
+
+        assertEquals(Collections.singletonList(schoolDTO), schools);
     }
 
     @Test
@@ -283,8 +335,12 @@ public class SchoolServiceImplIntegrationTest {
         Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
         PaginationSchoolDto paginationSchoolDto = PaginationSchoolDto
                 .builder().sorter(sorter).id(schoolDTO.getId()).studentIds(Collections.singletonList("3")).build();
-        assertEquals(Collections.emptyList(), schoolService.getAll(paginationSchoolDto));
+
+        List<SchoolDTO> schools = schoolService.getAll(paginationSchoolDto);
+
+        assertEquals(Collections.emptyList(), schools);
     }
+
     @Test
     public void testGetAllByNameAndAddress() {
         List<String> studentIds = Collections.singletonList("1");
@@ -295,7 +351,10 @@ public class SchoolServiceImplIntegrationTest {
         Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
         PaginationSchoolDto paginationSchoolDto = PaginationSchoolDto
                 .builder().sorter(sorter).name("name").address("maddress").build();
-        assertEquals(Collections.singletonList(schoolDTO), schoolService.getAll(paginationSchoolDto));
+
+        List<SchoolDTO> schools = schoolService.getAll(paginationSchoolDto);
+
+        assertEquals(Collections.singletonList(schoolDTO), schools);
     }
 
     @Test
@@ -309,7 +368,10 @@ public class SchoolServiceImplIntegrationTest {
         Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
         PaginationSchoolDto paginationSchoolDto = PaginationSchoolDto
                 .builder().sorter(sorter).name("name").address("address").build();
-        assertEquals(Arrays.asList(schoolDTO, schoolDTO2), schoolService.getAll(paginationSchoolDto));
+
+        List<SchoolDTO> schools = schoolService.getAll(paginationSchoolDto);
+
+        assertEquals(Arrays.asList(schoolDTO, schoolDTO2), schools);
     }
 
     @Test
@@ -321,7 +383,10 @@ public class SchoolServiceImplIntegrationTest {
         Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
         PaginationSchoolDto paginationSchoolDto = PaginationSchoolDto
                 .builder().sorter(sorter).name("1").address("y").build();
-        assertEquals(Collections.emptyList(), schoolService.getAll(paginationSchoolDto));
+
+        List<SchoolDTO> schools = schoolService.getAll(paginationSchoolDto);
+
+        assertEquals(Collections.emptyList(), schools);
     }
 
     @Test
@@ -335,7 +400,10 @@ public class SchoolServiceImplIntegrationTest {
         Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
         PaginationSchoolDto paginationSchoolDto = PaginationSchoolDto
                 .builder().sorter(sorter).name("name").studentIds(studentIds2).build();
-        assertEquals(Collections.singletonList(schoolDTO2), schoolService.getAll(paginationSchoolDto));
+
+        List<SchoolDTO> schools = schoolService.getAll(paginationSchoolDto);
+
+        assertEquals(Collections.singletonList(schoolDTO2), schools);
     }
 
     @Test
@@ -350,7 +418,10 @@ public class SchoolServiceImplIntegrationTest {
         Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
         PaginationSchoolDto paginationSchoolDto = PaginationSchoolDto
                 .builder().sorter(sorter).name("name").studentIds(studentIds2).build();
-        assertEquals(Arrays.asList(schoolDTO, schoolDTO2), schoolService.getAll(paginationSchoolDto));
+
+        List<SchoolDTO> schools = schoolService.getAll(paginationSchoolDto);
+
+        assertEquals(Arrays.asList(schoolDTO, schoolDTO2), schools);
     }
 
     @Test
@@ -362,7 +433,10 @@ public class SchoolServiceImplIntegrationTest {
         Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
         PaginationSchoolDto paginationSchoolDto = PaginationSchoolDto
                 .builder().sorter(sorter).name("1").studentIds(Collections.singletonList("3")).build();
-        assertEquals(Collections.emptyList(), schoolService.getAll(paginationSchoolDto));
+
+        List<SchoolDTO> schools = schoolService.getAll(paginationSchoolDto);
+
+        assertEquals(Collections.emptyList(), schools);
     }
 
     @Test
@@ -377,7 +451,10 @@ public class SchoolServiceImplIntegrationTest {
         Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
         PaginationSchoolDto paginationSchoolDto = PaginationSchoolDto
                 .builder().sorter(sorter).address("m").studentIds(studentIds).build();
-        assertEquals(Collections.singletonList(schoolDTO), schoolService.getAll(paginationSchoolDto));
+
+        List<SchoolDTO> schools = schoolService.getAll(paginationSchoolDto);
+
+        assertEquals(Collections.singletonList(schoolDTO), schools);
     }
 
     @Test
@@ -392,7 +469,10 @@ public class SchoolServiceImplIntegrationTest {
         Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
         PaginationSchoolDto paginationSchoolDto = PaginationSchoolDto
                 .builder().sorter(sorter).address("address").studentIds(studentIds2).build();
-        assertEquals(Arrays.asList(schoolDTO, schoolDTO2), schoolService.getAll(paginationSchoolDto));
+
+        List<SchoolDTO> schools = schoolService.getAll(paginationSchoolDto);
+
+        assertEquals(Arrays.asList(schoolDTO, schoolDTO2), schools);
     }
 
     @Test
@@ -404,7 +484,10 @@ public class SchoolServiceImplIntegrationTest {
         Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
         PaginationSchoolDto paginationSchoolDto = PaginationSchoolDto
                 .builder().sorter(sorter).address("x").studentIds(Collections.singletonList("3")).build();
-        assertEquals(Collections.emptyList(), schoolService.getAll(paginationSchoolDto));
+
+        List<SchoolDTO> schools = schoolService.getAll(paginationSchoolDto);
+
+        assertEquals(Collections.emptyList(), schools);
     }
 
 
@@ -412,11 +495,12 @@ public class SchoolServiceImplIntegrationTest {
     public void testGetById() {
         List<String> studentIds = Collections.singletonList("1");
         when(feignService.existsStudentsByIds(studentIds)).thenReturn(true);
-
         SchoolDTO schoolDTO = schoolService.
                 create(SchoolDTO.builder().name("name").address("address").studentIds(studentIds).build());
 
-        assertEquals(schoolDTO, schoolService.getById(schoolDTO.getId()));
+        SchoolDTO result = schoolService.getById(schoolDTO.getId());
+
+        assertEquals(schoolDTO, result);
     }
 
     @Test(expected = SchoolNotFoundException.class)
@@ -425,18 +509,39 @@ public class SchoolServiceImplIntegrationTest {
     }
 
     @Test
-    public void testCreate() {
+    public void testExistById() {
         List<String> studentIds = Collections.singletonList("1");
         when(feignService.existsStudentsByIds(studentIds)).thenReturn(true);
         SchoolDTO schoolDTO = schoolService.
                 create(SchoolDTO.builder().name("name").address("address").studentIds(studentIds).build());
-        assertEquals(schoolDTO, schoolService.getById(schoolDTO.getId()));
+
+        boolean result = schoolService.existById(schoolDTO.getId());
+
+        assertTrue(result);
+    }
+
+    @Test(expected = SchoolNotFoundException.class)
+    public void testExistByIdWithSchoolNotFound() {
+        schoolService.existById(1L);
+    }
+
+    @Test
+    public void testCreate() {
+        List<String> studentIds = Collections.singletonList("1");
+        when(feignService.existsStudentsByIds(studentIds)).thenReturn(true);
+        SchoolDTO schoolDTO = schoolService.
+                create(SchoolDTO.builder().name("name1").address("address").studentIds(studentIds).build());
+
+        SchoolDTO result = schoolService.getById(schoolDTO.getId());
+
+        assertEquals(schoolDTO, result);
     }
 
     @Test(expected = StudentNotFoundException.class)
     public void testCreateWithStudentNotFound() {
         List<String> studentIds = Collections.singletonList("1");
         when(feignService.existsStudentsByIds(studentIds)).thenReturn(false);
+
         schoolService.create(SchoolDTO.builder().name("name").address("address").studentIds(studentIds).build());
     }
 
@@ -448,7 +553,9 @@ public class SchoolServiceImplIntegrationTest {
                 create(SchoolDTO.builder().name("name").address("address").studentIds(studentIds).build());
         schoolDTO.setName("n");
         schoolDTO.setAddress("s");
+
         SchoolDTO updatedSchoolDTO = schoolService.update(schoolDTO);
+
         assertEquals(schoolDTO, updatedSchoolDTO);
     }
 
@@ -461,6 +568,7 @@ public class SchoolServiceImplIntegrationTest {
         schoolDTO.setId(22L);
         schoolDTO.setName("n");
         schoolDTO.setAddress("s");
+
         schoolService.update(schoolDTO);
     }
 
@@ -475,6 +583,7 @@ public class SchoolServiceImplIntegrationTest {
         schoolDTO.setName("n");
         schoolDTO.setAddress("s");
         schoolDTO.setStudentIds(studentIdsUpdate);
+
         schoolService.update(schoolDTO);
     }
 
@@ -487,7 +596,9 @@ public class SchoolServiceImplIntegrationTest {
         schoolService.remove(schoolDTO.getId());
         Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
         PaginationSchoolDto paginationSchoolDto = PaginationSchoolDto.builder().sorter(sorter).build();
+
         List<SchoolDTO> all = schoolService.getAll(paginationSchoolDto);
+
         assertEquals(0, all.size());
     }
 

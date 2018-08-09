@@ -1,7 +1,7 @@
 package liga.school.sevice.service;
 
-import liga.school.sevice.dto.PaginationSchoolDto;
-import liga.school.sevice.dto.SchoolDTO;
+import liga.school.sevice.transport.dto.PaginationSchoolDto;
+import liga.school.sevice.transport.dto.SchoolDTO;
 
 import java.util.List;
 
