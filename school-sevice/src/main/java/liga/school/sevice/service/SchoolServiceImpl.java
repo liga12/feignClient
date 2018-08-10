@@ -2,16 +2,15 @@ package liga.school.sevice.service;
 
 import liga.school.sevice.domain.entity.School;
 import liga.school.sevice.domain.repository.SchoolRepository;
+import liga.school.sevice.exception.SchoolNotFoundException;
+import liga.school.sevice.exception.StudentNotFoundException;
 import liga.school.sevice.transport.dto.PaginationSchoolDto;
 import liga.school.sevice.transport.dto.SchoolDTO;
 import liga.school.sevice.transport.dto.Sorter;
-import liga.school.sevice.exception.SchoolNotFoundException;
-import liga.school.sevice.exception.StudentNotFoundException;
 import liga.school.sevice.transport.mapper.SchoolMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,12 +28,16 @@ public class SchoolServiceImpl implements SchoolService {
     @Transactional
     public List<SchoolDTO> getAll(PaginationSchoolDto dto) {
         Sorter sorter = dto.getSorter();
-        int page = sorter.getPage();
-        int size = sorter.getSize();
-        Sort.Direction sortDirection = sorter.getSortDirection();
-        String sortBy = sorter.getSortBy();
-        PageRequest pageRequest = PageRequest.of(page, size, sortDirection, sortBy);
-        Page<School> result = schoolRepository.findAll(SchoolSearchSpecification.schoolFilter(dto),pageRequest);
+        PageRequest pageRequest = PageRequest.of(
+                sorter.getPage(),
+                sorter.getSize(),
+                sorter.getSortDirection(),
+                sorter.getSortBy()
+        );
+        Page<School> result = schoolRepository.findAll(
+                SchoolSearchSpecification.schoolFilter(dto),
+                pageRequest
+        );
         return mapper.toDto(result.getContent());
     }
 
@@ -45,39 +48,43 @@ public class SchoolServiceImpl implements SchoolService {
     }
 
     @Override
-    public boolean existById(Long id) {
-        boolean result = schoolRepository.existsById(id);
-        if (!result){
-            throw new SchoolNotFoundException();
-        }
-        return true;
-    }
-
-    @Override
     @Transactional
     public SchoolDTO create(SchoolDTO dto) {
         List<String> studentIds = dto.getStudentIds();
-        if (!studentFeignService.existsStudentsByIds(studentIds))
+        if (!studentFeignService.existsAllStudentsByIds(studentIds)) {
             throw new StudentNotFoundException();
-        School school = mapper.toEntity(dto);
-        School save = schoolRepository.save(school);
-        return mapper.toDto(save);
+        }
+        return mapper.toDto(
+                schoolRepository.save(
+                        mapper.toEntity(dto)
+                )
+        );
     }
 
     @Override
     public SchoolDTO update(SchoolDTO dto) {
         Long id = dto.getId();
-        existById(id);
+        validateExistingById(id);
         List<String> studentIds = dto.getStudentIds();
-        if (!studentFeignService.existsStudentsByIds(studentIds)) {
+        if (!studentFeignService.existsAllStudentsByIds(studentIds)) {
             throw new StudentNotFoundException();
         }
-        return mapper.toDto(schoolRepository.save(mapper.toEntity(dto)));
+        return mapper.toDto(
+                schoolRepository.save(
+                        mapper.toEntity(dto)
+                )
+        );
     }
 
     @Override
     public void remove(Long id) {
-        existById(id);
+        validateExistingById(id);
         schoolRepository.deleteById(id);
+    }
+
+    private void validateExistingById(Long id) {
+        if (!schoolRepository.existsById(id)) {
+            throw new SchoolNotFoundException();
+        }
     }
 }

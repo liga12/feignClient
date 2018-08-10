@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PaginationSchoolDto {
-    Sorter sorter;
+    private Sorter sorter;
     private Long id;
     private String name;
     private String address;

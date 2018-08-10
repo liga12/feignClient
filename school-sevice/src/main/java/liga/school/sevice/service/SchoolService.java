@@ -11,8 +11,6 @@ public interface SchoolService {
 
     SchoolDTO getById(Long id);
 
-    boolean existById(Long id);
-
     SchoolDTO create(SchoolDTO dto);
 
     SchoolDTO update(SchoolDTO dto);

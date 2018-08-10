@@ -9,14 +9,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/school")
+@RequestMapping("/schools")
 @RequiredArgsConstructor
 public class SchoolController {
 
     private final SchoolService schoolService;
 
-    @PostMapping("/")
-    public List<SchoolDTO> getSchools(@RequestBody PaginationSchoolDto dto) {
+    @GetMapping
+    public List<SchoolDTO> getSchools(PaginationSchoolDto dto) {
         return schoolService.getAll(dto);
     }
 

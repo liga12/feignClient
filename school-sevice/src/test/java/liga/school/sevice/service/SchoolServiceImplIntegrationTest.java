@@ -43,7 +43,7 @@ public class SchoolServiceImplIntegrationTest {
     @Test
     public void testGetAll() {
         List<String> studentIds = Collections.singletonList("1");
-        when(feignService.existsStudentsByIds(studentIds)).thenReturn(true);
+        when(feignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
         SchoolDTO schoolDTO = schoolService.
                 create(SchoolDTO.builder().name("name").address("address").studentIds(studentIds).build());
         SchoolDTO schoolDTO2 = schoolService.
@@ -60,7 +60,7 @@ public class SchoolServiceImplIntegrationTest {
     @Test
     public void testGetAllById() {
         List<String> studentIds = Collections.singletonList("1");
-        when(feignService.existsStudentsByIds(studentIds)).thenReturn(true);
+        when(feignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
         SchoolDTO schoolDTO = schoolService.
                 create(SchoolDTO.builder().name("name1").address("address").studentIds(studentIds).build());
         schoolService.create(SchoolDTO.builder().name("name2").address("address").studentIds(studentIds).build());
@@ -77,7 +77,7 @@ public class SchoolServiceImplIntegrationTest {
     @Test
     public void testGetAllByIdEmpty() {
         List<String> studentIds = Collections.singletonList("1");
-        when(feignService.existsStudentsByIds(studentIds)).thenReturn(true);
+        when(feignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
         schoolService.create(SchoolDTO.builder().name("name1").address("address").studentIds(studentIds).build());
         schoolService.create(SchoolDTO.builder().name("supername").address("address").studentIds(studentIds).build());
         Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
@@ -92,7 +92,7 @@ public class SchoolServiceImplIntegrationTest {
     @Test
     public void testGetAllByName() {
         List<String> studentIds = Collections.singletonList("1");
-        when(feignService.existsStudentsByIds(studentIds)).thenReturn(true);
+        when(feignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
         SchoolDTO schoolDTO = schoolService.
                 create(SchoolDTO.builder().name("name1").address("address").studentIds(studentIds).build());
         schoolService.create(SchoolDTO.builder().name("name2").address("address").studentIds(studentIds).build());
@@ -108,7 +108,7 @@ public class SchoolServiceImplIntegrationTest {
     @Test
     public void testGetAllByNameLike() {
         List<String> studentIds = Collections.singletonList("1");
-        when(feignService.existsStudentsByIds(studentIds)).thenReturn(true);
+        when(feignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
         SchoolDTO schoolDTO = schoolService
                 .create(SchoolDTO.builder().name("name1").address("address").studentIds(studentIds).build());
         SchoolDTO schoolDTO2 = schoolService
@@ -125,7 +125,7 @@ public class SchoolServiceImplIntegrationTest {
     @Test
     public void testGetAllByNameEmpty() {
         List<String> studentIds = Collections.singletonList("1");
-        when(feignService.existsStudentsByIds(studentIds)).thenReturn(true);
+        when(feignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
         schoolService.create(SchoolDTO.builder().name("name1").address("address").studentIds(studentIds).build());
         schoolService.create(SchoolDTO.builder().name("supername").address("address").studentIds(studentIds).build());
         Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
@@ -140,7 +140,7 @@ public class SchoolServiceImplIntegrationTest {
     @Test
     public void testGetAllByAddress() {
         List<String> studentIds = Collections.singletonList("1");
-        when(feignService.existsStudentsByIds(studentIds)).thenReturn(true);
+        when(feignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
         SchoolDTO schoolDTO = schoolService.
                 create(SchoolDTO.builder().name("name1").address("address2").studentIds(studentIds).build());
         schoolService.
@@ -157,7 +157,7 @@ public class SchoolServiceImplIntegrationTest {
     @Test
     public void testGetAllByAddressLike() {
         List<String> studentIds = Collections.singletonList("1");
-        when(feignService.existsStudentsByIds(studentIds)).thenReturn(true);
+        when(feignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
         SchoolDTO schoolDTO = schoolService.
                 create(SchoolDTO.builder().name("name1").address("address2").studentIds(studentIds).build());
         SchoolDTO schoolDTO2 = schoolService.
@@ -174,7 +174,7 @@ public class SchoolServiceImplIntegrationTest {
     @Test
     public void testGetAllByAddressEmpty() {
         List<String> studentIds = Collections.singletonList("1");
-        when(feignService.existsStudentsByIds(studentIds)).thenReturn(true);
+        when(feignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
         schoolService.create(SchoolDTO.builder().name("name1").address("address2").studentIds(studentIds).build());
         schoolService.create(SchoolDTO.builder().name("supername").address("superad").studentIds(studentIds).build());
         Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
@@ -190,8 +190,8 @@ public class SchoolServiceImplIntegrationTest {
     public void testGetAllByStudentIds() {
         List<String> studentIds = Collections.singletonList("1");
         List<String> studentIds2 = Collections.singletonList("2");
-        when(feignService.existsStudentsByIds(studentIds)).thenReturn(true);
-        when(feignService.existsStudentsByIds(studentIds2)).thenReturn(true);
+        when(feignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
+        when(feignService.existsAllStudentsByIds(studentIds2)).thenReturn(true);
         SchoolDTO schoolDTO = schoolService.
                 create(SchoolDTO.builder().name("name1").address("address").studentIds(studentIds).build());
         schoolService.create(SchoolDTO.builder().name("name2").address("address").studentIds(studentIds2).build());
@@ -209,8 +209,8 @@ public class SchoolServiceImplIntegrationTest {
     public void testGetAllByStudentIdsMany() {
         List<String> studentIds = Collections.singletonList("1");
         List<String> studentIds2 = Arrays.asList("1", "2");
-        when(feignService.existsStudentsByIds(studentIds)).thenReturn(true);
-        when(feignService.existsStudentsByIds(studentIds2)).thenReturn(true);
+        when(feignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
+        when(feignService.existsAllStudentsByIds(studentIds2)).thenReturn(true);
         SchoolDTO schoolDTO = schoolService
                 .create(SchoolDTO.builder().name("name1").address("address").studentIds(studentIds).build());
         SchoolDTO schoolDTO2 = schoolService
@@ -228,8 +228,8 @@ public class SchoolServiceImplIntegrationTest {
     public void testGetAllByStudentIdsEmpty() {
         List<String> studentIds = Collections.singletonList("1");
         List<String> studentIds2 = Collections.singletonList("2");
-        when(feignService.existsStudentsByIds(studentIds)).thenReturn(true);
-        when(feignService.existsStudentsByIds(studentIds2)).thenReturn(true);
+        when(feignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
+        when(feignService.existsAllStudentsByIds(studentIds2)).thenReturn(true);
         schoolService.create(SchoolDTO.builder().name("name1").address("address").studentIds(studentIds).build());
         schoolService.create(SchoolDTO.builder().name("supername").address("address").studentIds(studentIds).build());
         Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
@@ -244,7 +244,7 @@ public class SchoolServiceImplIntegrationTest {
     @Test
     public void testGetAllByIdAndName() {
         List<String> studentIds = Collections.singletonList("1");
-        when(feignService.existsStudentsByIds(studentIds)).thenReturn(true);
+        when(feignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
         SchoolDTO schoolDTO = schoolService.
                 create(SchoolDTO.builder().name("name1").address("address").studentIds(studentIds).build());
         schoolService.create(SchoolDTO.builder().name("name2").address("saddress").studentIds(studentIds).build());
@@ -260,7 +260,7 @@ public class SchoolServiceImplIntegrationTest {
     @Test
     public void testGetAllByIdAndNameEmpty() {
         List<String> studentIds = Collections.singletonList("1");
-        when(feignService.existsStudentsByIds(studentIds)).thenReturn(true);
+        when(feignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
         SchoolDTO schoolDTO = schoolService.
                 create(SchoolDTO.builder().name("name1").address("address").studentIds(studentIds).build());
         schoolService.create(SchoolDTO.builder().name("name2").address("saddress").studentIds(studentIds).build());
@@ -276,7 +276,7 @@ public class SchoolServiceImplIntegrationTest {
     @Test
     public void testGetAllByIdAndAddress() {
         List<String> studentIds = Collections.singletonList("1");
-        when(feignService.existsStudentsByIds(studentIds)).thenReturn(true);
+        when(feignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
         SchoolDTO schoolDTO = schoolService.
                 create(SchoolDTO.builder().name("name1").address("address").studentIds(studentIds).build());
         schoolService.create(SchoolDTO.builder().name("name2").address("saddress").studentIds(studentIds).build());
@@ -292,7 +292,7 @@ public class SchoolServiceImplIntegrationTest {
     @Test
     public void testGetAllByIdAndAddressEmpty() {
         List<String> studentIds = Collections.singletonList("1");
-        when(feignService.existsStudentsByIds(studentIds)).thenReturn(true);
+        when(feignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
         SchoolDTO schoolDTO = schoolService.
                 create(SchoolDTO.builder().name("name1").address("address").studentIds(studentIds).build());
         schoolService.create(SchoolDTO.builder().name("name2").address("saddress").studentIds(studentIds).build());
@@ -309,8 +309,8 @@ public class SchoolServiceImplIntegrationTest {
     public void testGetAllByIdAndStudentIds() {
         List<String> studentIds = Collections.singletonList("1");
         List<String> studentIds2 = Arrays.asList("1", "2");
-        when(feignService.existsStudentsByIds(studentIds)).thenReturn(true);
-        when(feignService.existsStudentsByIds(studentIds2)).thenReturn(true);
+        when(feignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
+        when(feignService.existsAllStudentsByIds(studentIds2)).thenReturn(true);
         SchoolDTO schoolDTO = schoolService.
                 create(SchoolDTO.builder().name("name1").address("address").studentIds(studentIds).build());
         schoolService.create(SchoolDTO.builder().name("name2").address("saddress").studentIds(studentIds2).build());
@@ -327,8 +327,8 @@ public class SchoolServiceImplIntegrationTest {
     public void testGetAllByIdAndStudentIdsEmpty() {
         List<String> studentIds = Collections.singletonList("1");
         List<String> studentIds2 = Arrays.asList("1", "2");
-        when(feignService.existsStudentsByIds(studentIds)).thenReturn(true);
-        when(feignService.existsStudentsByIds(studentIds2)).thenReturn(true);
+        when(feignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
+        when(feignService.existsAllStudentsByIds(studentIds2)).thenReturn(true);
         SchoolDTO schoolDTO = schoolService.
                 create(SchoolDTO.builder().name("name1").address("address").studentIds(studentIds).build());
         schoolService.create(SchoolDTO.builder().name("name2").address("saddress").studentIds(studentIds2).build());
@@ -344,7 +344,7 @@ public class SchoolServiceImplIntegrationTest {
     @Test
     public void testGetAllByNameAndAddress() {
         List<String> studentIds = Collections.singletonList("1");
-        when(feignService.existsStudentsByIds(studentIds)).thenReturn(true);
+        when(feignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
         SchoolDTO schoolDTO = schoolService.
                 create(SchoolDTO.builder().name("name1").address("maddress").studentIds(studentIds).build());
         schoolService.create(SchoolDTO.builder().name("name2").address("saddress").studentIds(studentIds).build());
@@ -360,7 +360,7 @@ public class SchoolServiceImplIntegrationTest {
     @Test
     public void testGetAllByNameAndAddressTwoItems() {
         List<String> studentIds = Collections.singletonList("1");
-        when(feignService.existsStudentsByIds(studentIds)).thenReturn(true);
+        when(feignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
         SchoolDTO schoolDTO = schoolService.
                 create(SchoolDTO.builder().name("name1").address("maddress").studentIds(studentIds).build());
         SchoolDTO schoolDTO2 = schoolService.
@@ -377,7 +377,7 @@ public class SchoolServiceImplIntegrationTest {
     @Test
     public void testGetAllByNameAndAddressEmpty() {
         List<String> studentIds = Collections.singletonList("1");
-        when(feignService.existsStudentsByIds(studentIds)).thenReturn(true);
+        when(feignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
         schoolService.create(SchoolDTO.builder().name("name1").address("maddress").studentIds(studentIds).build());
         schoolService.create(SchoolDTO.builder().name("name2").address("saddress").studentIds(studentIds).build());
         Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
@@ -393,8 +393,8 @@ public class SchoolServiceImplIntegrationTest {
     public void testGetAllByNameAndStudentIds() {
         List<String> studentIds = Collections.singletonList("1");
         List<String> studentIds2 = Collections.singletonList("2");
-        when(feignService.existsStudentsByIds(studentIds)).thenReturn(true);
-        when(feignService.existsStudentsByIds(studentIds2)).thenReturn(true);
+        when(feignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
+        when(feignService.existsAllStudentsByIds(studentIds2)).thenReturn(true);
         schoolService.create(SchoolDTO.builder().name("name1").address("maddress").studentIds(studentIds).build());
         SchoolDTO schoolDTO2 = schoolService.create(SchoolDTO.builder().name("name2").address("saddress").studentIds(studentIds2).build());
         Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
@@ -410,8 +410,8 @@ public class SchoolServiceImplIntegrationTest {
     public void testGetAllByNameAndStudentIdsTwoItems() {
         List<String> studentIds = Collections.singletonList("1");
         List<String> studentIds2 = Arrays.asList("1", "2");
-        when(feignService.existsStudentsByIds(studentIds)).thenReturn(true);
-        when(feignService.existsStudentsByIds(studentIds2)).thenReturn(true);
+        when(feignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
+        when(feignService.existsAllStudentsByIds(studentIds2)).thenReturn(true);
         SchoolDTO schoolDTO = schoolService.
                 create(SchoolDTO.builder().name("name1").address("maddress").studentIds(studentIds).build());
         SchoolDTO schoolDTO2 = schoolService.create(SchoolDTO.builder().name("name2").address("saddress").studentIds(studentIds).build());
@@ -427,7 +427,7 @@ public class SchoolServiceImplIntegrationTest {
     @Test
     public void testGetAllByNameAndStudentIdsEmpty() {
         List<String> studentIds = Collections.singletonList("1");
-        when(feignService.existsStudentsByIds(studentIds)).thenReturn(true);
+        when(feignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
         schoolService.create(SchoolDTO.builder().name("name1").address("maddress").studentIds(studentIds).build());
         schoolService.create(SchoolDTO.builder().name("name2").address("saddress").studentIds(studentIds).build());
         Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
@@ -443,8 +443,8 @@ public class SchoolServiceImplIntegrationTest {
     public void testGetAllByAddressAndStudentIds() {
         List<String> studentIds = Collections.singletonList("1");
         List<String> studentIds2 = Collections.singletonList("2");
-        when(feignService.existsStudentsByIds(studentIds)).thenReturn(true);
-        when(feignService.existsStudentsByIds(studentIds2)).thenReturn(true);
+        when(feignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
+        when(feignService.existsAllStudentsByIds(studentIds2)).thenReturn(true);
         SchoolDTO schoolDTO = schoolService.
                 create(SchoolDTO.builder().name("name1").address("maddress").studentIds(studentIds).build());
         schoolService.create(SchoolDTO.builder().name("name2").address("saddress").studentIds(studentIds2).build());
@@ -461,8 +461,8 @@ public class SchoolServiceImplIntegrationTest {
     public void testGetAllByAddressAndStudentIdsTwoItems() {
         List<String> studentIds = Collections.singletonList("1");
         List<String> studentIds2 = Arrays.asList("1", "2");
-        when(feignService.existsStudentsByIds(studentIds)).thenReturn(true);
-        when(feignService.existsStudentsByIds(studentIds2)).thenReturn(true);
+        when(feignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
+        when(feignService.existsAllStudentsByIds(studentIds2)).thenReturn(true);
         SchoolDTO schoolDTO = schoolService.
                 create(SchoolDTO.builder().name("name1").address("maddress").studentIds(studentIds).build());
         SchoolDTO schoolDTO2 = schoolService.create(SchoolDTO.builder().name("name2").address("saddress").studentIds(studentIds).build());
@@ -478,7 +478,7 @@ public class SchoolServiceImplIntegrationTest {
     @Test
     public void testGetAllByAddressAndStudentIdsEmpty() {
         List<String> studentIds = Collections.singletonList("1");
-        when(feignService.existsStudentsByIds(studentIds)).thenReturn(true);
+        when(feignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
         schoolService.create(SchoolDTO.builder().name("name1").address("maddress").studentIds(studentIds).build());
         schoolService.create(SchoolDTO.builder().name("name2").address("saddress").studentIds(studentIds).build());
         Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
@@ -494,7 +494,7 @@ public class SchoolServiceImplIntegrationTest {
     @Test
     public void testGetById() {
         List<String> studentIds = Collections.singletonList("1");
-        when(feignService.existsStudentsByIds(studentIds)).thenReturn(true);
+        when(feignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
         SchoolDTO schoolDTO = schoolService.
                 create(SchoolDTO.builder().name("name").address("address").studentIds(studentIds).build());
 
@@ -511,24 +511,24 @@ public class SchoolServiceImplIntegrationTest {
     @Test
     public void testExistById() {
         List<String> studentIds = Collections.singletonList("1");
-        when(feignService.existsStudentsByIds(studentIds)).thenReturn(true);
+        when(feignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
         SchoolDTO schoolDTO = schoolService.
                 create(SchoolDTO.builder().name("name").address("address").studentIds(studentIds).build());
 
-        boolean result = schoolService.existById(schoolDTO.getId());
+//        boolean result = schoolService.existById(schoolDTO.getId());
 
-        assertTrue(result);
+//        assertTrue(result);
     }
 
-    @Test(expected = SchoolNotFoundException.class)
-    public void testExistByIdWithSchoolNotFound() {
-        schoolService.existById(1L);
-    }
+//    @Test(expected = SchoolNotFoundException.class)
+//    public void testExistByIdWithSchoolNotFound() {
+//        schoolService.existById(1L);
+//    }
 
     @Test
     public void testCreate() {
         List<String> studentIds = Collections.singletonList("1");
-        when(feignService.existsStudentsByIds(studentIds)).thenReturn(true);
+        when(feignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
         SchoolDTO schoolDTO = schoolService.
                 create(SchoolDTO.builder().name("name1").address("address").studentIds(studentIds).build());
 
@@ -540,7 +540,7 @@ public class SchoolServiceImplIntegrationTest {
     @Test(expected = StudentNotFoundException.class)
     public void testCreateWithStudentNotFound() {
         List<String> studentIds = Collections.singletonList("1");
-        when(feignService.existsStudentsByIds(studentIds)).thenReturn(false);
+        when(feignService.existsAllStudentsByIds(studentIds)).thenReturn(false);
 
         schoolService.create(SchoolDTO.builder().name("name").address("address").studentIds(studentIds).build());
     }
@@ -548,7 +548,7 @@ public class SchoolServiceImplIntegrationTest {
     @Test
     public void testUpdate() {
         List<String> studentIds = Collections.singletonList("1");
-        when(feignService.existsStudentsByIds(studentIds)).thenReturn(true);
+        when(feignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
         SchoolDTO schoolDTO = schoolService.
                 create(SchoolDTO.builder().name("name").address("address").studentIds(studentIds).build());
         schoolDTO.setName("n");
@@ -562,7 +562,7 @@ public class SchoolServiceImplIntegrationTest {
     @Test(expected = SchoolNotFoundException.class)
     public void testUpdateWithSchoolNotFound() {
         List<String> studentIds = Collections.singletonList("1");
-        when(feignService.existsStudentsByIds(studentIds)).thenReturn(true);
+        when(feignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
         SchoolDTO schoolDTO = schoolService.
                 create(SchoolDTO.builder().name("name").address("address").studentIds(studentIds).build());
         schoolDTO.setId(22L);
@@ -576,8 +576,8 @@ public class SchoolServiceImplIntegrationTest {
     public void testUpdateWithStudentNotFound() {
         List<String> studentIds = Collections.singletonList("1");
         List<String> studentIdsUpdate = Collections.singletonList("2");
-        when(feignService.existsStudentsByIds(studentIds)).thenReturn(true);
-        when(feignService.existsStudentsByIds(studentIdsUpdate)).thenReturn(false);
+        when(feignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
+        when(feignService.existsAllStudentsByIds(studentIdsUpdate)).thenReturn(false);
         SchoolDTO schoolDTO = schoolService.
                 create(SchoolDTO.builder().name("name").address("address").studentIds(studentIds).build());
         schoolDTO.setName("n");
@@ -590,7 +590,7 @@ public class SchoolServiceImplIntegrationTest {
     @Test
     public void testRemove() {
         List<String> studentIds = Collections.singletonList("1");
-        when(feignService.existsStudentsByIds(studentIds)).thenReturn(true);
+        when(feignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
         SchoolDTO schoolDTO = schoolService.create(
                 SchoolDTO.builder().name("name").address("address").studentIds(studentIds).build());
         schoolService.remove(schoolDTO.getId());
@@ -605,7 +605,7 @@ public class SchoolServiceImplIntegrationTest {
     @Test(expected = SchoolNotFoundException.class)
     public void testRemoveSchoolNotFound() {
         List<String> studentIds = Collections.singletonList("1");
-        when(feignService.existsStudentsByIds(studentIds)).thenReturn(true);
+        when(feignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
         schoolService.remove(1L);
     }
 }

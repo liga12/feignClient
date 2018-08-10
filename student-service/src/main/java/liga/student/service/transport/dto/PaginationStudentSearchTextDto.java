@@ -13,4 +13,6 @@ public class PaginationStudentSearchTextDto {
     private Sorter sorter;
     private String text;
     private Boolean caseSensitive;
+
+
 }

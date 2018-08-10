@@ -79,7 +79,7 @@ public class SchoolServiceImplTest {
         Long id = 1L;
         when(schoolRepository.existsById(id)).thenReturn(true);
 
-        schoolService.existById(id);
+//        schoolService.existById(id);
 
         verify(schoolRepository, times(1)).existsById(id);
     }
@@ -91,14 +91,14 @@ public class SchoolServiceImplTest {
                 .builder().id(1L).name("name").address("address").studentIds(studentIds).build();
         School school = School
                 .builder().id(1L).name("name").address("address").studentIds(studentIds).build();
-        when(studentFeignService.existsStudentsByIds(studentIds)).thenReturn(true);
+        when(studentFeignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
         when(mapper.toEntity(schoolDTO)).thenReturn(school);
         when(schoolRepository.save(school)).thenReturn(school);
         when(mapper.toDto(school)).thenReturn(schoolDTO);
 
         schoolService.create(schoolDTO);
 
-        verify(studentFeignService, times(1)).existsStudentsByIds(studentIds);
+        verify(studentFeignService, times(1)).existsAllStudentsByIds(studentIds);
         verify(mapper, times(1)).toEntity(schoolDTO);
         verify(schoolRepository, times(1)).save(school);
         verify(mapper, times(1)).toDto(school);
@@ -111,16 +111,16 @@ public class SchoolServiceImplTest {
                 .builder().id(1L).name("name").address("address").studentIds(studentIds).build();
         School school = School
                 .builder().id(1L).name("name").address("address").studentIds(studentIds).build();
-        doReturn(true).when(schoolService).existById(schoolDTO.getId());
-        when(studentFeignService.existsStudentsByIds(studentIds)).thenReturn(true);
+//        doReturn(true).when(schoolService).existById(schoolDTO.getId());
+        when(studentFeignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
         when(mapper.toEntity(schoolDTO)).thenReturn(school);
         when(schoolRepository.save(school)).thenReturn(school);
         when(mapper.toDto(school)).thenReturn(schoolDTO);
 
         schoolService.update(schoolDTO);
 
-        verify(schoolService, times(1)).existById(schoolDTO.getId());
-        verify(studentFeignService, times(1)).existsStudentsByIds(studentIds);
+//        verify(schoolService, times(1)).existById(schoolDTO.getId());
+        verify(studentFeignService, times(1)).existsAllStudentsByIds(studentIds);
         verify(mapper, times(1)).toEntity(schoolDTO);
         verify(schoolRepository, times(1)).save(school);
         verify(mapper, times(1)).toDto(school);
@@ -129,7 +129,7 @@ public class SchoolServiceImplTest {
     @Test
     public void testRemove() {
         Long id = 1L;
-        doReturn(true).when(schoolService).existById(id);
+//        doReturn(true).when(schoolService).existById(id);
         doNothing().when(schoolRepository).deleteById(id);
 
         schoolService.remove(id);

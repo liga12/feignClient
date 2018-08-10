@@ -3,6 +3,7 @@ package liga.school.sevice.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import liga.school.sevice.SchoolClientService;
+import liga.school.sevice.domain.entity.School;
 import liga.school.sevice.domain.repository.SchoolRepository;
 import liga.school.sevice.transport.dto.PaginationSchoolDto;
 import liga.school.sevice.transport.dto.SchoolDTO;
@@ -17,6 +18,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -25,10 +27,12 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -55,19 +59,19 @@ public class SchoolControllerIntegrationTest {
 
     @Autowired
     private SchoolService schoolService;
-    private static ConfigurableApplicationContext eurekaServer;
+//    private static ConfigurableApplicationContext eurekaServer;
 
-    @BeforeClass
-    public static void startEureka() {
-        eurekaServer = SpringApplication.run(EurekaServer.class,
-                "--server.port=8761",
-                "--eureka.instance.leaseRenewalIntervalInSeconds=1");
-    }
+//    @BeforeClass
+//    public static void startEureka() {
+//        eurekaServer = SpringApplication.run(EurekaServer.class,
+//                "--server.port=8761",
+//                "--eureka.instance.leaseRenewalIntervalInSeconds=1");
+//    }
 
-    @AfterClass
-    public static void closeEureka() {
-        eurekaServer.close();
-    }
+//    @AfterClass
+//    public static void closeEureka() {
+//        eurekaServer.close();
+//    }
 
     @Before
     public void setUp() {
@@ -76,7 +80,7 @@ public class SchoolControllerIntegrationTest {
 
     @Test
     public void testGetStudents() throws Exception {
-        when(studentFeignService.existsStudentsByIds(any())).thenReturn(true);
+        when(studentFeignService.existsAllStudentsByIds(any())).thenReturn(true);
         SchoolDTO first = schoolService.create(SchoolDTO.builder().
                 name("n").address("a").studentIds(Collections.singletonList("1")).build());
         SchoolDTO second = schoolService.create(SchoolDTO.builder().name("n1").
@@ -86,37 +90,39 @@ public class SchoolControllerIntegrationTest {
         Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
         PaginationSchoolDto paginationSchoolDto = PaginationSchoolDto.builder().sorter(sorter).build();
 
-        mockMvc.perform(post("/school/").contentType(MediaType.APPLICATION_JSON).content(mapToJson(paginationSchoolDto)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(first.getId()))
-                .andExpect(jsonPath("$[0].name").value(first.getName()))
-                .andExpect(jsonPath("$[0].address").value(first.getAddress()))
-                .andExpect(jsonPath("$[0].studentIds[0]").value(first.getStudentIds().get(0)))
-                .andExpect(jsonPath("$[1].id").value(second.getId()))
-                .andExpect(jsonPath("$[1].name").value(second.getName()))
-                .andExpect(jsonPath("$[1].address").value(second.getAddress()))
-                .andExpect(jsonPath("$[1].studentIds[0]").value(second.getStudentIds().get(0)));
+//        mockMvc.perform(get("/schools").contentType(MediaType.APPLICATION_JSON).content(mapToJson(paginationSchoolDto)))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$[0].id").value(first.getId()))
+//                .andExpect(jsonPath("$[0].name").value(first.getName()))
+//                .andExpect(jsonPath("$[0].address").value(first.getAddress()))
+//                .andExpect(jsonPath("$[0].studentIds[0]").value(first.getStudentIds().get(0)))
+//                .andExpect(jsonPath("$[1].id").value(second.getId()))
+//                .andExpect(jsonPath("$[1].name").value(second.getName()))
+//                .andExpect(jsonPath("$[1].address").value(second.getAddress()))
+//                .andExpect(jsonPath("$[1].studentIds[0]").value(second.getStudentIds().get(0)));
     }
 
     @Test
+    @Sql(scripts = "/scripts/initSchools.sql")
     public void testGetStudentById() throws Exception {
         List<String> studentIds = Collections.singletonList("1");
-        when(studentFeignService.existsStudentsByIds(studentIds)).thenReturn(true);
-        SchoolDTO first = schoolService.create(SchoolDTO.builder().id(1L).
-                name("n").address("a").studentIds(studentIds).build());
+        School school = schoolRepository.getOne(1L);
+//        when(studentFeignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
+//        SchoolDTO first = schoolService.create(SchoolDTO.builder().id(1L).
+//                name("n").address("a").studentIds(studentIds).build());
 
 
-        mockMvc.perform(get("/school/{id}", first.getId()))
+        mockMvc.perform(get("/schools/{id}", school.getId()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(first.getId()))
-                .andExpect(jsonPath("$.name").value(first.getName()))
-                .andExpect(jsonPath("$.address").value(first.getAddress()))
-                .andExpect(jsonPath("$.studentIds[0]").value(first.getStudentIds().get(0)));
+                .andExpect(jsonPath("$.id").value(school.getId()))
+                .andExpect(jsonPath("$.name").value(school.getName()))
+                .andExpect(jsonPath("$.address").value(school.getAddress()))
+                .andExpect(jsonPath("$.studentIds[0]").value(school.getStudentIds().get(0)));
     }
 
     @Test
     public void testGetStudentByIdWithSchoolNotFoundException() throws Exception {
-        mockMvc.perform(get("/school/{id}", "1"))
+        mockMvc.perform(get("/schools/{id}", "1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.error").value("School not found"));
     }
@@ -126,9 +132,9 @@ public class SchoolControllerIntegrationTest {
         List<String> studentIds = Collections.singletonList("1");
         SchoolDTO school = SchoolDTO.builder().
                 name("n").address("a").studentIds(studentIds).build();
-        when(studentFeignService.existsStudentsByIds(studentIds)).thenReturn(true);
+        when(studentFeignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
 
-        mockMvc.perform(put("/school").contentType(MediaType.APPLICATION_JSON).content(mapToJson(school)))
+        mockMvc.perform(put("/schools").contentType(MediaType.APPLICATION_JSON).content(mapToJson(school)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.name").value(school.getName()))
@@ -141,9 +147,9 @@ public class SchoolControllerIntegrationTest {
         List<String> studentIds = Collections.singletonList("1");
         SchoolDTO school = SchoolDTO.builder().
                 name("n").address("a").studentIds(studentIds).build();
-        when(studentFeignService.existsStudentsByIds(studentIds)).thenReturn(false);
+        when(studentFeignService.existsAllStudentsByIds(studentIds)).thenReturn(false);
 
-        mockMvc.perform(put("/school").contentType(MediaType.APPLICATION_JSON).content(mapToJson(school)))
+        mockMvc.perform(put("/schools").contentType(MediaType.APPLICATION_JSON).content(mapToJson(school)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.error").value("Student not found"));
     }
@@ -151,12 +157,12 @@ public class SchoolControllerIntegrationTest {
     @Test
     public void testUpdateStudent() throws Exception {
         List<String> studentIds = Collections.singletonList("1");
-        when(studentFeignService.existsStudentsByIds(studentIds)).thenReturn(true);
+        when(studentFeignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
         SchoolDTO school = schoolService.create(SchoolDTO.builder().id(1L).
                 name("n").address("a").studentIds(Collections.singletonList("1")).build());
         school.setAddress("aaa");
 
-        mockMvc.perform(post("/school").contentType(MediaType.APPLICATION_JSON).content(mapToJson(school)))
+        mockMvc.perform(post("/schools").contentType(MediaType.APPLICATION_JSON).content(mapToJson(school)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(school.getId()))
                 .andExpect(jsonPath("$.name").value(school.getName()))
@@ -170,7 +176,7 @@ public class SchoolControllerIntegrationTest {
         SchoolDTO school = SchoolDTO.builder().id(1L).
                 name("n").address("a").studentIds( studentIds).build();
         school.setAddress("dd");
-        mockMvc.perform(post("/school").contentType(MediaType.APPLICATION_JSON).content(mapToJson(school)))
+        mockMvc.perform(post("/schools").contentType(MediaType.APPLICATION_JSON).content(mapToJson(school)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.error").value("School not found"));
     }
@@ -179,13 +185,13 @@ public class SchoolControllerIntegrationTest {
     public void testUpdateStudentWithStudentNotFoundException() throws Exception {
         List<String> studentIds = Collections.singletonList("1");
         List<String> studentIdsUpdate = Collections.singletonList("2");
-        when(studentFeignService.existsStudentsByIds(studentIds)).thenReturn(true);
-        when(studentFeignService.existsStudentsByIds(studentIdsUpdate)).thenReturn(false);
+        when(studentFeignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
+        when(studentFeignService.existsAllStudentsByIds(studentIdsUpdate)).thenReturn(false);
         SchoolDTO school = schoolService.create(SchoolDTO.builder().id(1L).
                 name("n").address("a").studentIds(studentIds).build());
         school.setStudentIds(studentIdsUpdate);
 
-        mockMvc.perform(post("/school").contentType(MediaType.APPLICATION_JSON).content(mapToJson(school)))
+        mockMvc.perform(post("/schools").contentType(MediaType.APPLICATION_JSON).content(mapToJson(school)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.error").value("Student not found"));
     }
@@ -193,17 +199,17 @@ public class SchoolControllerIntegrationTest {
     @Test
     public void deleteStudent() throws Exception {
         List<String> studentIds = Collections.singletonList("1");
-        when(studentFeignService.existsStudentsByIds(studentIds)).thenReturn(true);
+        when(studentFeignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
         SchoolDTO first = schoolService.create(SchoolDTO.builder().id(1L).
                 name("n").address("a").studentIds(studentIds).build());
 
-        mockMvc.perform(delete("/school/{id}", first.getId()))
+        mockMvc.perform(delete("/schools/{id}", first.getId()))
                 .andExpect(status().isOk());
     }
 
     @Test
     public void deleteStudentWithSchoolNotFoundException() throws Exception {
-        mockMvc.perform(delete("/school/{id}", "1"))
+        mockMvc.perform(delete("/schools/{id}", "1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.error").value("School not found"));
     }
@@ -212,10 +218,10 @@ public class SchoolControllerIntegrationTest {
         return new ObjectMapper().writeValueAsString(object);
     }
 
-    @Configuration
-    @EnableAutoConfiguration
-    @EnableEurekaServer
-    static class EurekaServer {
-    }
+//    @Configuration
+//    @EnableAutoConfiguration
+//    @EnableEurekaServer
+//    static class EurekaServer {
+//    }
 }
 

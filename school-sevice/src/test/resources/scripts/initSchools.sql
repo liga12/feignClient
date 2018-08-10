@@ -1,0 +1,17 @@
+insert into school (id, address, name) values (1, 'address1', 'name1');
+-- insert into school (id, address, name) values (2, 'address2', 'name2');
+-- insert into school (id, address, name) values (3, 'address3', 'name3');
+-- insert into school (id, address, name) values (4, 'address4', 'name4');
+-- insert into school (id, address, name) values (5, 'address5', 'name5');
+--
+-- insert into student_ids (school_id, student_ids) values (1, '1');
+-- insert into student_ids (school_id, student_ids) values (1, '2');
+-- insert into student_ids (school_id, student_ids) values (1, '3');
+--
+-- insert into student_ids (school_id, student_ids) values (2, '21');
+-- insert into student_ids (school_id, student_ids) values (2, '22');
+-- insert into student_ids (school_id, student_ids) values (2, '23');
+--
+-- insert into student_ids (school_id, student_ids) values (3, '31');
+-- insert into student_ids (school_id, student_ids) values (3, '32');
+-- insert into student_ids (school_id, student_ids) values (3, '33');

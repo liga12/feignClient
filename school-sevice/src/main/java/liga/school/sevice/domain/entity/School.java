@@ -9,7 +9,6 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "school")
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -17,11 +16,8 @@ import java.util.List;
 public class School {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "Id")
     private Long id;
-    @Column(name = "name")
     private String name;
-    @Column(name = "address")
     private String address;
     @ElementCollection
     @CollectionTable(name = "studentIds",joinColumns = @JoinColumn(name = "school_id"))

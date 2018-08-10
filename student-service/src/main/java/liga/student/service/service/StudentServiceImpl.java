@@ -31,8 +31,9 @@ public class StudentServiceImpl implements StudentService {
         Sorter sorter = dto.getSorter();
         PageRequest pageRequest = PageRequest
                 .of(sorter.getPage(), sorter.getSize(), sorter.getSortDirection(), sorter.getSortBy());
-        return mapper.studentToStudentDTO
-                (studentRepository.searchByNamesAndSurname(dto.getText(), dto.getCaseSensitive(), pageRequest));
+        List<Student> students = studentRepository.
+                searchByNamesAndSurname(dto.getText(), dto.getCaseSensitive(), pageRequest);
+        return mapper.studentToStudentDTO(students);
     }
 
     @Override
