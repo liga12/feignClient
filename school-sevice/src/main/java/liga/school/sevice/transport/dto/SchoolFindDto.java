@@ -5,8 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.awt.print.Pageable;
-import java.util.List;
+import java.util.Set;
 
 @Data
 @Builder
@@ -16,5 +15,5 @@ public class SchoolFindDto {
     private Long id;
     private String name;
     private String address;
-    private List<String> studentIds;
+    private Set<String> studentIds;
 }

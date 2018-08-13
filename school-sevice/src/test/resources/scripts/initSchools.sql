@@ -1,6 +1,3 @@
--- delete from school
--- delete from student_ids
-
 insert into school (id, address, name) values (1, 'address11', 'name12');
 insert into school (id, address, name) values (2, 'address22', 'name22');
 insert into school (id, address, name) values (3, 'address31', 'name31');

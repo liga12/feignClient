@@ -28,7 +28,7 @@ class SchoolSearchSpecification {
         return paramValue != null ? criteriaBuilder.like(root.get(param), "%" + paramValue + "%") : null;
     }
 
-    private static Predicate toEqualsPredicate(Root<School> root, String param, List<String> paramValue) {
+    private static Predicate toEqualsPredicate(Root<School> root, String param, Set<String> paramValue) {
         return paramValue != null ?root.join(param).in(paramValue):null;
     }
 }
