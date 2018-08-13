@@ -1,7 +1,7 @@
 package liga.school.sevice.transport.mapper;
 
 import liga.school.sevice.domain.entity.School;
-import liga.school.sevice.transport.dto.SchoolDTO;
+import liga.school.sevice.transport.dto.SchoolDto;
 import lombok.NoArgsConstructor;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
@@ -18,20 +18,20 @@ public class SchoolMapper {
 
     static {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
-        mapperFactory.classMap(SchoolDTO.class, School.class)
+        mapperFactory.classMap(SchoolDto.class, School.class)
                 .byDefault().register();
         mapper = mapperFactory.getMapperFacade();
     }
 
-    public SchoolDTO toDto(final School school) {
-        return mapper.map(school, SchoolDTO.class);
+    public SchoolDto toDto(final School school) {
+        return mapper.map(school, SchoolDto.class);
     }
 
-    public List<SchoolDTO> toDto(final List<School> schools) {
-        return mapper.mapAsList(schools, SchoolDTO.class);
+     List<SchoolDto> toDto(final List<School> schools) {
+        return mapper.mapAsList(schools, SchoolDto.class);
     }
 
-    public School toEntity(final SchoolDTO dto) {
+    public School toEntity(final SchoolDto dto) {
         return mapper.map(dto, School.class);
     }
 }

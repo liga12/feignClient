@@ -1,19 +1,18 @@
 package liga.school.sevice.service;
 
-import liga.school.sevice.transport.dto.PaginationSchoolDto;
-import liga.school.sevice.transport.dto.SchoolDTO;
-
-import java.util.List;
+import liga.school.sevice.transport.dto.SchoolDto;
+import liga.school.sevice.transport.dto.SchoolFindDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface SchoolService {
+    Page<SchoolDto> getAll(SchoolFindDto dto, Pageable pageable);
 
-    List<SchoolDTO> getAll(PaginationSchoolDto dto);
+    SchoolDto getById(Long id);
 
-    SchoolDTO getById(Long id);
+    SchoolDto create(SchoolDto dto);
 
-    SchoolDTO create(SchoolDTO dto);
-
-    SchoolDTO update(SchoolDTO dto);
+    SchoolDto update(SchoolDto dto);
 
     void remove(Long id);
 }

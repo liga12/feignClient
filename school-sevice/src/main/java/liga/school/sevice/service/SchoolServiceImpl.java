@@ -4,19 +4,20 @@ import liga.school.sevice.domain.entity.School;
 import liga.school.sevice.domain.repository.SchoolRepository;
 import liga.school.sevice.exception.SchoolNotFoundException;
 import liga.school.sevice.exception.StudentNotFoundException;
-import liga.school.sevice.transport.dto.PaginationSchoolDto;
-import liga.school.sevice.transport.dto.SchoolDTO;
-import liga.school.sevice.transport.dto.Sorter;
+import liga.school.sevice.transport.dto.SchoolDto;
+import liga.school.sevice.transport.dto.SchoolFindDto;
 import liga.school.sevice.transport.mapper.SchoolMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
-import java.util.List;
+import java.util.Set;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class SchoolServiceImpl implements SchoolService {
 
@@ -25,32 +26,24 @@ public class SchoolServiceImpl implements SchoolService {
     private final StudentService studentFeignService;
 
     @Override
-    @Transactional
-    public List<SchoolDTO> getAll(PaginationSchoolDto dto) {
-        Sorter sorter = dto.getSorter();
-        PageRequest pageRequest = PageRequest.of(
-                sorter.getPage(),
-                sorter.getSize(),
-                sorter.getSortDirection(),
-                sorter.getSortBy()
-        );
+    @Transactional(readOnly = true)
+    public Page<SchoolDto> getAll(SchoolFindDto dto, Pageable pageable) {
         Page<School> result = schoolRepository.findAll(
                 SchoolSearchSpecification.schoolFilter(dto),
-                pageRequest
+                pageable
         );
-        return mapper.toDto(result.getContent());
+        return result.map(mapper::toDto);
     }
 
     @Override
-    @Transactional
-    public SchoolDTO getById(Long id) {
+    @Transactional(readOnly = true)
+    public SchoolDto getById(Long id) {
         return mapper.toDto(schoolRepository.findById(id).orElseThrow(SchoolNotFoundException::new));
     }
 
     @Override
-    @Transactional
-    public SchoolDTO create(SchoolDTO dto) {
-        List<String> studentIds = dto.getStudentIds();
+    public SchoolDto create(SchoolDto dto) {
+        Set<String> studentIds = dto.getStudentIds();
         if (!studentFeignService.existsAllStudentsByIds(studentIds)) {
             throw new StudentNotFoundException();
         }
@@ -62,17 +55,21 @@ public class SchoolServiceImpl implements SchoolService {
     }
 
     @Override
-    public SchoolDTO update(SchoolDTO dto) {
-        Long id = dto.getId();
-        validateExistingById(id);
-        List<String> studentIds = dto.getStudentIds();
-        if (!studentFeignService.existsAllStudentsByIds(studentIds)) {
+    public SchoolDto update(SchoolDto dto) {
+        School storedSchool = schoolRepository.getOne(dto.getId());
+        Set<String> studentIds = dto.getStudentIds();
+        boolean isNotEmptyStudentsIds = !CollectionUtils.isEmpty(studentIds);
+        if (isNotEmptyStudentsIds && !studentFeignService.existsAllStudentsByIds(studentIds)) {
             throw new StudentNotFoundException();
         }
+        storedSchool.setName(dto.getName());
+        storedSchool.setAddress(dto.getAddress());
+        storedSchool.getStudentIds().clear();
+        if (isNotEmptyStudentsIds) {
+            storedSchool.getStudentIds().addAll(dto.getStudentIds());
+        }
         return mapper.toDto(
-                schoolRepository.save(
-                        mapper.toEntity(dto)
-                )
+                schoolRepository.save(storedSchool)
         );
     }
 

@@ -1,7 +1,7 @@
 package liga.school.sevice.transport.mapper;
 
 import liga.school.sevice.domain.entity.School;
-import liga.school.sevice.transport.dto.SchoolDTO;
+import liga.school.sevice.transport.dto.SchoolDto;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,7 +23,7 @@ public class SchoolMapperTest {
 
     @Before
     public void setUp() {
-        school = new School(1L, "name", "address", new ArrayList<>(Collections.singleton("1")));
+        school = new School(1L, "name", "address", new LinkedHashSet<>(Collections.singleton("1")));
     }
 
     @Test
@@ -33,21 +33,21 @@ public class SchoolMapperTest {
 
     @Test
     public void schoolToSchoolDtoList() {
-        School school = new School(2L, "name2", "address2", new ArrayList<>(Collections.singleton("2")));
+        School school = new School(2L, "name2", "address2", new LinkedHashSet<>(Collections.singleton("2")));
         List<School> schools = new ArrayList<>(Arrays.asList(school, this.school));
-        List<SchoolDTO> schoolDTOs = schoolMapper.toDto(schools);
-        for (int i = 0; i < schoolDTOs.size(); i++) {
-            checkStudentData(schools.get(i), schoolDTOs.get(i));
+        List<SchoolDto> schoolDtos = schoolMapper.toDto(schools);
+        for (int i = 0; i < schoolDtos.size(); i++) {
+            checkStudentData(schools.get(i), schoolDtos.get(i));
         }
     }
 
     @Test
     public void schoolDtoToSchool() {
-        SchoolDTO schoolDTO = new SchoolDTO(1L, "name", "address", new ArrayList<>(Collections.singleton("1")));
+        SchoolDto schoolDTO = new SchoolDto(1L, "name", "address", new LinkedHashSet<>(Collections.singleton("1")));
         checkStudentData(schoolMapper.toEntity(schoolDTO), schoolDTO);
     }
 
-    private void checkStudentData(School school, SchoolDTO schoolDTO) {
+    private void checkStudentData(School school, SchoolDto schoolDTO) {
         assertEquals(school.getId(), schoolDTO.getId());
         assertEquals(school.getName(), schoolDTO.getName());
         assertEquals(school.getAddress(), schoolDTO.getAddress());

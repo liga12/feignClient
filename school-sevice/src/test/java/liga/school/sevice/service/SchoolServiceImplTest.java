@@ -1,11 +1,11 @@
 package liga.school.sevice.service;
 
-import liga.school.sevice.transport.dto.PaginationSchoolDto;
-import liga.school.sevice.transport.dto.SchoolDTO;
-import liga.school.sevice.transport.dto.Sorter;
 import liga.school.sevice.domain.entity.School;
-import liga.school.sevice.transport.mapper.SchoolMapper;
 import liga.school.sevice.domain.repository.SchoolRepository;
+import liga.school.sevice.transport.dto.SchoolDto;
+import liga.school.sevice.transport.dto.SchoolFindDto;
+import liga.school.sevice.transport.mapper.SchoolMapper;
+import org.assertj.core.util.Sets;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -13,11 +13,14 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.Collections;
-import java.util.List;
+import java.util.Set;
 
 import static org.mockito.Mockito.*;
 
@@ -37,34 +40,35 @@ public class SchoolServiceImplTest {
 
     @Test
     public void testGetAll() {
-        List<String> studentIds = Collections.singletonList("1");
+        Set<String> studentIds = Sets.newLinkedHashSet("1");
         School school = School.builder().id(1L).name("name").address("address").studentIds(studentIds).build();
-        SchoolDTO schoolDTO = SchoolDTO
-                .builder().name("name").address("address").studentIds(studentIds).build();
-        Sorter sorter = new Sorter(0, 1, Sort.Direction.ASC, "id");
-        int page = sorter.getPage();
-        int size = sorter.getSize();
-        Sort.Direction sortDirection = sorter.getSortDirection();
-        String sortBy = sorter.getSortBy();
-        PageRequest pageRequest = PageRequest.of(page, size, sortDirection, sortBy);
-        PaginationSchoolDto paginationSchoolDto = PaginationSchoolDto.builder().sorter(sorter).build();
-        Page<School> schoolPage = new PageImpl<>(Collections.singletonList(school), pageRequest, 1);
-        when(schoolRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(schoolPage);
-        when(mapper.toDto(Collections.singletonList(school))).thenReturn(Collections.singletonList(schoolDTO));
+        SchoolDto schoolDTO = SchoolDto.builder()
+                .name("name")
+                .address("address")
+                .studentIds(studentIds)
+                .build();
+        when(schoolRepository.findAll(
+                any(Specification.class),
+                any(Pageable.class))).thenReturn(new PageImpl(Collections.singletonList(school)));
+        when(mapper.toDto(school)).thenReturn(schoolDTO);
 
-        schoolService.getAll(paginationSchoolDto);
+        schoolService.getAll(new SchoolFindDto(), PageRequest.of(0, 10));
 
         verify(schoolRepository, times(1)).findAll(any(Specification.class), any(Pageable.class));
-        verify(mapper, times(1)).toDto(Collections.singletonList(school));
+        verify(mapper, times(1)).toDto(school);
     }
 
     @Test
     public void testGetById() {
-        List<String> studentIds = Collections.singletonList("1");
+        Set<String> studentIds = Sets.newLinkedHashSet("1");
         School school = School.builder()
                 .id(1L).name("name").address("address").studentIds(studentIds).build();
-        SchoolDTO schoolDTO = SchoolDTO
-                .builder().id(1L).name("name").address("address").studentIds(studentIds).build();
+        SchoolDto schoolDTO = SchoolDto.builder()
+                .id(1L)
+                .name("name")
+                .address("address")
+                .studentIds(studentIds)
+                .build();
         when(schoolRepository.findById(schoolDTO.getId())).thenReturn(java.util.Optional.ofNullable(school));
         when(mapper.toDto(school)).thenReturn(schoolDTO);
 
@@ -75,22 +79,18 @@ public class SchoolServiceImplTest {
     }
 
     @Test
-    public void testExistById() {
-        Long id = 1L;
-        when(schoolRepository.existsById(id)).thenReturn(true);
-
-//        schoolService.existById(id);
-
-        verify(schoolRepository, times(1)).existsById(id);
-    }
-
-    @Test
     public void testCreate() {
-        List<String> studentIds = Collections.singletonList("1");
-        SchoolDTO schoolDTO = SchoolDTO
-                .builder().id(1L).name("name").address("address").studentIds(studentIds).build();
-        School school = School
-                .builder().id(1L).name("name").address("address").studentIds(studentIds).build();
+        Set<String> studentIds = Sets.newLinkedHashSet("1");
+        SchoolDto schoolDTO = SchoolDto.builder()
+                .id(1L)
+                .name("name")
+                .address("address")
+                .studentIds(studentIds).build();
+        School school = School.builder()
+                .id(1L).name("name")
+                .address("address")
+                .studentIds(studentIds)
+                .build();
         when(studentFeignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
         when(mapper.toEntity(schoolDTO)).thenReturn(school);
         when(schoolRepository.save(school)).thenReturn(school);
@@ -106,22 +106,28 @@ public class SchoolServiceImplTest {
 
     @Test
     public void testUpdate() {
-        List<String> studentIds = Collections.singletonList("1");
-        SchoolDTO schoolDTO = SchoolDTO
-                .builder().id(1L).name("name").address("address").studentIds(studentIds).build();
-        School school = School
-                .builder().id(1L).name("name").address("address").studentIds(studentIds).build();
-//        doReturn(true).when(schoolService).existById(schoolDTO.getId());
+        Set<String> studentIds = Sets.newLinkedHashSet("1");
+        SchoolDto schoolDTO = SchoolDto.builder()
+                .id(1L)
+                .name("name")
+                .address("address")
+                .studentIds(studentIds)
+                .build();
+        School school = School.builder()
+                .id(1L)
+                .name("name")
+                .address("address")
+                .studentIds(studentIds)
+                .build();
+        when(schoolRepository.getOne(schoolDTO.getId())).thenReturn(school);
         when(studentFeignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
-        when(mapper.toEntity(schoolDTO)).thenReturn(school);
         when(schoolRepository.save(school)).thenReturn(school);
         when(mapper.toDto(school)).thenReturn(schoolDTO);
 
         schoolService.update(schoolDTO);
 
-//        verify(schoolService, times(1)).existById(schoolDTO.getId());
+        verify(schoolRepository, times(1)).getOne(schoolDTO.getId());
         verify(studentFeignService, times(1)).existsAllStudentsByIds(studentIds);
-        verify(mapper, times(1)).toEntity(schoolDTO);
         verify(schoolRepository, times(1)).save(school);
         verify(mapper, times(1)).toDto(school);
     }
@@ -129,11 +135,12 @@ public class SchoolServiceImplTest {
     @Test
     public void testRemove() {
         Long id = 1L;
-//        doReturn(true).when(schoolService).existById(id);
+        when(schoolRepository.existsById(id)).thenReturn(true);
         doNothing().when(schoolRepository).deleteById(id);
 
         schoolService.remove(id);
 
+        verify(schoolRepository, times(1)).existsById(id);
         verify(schoolRepository, times(1)).deleteById(id);
     }
 }

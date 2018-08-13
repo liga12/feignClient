@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @NoArgsConstructor
@@ -20,8 +20,7 @@ public class School {
     private String name;
     private String address;
     @ElementCollection
-    @CollectionTable(name = "studentIds",joinColumns = @JoinColumn(name = "school_id"))
-    private List<String> studentIds;
-
-
+    @CollectionTable(name = "studentIds", joinColumns = @JoinColumn(name = "school_id"))
+    private Set<String> studentIds;
 }
+

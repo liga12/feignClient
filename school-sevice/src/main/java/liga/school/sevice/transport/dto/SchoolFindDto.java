@@ -5,14 +5,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.awt.print.Pageable;
 import java.util.List;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PaginationSchoolDto {
-    private Sorter sorter;
+public class SchoolFindDto {
     private Long id;
     private String name;
     private String address;
