@@ -10,12 +10,14 @@ import liga.school.sevice.transport.dto.SchoolFindDto;
 import liga.school.sevice.transport.dto.SchoolUpdateDto;
 import liga.school.sevice.transport.mapper.SchoolMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.Set;
 
 @Service
@@ -58,7 +60,7 @@ public class SchoolServiceImpl implements SchoolService {
 
     @Override
     public SchoolOutComeDto update(SchoolUpdateDto dto) {
-        School storedSchool = schoolRepository.getOne(dto.getId());
+        SchoolOutComeDto storedSchool = getById(dto.getId());
         Set<String> studentIds = dto.getStudentIds();
         boolean isNotEmptyStudentsIds = !CollectionUtils.isEmpty(studentIds);
         if (isNotEmptyStudentsIds && !studentFeignService.existsAllStudentsByIds(studentIds)) {
@@ -71,7 +73,7 @@ public class SchoolServiceImpl implements SchoolService {
             storedSchool.getStudentIds().addAll(dto.getStudentIds());
         }
         return mapper.toDto(
-                schoolRepository.save(storedSchool)
+                schoolRepository.save(mapper.toEntity(storedSchool))
         );
     }
 

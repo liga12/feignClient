@@ -5,8 +5,8 @@ import liga.school.sevice.domain.repository.SchoolRepository;
 import liga.school.sevice.exception.SchoolNotFoundException;
 import liga.school.sevice.exception.StudentNotFoundException;
 import liga.school.sevice.transport.dto.SchoolCreateDto;
-import liga.school.sevice.transport.dto.SchoolOutComeDto;
 import liga.school.sevice.transport.dto.SchoolFindDto;
+import liga.school.sevice.transport.dto.SchoolOutComeDto;
 import liga.school.sevice.transport.dto.SchoolUpdateDto;
 import org.assertj.core.util.Sets;
 import org.junit.Test;
@@ -14,7 +14,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -22,6 +21,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -329,10 +329,10 @@ public class SchoolServiceImplIntegrationTest {
         assertEquals(schoolOutComeDto, updatedSchoolDto);
     }
 
-    @Test(expected = InvalidDataAccessApiUsageException.class)
+    @Test(expected = SchoolNotFoundException.class)
     @Sql("/scripts/initSchools.sql")
     public void testUpdateWithInvalidDataAccessApiUsageException() {
-        SchoolUpdateDto schoolDto = SchoolUpdateDto.builder().build();
+        SchoolUpdateDto schoolDto = SchoolUpdateDto.builder().id(22L).build();
 
         schoolService.update(schoolDto);
     }

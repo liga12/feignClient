@@ -35,5 +35,9 @@ public class SchoolMapper {
     public School toEntity(final SchoolCreateDto dto) {
         return mapper.map(dto, School.class);
     }
+
+    public School toEntity(final SchoolOutComeDto dto) {
+        return mapper.map(dto, School.class);
+    }
 }
 

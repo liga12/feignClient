@@ -3,8 +3,8 @@ package liga.school.sevice.service;
 import liga.school.sevice.domain.entity.School;
 import liga.school.sevice.domain.repository.SchoolRepository;
 import liga.school.sevice.transport.dto.SchoolCreateDto;
-import liga.school.sevice.transport.dto.SchoolOutComeDto;
 import liga.school.sevice.transport.dto.SchoolFindDto;
+import liga.school.sevice.transport.dto.SchoolOutComeDto;
 import liga.school.sevice.transport.dto.SchoolUpdateDto;
 import liga.school.sevice.transport.mapper.SchoolMapper;
 import org.assertj.core.util.Sets;
@@ -111,7 +111,7 @@ public class SchoolServiceImplTest {
     @Test
     public void testUpdate() {
         Set<String> studentIds = Sets.newLinkedHashSet("1");
-        SchoolUpdateDto schoolDTO = SchoolUpdateDto.builder()
+        SchoolUpdateDto schoolUpdateDto = SchoolUpdateDto.builder()
                 .id(1L)
                 .name("name")
                 .address("address")
@@ -129,15 +129,17 @@ public class SchoolServiceImplTest {
                 .address("address")
                 .studentIds(studentIds)
                 .build();
-        when(schoolRepository.getOne(schoolDTO.getId())).thenReturn(school);
+        doReturn(schoolOutComeDto).when(schoolService).getById(schoolUpdateDto.getId());
         when(studentFeignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
+        when(mapper.toEntity(schoolOutComeDto)).thenReturn(school);
         when(schoolRepository.save(school)).thenReturn(school);
         when(mapper.toDto(school)).thenReturn(schoolOutComeDto);
 
-        schoolService.update(schoolDTO);
+        schoolService.update(schoolUpdateDto);
 
-        verify(schoolRepository, times(1)).getOne(schoolDTO.getId());
+        verify(schoolService, times(1)).getById(schoolUpdateDto.getId());
         verify(studentFeignService, times(1)).existsAllStudentsByIds(studentIds);
+        verify(mapper, times(1)).toEntity(schoolOutComeDto);
         verify(schoolRepository, times(1)).save(school);
         verify(mapper, times(1)).toDto(school);
     }
