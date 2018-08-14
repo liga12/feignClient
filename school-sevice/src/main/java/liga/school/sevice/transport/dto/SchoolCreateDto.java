@@ -6,18 +6,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class SchoolDto {
-
-    @NotNull
-    private Long id;
-
+@NoArgsConstructor
+public class SchoolCreateDto {
     @NotBlank
     private String name;
 

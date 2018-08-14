@@ -4,8 +4,10 @@ import liga.school.sevice.domain.entity.School;
 import liga.school.sevice.domain.repository.SchoolRepository;
 import liga.school.sevice.exception.SchoolNotFoundException;
 import liga.school.sevice.exception.StudentNotFoundException;
-import liga.school.sevice.transport.dto.SchoolDto;
+import liga.school.sevice.transport.dto.SchoolCreateDto;
+import liga.school.sevice.transport.dto.SchoolOutComeDto;
 import liga.school.sevice.transport.dto.SchoolFindDto;
+import liga.school.sevice.transport.dto.SchoolUpdateDto;
 import liga.school.sevice.transport.mapper.SchoolMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -27,7 +29,7 @@ public class SchoolServiceImpl implements SchoolService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<SchoolDto> getAll(SchoolFindDto dto, Pageable pageable) {
+    public Page<SchoolOutComeDto> getAll(SchoolFindDto dto, Pageable pageable) {
         Page<School> result = schoolRepository.findAll(
                 SchoolSearchSpecification.schoolFilter(dto),
                 pageable
@@ -37,12 +39,12 @@ public class SchoolServiceImpl implements SchoolService {
 
     @Override
     @Transactional(readOnly = true)
-    public SchoolDto getById(Long id) {
+    public SchoolOutComeDto getById(Long id) {
         return mapper.toDto(schoolRepository.findById(id).orElseThrow(SchoolNotFoundException::new));
     }
 
     @Override
-    public SchoolDto create(SchoolDto dto) {
+    public SchoolOutComeDto create(SchoolCreateDto dto) {
         Set<String> studentIds = dto.getStudentIds();
         if (!studentFeignService.existsAllStudentsByIds(studentIds)) {
             throw new StudentNotFoundException();
@@ -55,7 +57,7 @@ public class SchoolServiceImpl implements SchoolService {
     }
 
     @Override
-    public SchoolDto update(SchoolDto dto) {
+    public SchoolOutComeDto update(SchoolUpdateDto dto) {
         School storedSchool = schoolRepository.getOne(dto.getId());
         Set<String> studentIds = dto.getStudentIds();
         boolean isNotEmptyStudentsIds = !CollectionUtils.isEmpty(studentIds);
@@ -80,7 +82,7 @@ public class SchoolServiceImpl implements SchoolService {
     }
 
     private void validateExistingById(Long id) {
-        if (!schoolRepository.existsById(id)) {
+        if (null==id||!schoolRepository.existsById(id)) {
             throw new SchoolNotFoundException();
         }
     }

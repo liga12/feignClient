@@ -2,8 +2,10 @@ package liga.school.sevice.service;
 
 import liga.school.sevice.domain.entity.School;
 import liga.school.sevice.domain.repository.SchoolRepository;
-import liga.school.sevice.transport.dto.SchoolDto;
+import liga.school.sevice.transport.dto.SchoolCreateDto;
+import liga.school.sevice.transport.dto.SchoolOutComeDto;
 import liga.school.sevice.transport.dto.SchoolFindDto;
+import liga.school.sevice.transport.dto.SchoolUpdateDto;
 import liga.school.sevice.transport.mapper.SchoolMapper;
 import org.assertj.core.util.Sets;
 import org.junit.Test;
@@ -16,7 +18,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.Collections;
@@ -42,7 +43,7 @@ public class SchoolServiceImplTest {
     public void testGetAll() {
         Set<String> studentIds = Sets.newLinkedHashSet("1");
         School school = School.builder().id(1L).name("name").address("address").studentIds(studentIds).build();
-        SchoolDto schoolDTO = SchoolDto.builder()
+        SchoolOutComeDto schoolDTO = SchoolOutComeDto.builder()
                 .name("name")
                 .address("address")
                 .studentIds(studentIds)
@@ -63,7 +64,7 @@ public class SchoolServiceImplTest {
         Set<String> studentIds = Sets.newLinkedHashSet("1");
         School school = School.builder()
                 .id(1L).name("name").address("address").studentIds(studentIds).build();
-        SchoolDto schoolDTO = SchoolDto.builder()
+        SchoolOutComeDto schoolDTO = SchoolOutComeDto.builder()
                 .id(1L)
                 .name("name")
                 .address("address")
@@ -81,8 +82,7 @@ public class SchoolServiceImplTest {
     @Test
     public void testCreate() {
         Set<String> studentIds = Sets.newLinkedHashSet("1");
-        SchoolDto schoolDTO = SchoolDto.builder()
-                .id(1L)
+        SchoolCreateDto schoolCreateDto = SchoolCreateDto.builder()
                 .name("name")
                 .address("address")
                 .studentIds(studentIds).build();
@@ -91,15 +91,19 @@ public class SchoolServiceImplTest {
                 .address("address")
                 .studentIds(studentIds)
                 .build();
+        SchoolOutComeDto schoolOutComeDto = SchoolOutComeDto.builder().id(1L).name("name")
+                .address("address")
+                .studentIds(studentIds)
+                .build();
         when(studentFeignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
-        when(mapper.toEntity(schoolDTO)).thenReturn(school);
+        when(mapper.toEntity(schoolCreateDto)).thenReturn(school);
         when(schoolRepository.save(school)).thenReturn(school);
-        when(mapper.toDto(school)).thenReturn(schoolDTO);
+        when(mapper.toDto(school)).thenReturn(schoolOutComeDto);
 
-        schoolService.create(schoolDTO);
+        schoolService.create(schoolCreateDto);
 
         verify(studentFeignService, times(1)).existsAllStudentsByIds(studentIds);
-        verify(mapper, times(1)).toEntity(schoolDTO);
+        verify(mapper, times(1)).toEntity(schoolCreateDto);
         verify(schoolRepository, times(1)).save(school);
         verify(mapper, times(1)).toDto(school);
     }
@@ -107,7 +111,7 @@ public class SchoolServiceImplTest {
     @Test
     public void testUpdate() {
         Set<String> studentIds = Sets.newLinkedHashSet("1");
-        SchoolDto schoolDTO = SchoolDto.builder()
+        SchoolUpdateDto schoolDTO = SchoolUpdateDto.builder()
                 .id(1L)
                 .name("name")
                 .address("address")
@@ -119,10 +123,16 @@ public class SchoolServiceImplTest {
                 .address("address")
                 .studentIds(studentIds)
                 .build();
+        SchoolOutComeDto schoolOutComeDto = SchoolOutComeDto.builder()
+                .id(1L)
+                .name("name")
+                .address("address")
+                .studentIds(studentIds)
+                .build();
         when(schoolRepository.getOne(schoolDTO.getId())).thenReturn(school);
         when(studentFeignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
         when(schoolRepository.save(school)).thenReturn(school);
-        when(mapper.toDto(school)).thenReturn(schoolDTO);
+        when(mapper.toDto(school)).thenReturn(schoolOutComeDto);
 
         schoolService.update(schoolDTO);
 

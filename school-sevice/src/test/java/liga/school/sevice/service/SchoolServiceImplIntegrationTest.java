@@ -4,14 +4,17 @@ import liga.school.sevice.domain.entity.School;
 import liga.school.sevice.domain.repository.SchoolRepository;
 import liga.school.sevice.exception.SchoolNotFoundException;
 import liga.school.sevice.exception.StudentNotFoundException;
-import liga.school.sevice.transport.dto.SchoolDto;
+import liga.school.sevice.transport.dto.SchoolCreateDto;
+import liga.school.sevice.transport.dto.SchoolOutComeDto;
 import liga.school.sevice.transport.dto.SchoolFindDto;
+import liga.school.sevice.transport.dto.SchoolUpdateDto;
 import org.assertj.core.util.Sets;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -29,7 +32,6 @@ import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@Sql("/scripts/initSchools.sql")
 @Transactional
 public class SchoolServiceImplIntegrationTest {
 
@@ -43,20 +45,22 @@ public class SchoolServiceImplIntegrationTest {
     SchoolRepository schoolRepository;
 
     @Test
+    @Sql("/scripts/initSchools.sql")
     public void testGetAll() {
         PageRequest pageable = PageRequest.of(0, 10, Sort.Direction.ASC, "id");
         SchoolFindDto schoolFindDto = SchoolFindDto
                 .builder().build();
 
-        Page<SchoolDto> result = schoolService.getAll(schoolFindDto, pageable);
+        Page<SchoolOutComeDto> result = schoolService.getAll(schoolFindDto, pageable);
 
         assertEquals(5, result.getContent().size());
     }
 
     @Test
+    @Sql("/scripts/initSchools.sql")
     public void testGetAllById() {
         Set<String> set = Stream.of("1", "2", "3").collect(toSet());
-        SchoolDto schoolDto = SchoolDto.builder()
+        SchoolOutComeDto schoolDto = SchoolOutComeDto.builder()
                 .id(1L)
                 .name("name12")
                 .address("address11")
@@ -68,13 +72,14 @@ public class SchoolServiceImplIntegrationTest {
                 .id(1L)
                 .build();
 
-        Page<SchoolDto> result = schoolService.getAll(schoolFindDto, pageable);
+        Page<SchoolOutComeDto> result = schoolService.getAll(schoolFindDto, pageable);
 
         assertEquals(Collections.singletonList(schoolDto), result.getContent());
     }
 
 
     @Test
+    @Sql("/scripts/initSchools.sql")
     public void testGetAllByIdEmpty() {
         PageRequest pageable = PageRequest.of(0, 10, Sort.Direction.ASC, "id");
         SchoolFindDto schoolFindDto = SchoolFindDto
@@ -82,15 +87,16 @@ public class SchoolServiceImplIntegrationTest {
                 .id(10L)
                 .build();
 
-        Page<SchoolDto> result = schoolService.getAll(schoolFindDto, pageable);
+        Page<SchoolOutComeDto> result = schoolService.getAll(schoolFindDto, pageable);
 
 
         assertEquals(Collections.emptyList(), result.getContent());
     }
 
     @Test
+    @Sql("/scripts/initSchools.sql")
     public void testGetAllByName() {
-        SchoolDto schoolDto = SchoolDto.builder()
+        SchoolOutComeDto schoolDto = SchoolOutComeDto.builder()
                 .id(1L)
                 .name("name12")
                 .address("address11")
@@ -102,20 +108,21 @@ public class SchoolServiceImplIntegrationTest {
                 .name("me12")
                 .build();
 
-        Page<SchoolDto> result = schoolService.getAll(schoolFindDto, pageable);
+        Page<SchoolOutComeDto> result = schoolService.getAll(schoolFindDto, pageable);
 
         assertEquals(Collections.singletonList(schoolDto), result.getContent());
     }
 
     @Test
+    @Sql("/scripts/initSchools.sql")
     public void testGetAllByNameLike() {
-        SchoolDto schoolDto = SchoolDto.builder()
+        SchoolOutComeDto schoolDto = SchoolOutComeDto.builder()
                 .id(1L)
                 .name("name12")
                 .address("address11")
                 .studentIds(new HashSet<>(Arrays.asList("1", "2", "3")))
                 .build();
-        SchoolDto schoolDto2 = SchoolDto.builder()
+        SchoolOutComeDto schoolDto2 = SchoolOutComeDto.builder()
                 .id(3L)
                 .name("name31")
                 .address("address31")
@@ -127,12 +134,13 @@ public class SchoolServiceImplIntegrationTest {
                 .name("1")
                 .build();
 
-        Page<SchoolDto> result = schoolService.getAll(schoolFindDto, pageable);
+        Page<SchoolOutComeDto> result = schoolService.getAll(schoolFindDto, pageable);
 
         assertEquals(Arrays.asList(schoolDto, schoolDto2), result.getContent());
     }
 
     @Test
+    @Sql("/scripts/initSchools.sql")
     public void testGetAllByNameEmpty() {
         PageRequest pageable = PageRequest.of(0, 10, Sort.Direction.ASC, "id");
         SchoolFindDto schoolFindDto = SchoolFindDto
@@ -140,14 +148,15 @@ public class SchoolServiceImplIntegrationTest {
                 .name("ss")
                 .build();
 
-        Page<SchoolDto> result = schoolService.getAll(schoolFindDto, pageable);
+        Page<SchoolOutComeDto> result = schoolService.getAll(schoolFindDto, pageable);
 
         assertEquals(Collections.emptyList(), result.getContent());
     }
 
     @Test
+    @Sql("/scripts/initSchools.sql")
     public void testGetAllByAddress() {
-        SchoolDto schoolDto = SchoolDto.builder()
+        SchoolOutComeDto schoolDto = SchoolOutComeDto.builder()
                 .id(1L)
                 .name("name12")
                 .address("address11")
@@ -159,12 +168,13 @@ public class SchoolServiceImplIntegrationTest {
                 .address("ress1")
                 .build();
 
-        Page<SchoolDto> result = schoolService.getAll(schoolFindDto, pageable);
+        Page<SchoolOutComeDto> result = schoolService.getAll(schoolFindDto, pageable);
 
         assertEquals(Collections.singletonList(schoolDto), result.getContent());
     }
 
     @Test
+    @Sql("/scripts/initSchools.sql")
     public void testGetAllByAddressLike() {
         PageRequest pageable = PageRequest.of(0, 10, Sort.Direction.ASC, "id");
         SchoolFindDto schoolFindDto = SchoolFindDto
@@ -172,12 +182,13 @@ public class SchoolServiceImplIntegrationTest {
                 .name("1")
                 .build();
 
-        Page<SchoolDto> result = schoolService.getAll(schoolFindDto, pageable);
+        Page<SchoolOutComeDto> result = schoolService.getAll(schoolFindDto, pageable);
 
         assertEquals(2, result.getContent().size());
     }
 
     @Test
+    @Sql("/scripts/initSchools.sql")
     public void testGetAllByAddressEmpty() {
         PageRequest pageable = PageRequest.of(0, 10, Sort.Direction.ASC, "id");
         SchoolFindDto schoolFindDto = SchoolFindDto
@@ -185,14 +196,15 @@ public class SchoolServiceImplIntegrationTest {
                 .name("ss")
                 .build();
 
-        Page<SchoolDto> result = schoolService.getAll(schoolFindDto, pageable);
+        Page<SchoolOutComeDto> result = schoolService.getAll(schoolFindDto, pageable);
 
         assertEquals(Collections.emptyList(), result.getContent());
     }
 
     @Test
+    @Sql("/scripts/initSchools.sql")
     public void testGetAllByStudentIds() {
-        SchoolDto schoolDto = SchoolDto.builder()
+        SchoolOutComeDto schoolDto = SchoolOutComeDto.builder()
                 .id(1L)
                 .name("name12")
                 .address("address11")
@@ -204,20 +216,21 @@ public class SchoolServiceImplIntegrationTest {
                 .studentIds(Sets.newLinkedHashSet("3"))
                 .build();
 
-        Page<SchoolDto> result = schoolService.getAll(schoolFindDto, pageable);
+        Page<SchoolOutComeDto> result = schoolService.getAll(schoolFindDto, pageable);
 
         assertEquals(Collections.singletonList(schoolDto), result.getContent());
     }
 
     @Test
+    @Sql("/scripts/initSchools.sql")
     public void testGetAllByStudentIdsMany() {
-        SchoolDto schoolDto1 = SchoolDto.builder()
+        SchoolOutComeDto schoolDto1 = SchoolOutComeDto.builder()
                 .id(1L)
                 .name("name12")
                 .address("address11")
                 .studentIds(new HashSet<>(Arrays.asList("1", "2", "3")))
                 .build();
-        SchoolDto schoolDto2 = SchoolDto.builder()
+        SchoolOutComeDto schoolDto2 = SchoolOutComeDto.builder()
                 .id(4L)
                 .name("name42")
                 .address("address45")
@@ -229,12 +242,13 @@ public class SchoolServiceImplIntegrationTest {
                 .studentIds(Sets.newLinkedHashSet("1"))
                 .build();
 
-        Page<SchoolDto> result = schoolService.getAll(schoolFindDto, pageable);
+        Page<SchoolOutComeDto> result = schoolService.getAll(schoolFindDto, pageable);
 
         assertEquals(Arrays.asList(schoolDto1, schoolDto2), result.getContent());
     }
 
     @Test
+    @Sql("/scripts/initSchools.sql")
     public void testGetAllByStudentIdsEmpty() {
         PageRequest pageable = PageRequest.of(0, 10, Sort.Direction.ASC, "id");
         SchoolFindDto schoolFindDto = SchoolFindDto
@@ -242,14 +256,15 @@ public class SchoolServiceImplIntegrationTest {
                 .studentIds(Sets.newLinkedHashSet("45"))
                 .build();
 
-        Page<SchoolDto> result = schoolService.getAll(schoolFindDto, pageable);
+        Page<SchoolOutComeDto> result = schoolService.getAll(schoolFindDto, pageable);
 
         assertEquals(Collections.emptyList(), result.getContent());
     }
 
     @Test
+    @Sql("/scripts/initSchools.sql")
     public void testGetById() {
-        SchoolDto schoolDto = SchoolDto.builder()
+        SchoolOutComeDto schoolDto = SchoolOutComeDto.builder()
                 .id(1L)
                 .name("name12")
                 .address("address11")
@@ -260,7 +275,7 @@ public class SchoolServiceImplIntegrationTest {
                 .builder()
                 .id(1L)
                 .build();
-        Page<SchoolDto> result = schoolService.getAll(schoolFindDto, pageable);
+        Page<SchoolOutComeDto> result = schoolService.getAll(schoolFindDto, pageable);
 
         assertEquals(Collections.singletonList(schoolDto), result.getContent());
     }
@@ -273,15 +288,13 @@ public class SchoolServiceImplIntegrationTest {
     @Test
     public void testCreate() {
         when(feignService.existsAllStudentsByIds(anySet())).thenReturn(true);
-        List<School> all = schoolRepository.findAll();
-        SchoolDto schoolDTO = schoolService.create(SchoolDto.builder()
-                .id(45L)
-                .name("name1")
-                .address("address")
-                .studentIds(new HashSet<>(Collections.singletonList("2")))
+        SchoolOutComeDto schoolDTO = schoolService.create(SchoolCreateDto.builder()
+                .name("name45")
+                .address("address45")
+                .studentIds(new HashSet<>(Collections.singletonList("45")))
                 .build());
 
-        SchoolDto result = schoolService.getById(schoolDTO.getId());
+        SchoolOutComeDto result = schoolService.getById(schoolDTO.getId());
 
         assertEquals(schoolDTO, result);
     }
@@ -289,75 +302,89 @@ public class SchoolServiceImplIntegrationTest {
     @Test(expected = StudentNotFoundException.class)
     public void testCreateWithStudentNotFound() {
         when(feignService.existsAllStudentsByIds(anySet())).thenReturn(false);
-        schoolService.create(SchoolDto.builder()
+        SchoolCreateDto schoolCreateDto = SchoolCreateDto.builder()
                 .name("name1")
                 .address("address")
                 .studentIds(new HashSet<>(Collections.singletonList("2")))
-                .build());
+                .build();
 
+        schoolService.create(schoolCreateDto);
     }
 
-//    @Test
-//    public void testUpdate() {
-//        List<String> studentIds = Collections.singletonList("1");
-//        when(feignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
-//        SchoolDto schoolDTO = schoolService.
-//                create(SchoolDto.builder().name("name").address("address").studentIds(studentIds).build());
-//        schoolDTO.setName("n");
-//        schoolDTO.setAddress("s");
-//
-//        SchoolDto updatedSchoolDto = schoolService.update(schoolDTO);
-//
-//        assertEquals(schoolDTO, updatedSchoolDto);
-//    }
-//
-//    @Test(expected = SchoolNotFoundException.class)
-//    public void testUpdateWithSchoolNotFound() {
-//        List<String> studentIds = Collections.singletonList("1");
-//        when(feignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
-//        SchoolDto schoolDTO = schoolService.
-//                create(SchoolDto.builder().name("name").address("address").studentIds(studentIds).build());
-//        schoolDTO.setId(22L);
-//        schoolDTO.setName("n");
-//        schoolDTO.setAddress("s");
-//
-//        schoolService.update(schoolDTO);
-//    }
-//
-//    @Test(expected = StudentNotFoundException.class)
-//    public void testUpdateWithStudentNotFound() {
-//        List<String> studentIds = Collections.singletonList("1");
-//        List<String> studentIdsUpdate = Collections.singletonList("2");
-//        when(feignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
-//        when(feignService.existsAllStudentsByIds(studentIdsUpdate)).thenReturn(false);
-//        SchoolDto schoolDTO = schoolService.
-//                create(SchoolDto.builder().name("name").address("address").studentIds(studentIds).build());
-//        schoolDTO.setName("n");
-//        schoolDTO.setAddress("s");
-//        schoolDTO.setStudentIds(studentIdsUpdate);
-//
-//        schoolService.update(schoolDTO);
-//    }
-//
-//    @Test
-//    public void testRemove() {
-//        List<String> studentIds = Collections.singletonList("1");
-//        when(feignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
-//        SchoolDto schoolDTO = schoolService.create(
-//                SchoolDto.builder().name("name").address("address").studentIds(studentIds).build());
-//        schoolService.remove(schoolDTO.getId());
-//        Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
-//        SchoolFindDto schoolFindDto = SchoolFindDto.builder().sorter(sorter).build();
-//
-//        List<SchoolDto> all = schoolService.getAll(schoolFindDto);
-//
-//        assertEquals(0, all.size());
-//    }
-//
-//    @Test(expected = SchoolNotFoundException.class)
-//    public void testRemoveSchoolNotFound() {
-//        List<String> studentIds = Collections.singletonList("1");
-//        when(feignService.existsAllStudentsByIds(studentIds)).thenReturn(true);
-//        schoolService.remove(1L);
-//    }
+    @Test
+    @Sql("/scripts/initSchools.sql")
+    public void testUpdate() {
+        SchoolOutComeDto schoolOutComeDto = schoolService.getById(1L);
+        SchoolUpdateDto schoolUpdateDto = SchoolUpdateDto.builder()
+                .id(schoolOutComeDto.getId())
+                .name("ttt")
+                .address(schoolOutComeDto.getAddress())
+                .studentIds(schoolOutComeDto.getStudentIds())
+                .build();
+        schoolOutComeDto.setName("ttt");
+        when(feignService.existsAllStudentsByIds(schoolUpdateDto.getStudentIds())).thenReturn(true);
+
+        SchoolOutComeDto updatedSchoolDto = schoolService.update(schoolUpdateDto);
+
+        assertEquals(schoolOutComeDto, updatedSchoolDto);
+    }
+
+    @Test(expected = InvalidDataAccessApiUsageException.class)
+    @Sql("/scripts/initSchools.sql")
+    public void testUpdateWithInvalidDataAccessApiUsageException() {
+        SchoolUpdateDto schoolDto = SchoolUpdateDto.builder().build();
+
+        schoolService.update(schoolDto);
+    }
+
+    @Test(expected = StudentNotFoundException.class)
+    @Sql("/scripts/initSchools.sql")
+    public void testUpdateWithStudentNotFoundException() {
+        SchoolUpdateDto schoolDto = SchoolUpdateDto.builder()
+                .id(1L)
+                .studentIds(new HashSet<>(Collections.singletonList("1"))).build();
+        when(feignService.existsAllStudentsByIds(anySet())).thenReturn(false);
+
+        schoolService.update(schoolDto);
+    }
+
+    @Test
+    @Sql("/scripts/initSchools.sql")
+    public void testUpdateWithEmptyStudentIds() {
+        SchoolOutComeDto schoolOutComeDto = schoolService.getById(1L);
+        SchoolUpdateDto schoolUpdateDto = SchoolUpdateDto.builder()
+                .id(schoolOutComeDto.getId())
+                .name(schoolOutComeDto.getName())
+                .address(schoolOutComeDto.getAddress())
+                .studentIds(Sets.newHashSet())
+                .build();
+        schoolOutComeDto.setStudentIds(Sets.newHashSet());
+
+        SchoolOutComeDto updatedSchoolDto = schoolService.update(schoolUpdateDto);
+
+        assertEquals(schoolOutComeDto, updatedSchoolDto);
+    }
+
+    @Test
+    @Sql("/scripts/initSchools.sql")
+    public void testRemove() {
+        List<School> all = schoolRepository.findAll();
+
+        schoolService.remove(1L);
+
+        List<School> afterRemove = schoolRepository.findAll();
+        assertEquals(all.size() - 1, afterRemove.size());
+    }
+
+    @Test(expected = SchoolNotFoundException.class)
+    @Sql("/scripts/initSchools.sql")
+    public void testRemoveWithNullIdSchoolNotFound() {
+        schoolService.remove(null);
+    }
+
+    @Test(expected = SchoolNotFoundException.class)
+    @Sql("/scripts/initSchools.sql")
+    public void testRemoveSchoolNotFound() {
+        schoolService.remove(23L);
+    }
 }
