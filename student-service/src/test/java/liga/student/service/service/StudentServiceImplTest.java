@@ -2,9 +2,9 @@ package liga.student.service.service;
 
 import liga.student.service.domain.entity.Student;
 import liga.student.service.domain.repository.StudentRepository;
-import liga.student.service.transport.dto.StudentFindByTextSearchDto;
-import liga.student.service.transport.dto.StudentOutComeDto;
+import liga.student.service.transport.dto.*;
 import liga.student.service.transport.mapper.StudentMapper;
+import org.assertj.core.util.Sets;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -13,11 +13,11 @@ import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import static org.mockito.Mockito.*;
 
@@ -55,7 +55,7 @@ public class StudentServiceImplTest {
         PageRequest pageable = PageRequest.of(0, 10);
         when(studentRepository.
                 searchByNamesAndSurname(
-                       searchDto.getText(),
+                        searchDto.getText(),
                         searchDto.getCaseSensitive(),
                         pageable
                 )
@@ -70,94 +70,137 @@ public class StudentServiceImplTest {
                         pageable);
         verify(mapper, times(1)).toDto(students);
     }
-//
-//    @Test
-//    public void testGetAll() {
-//        Student student = Student.builder().name("n").surname("s").age(1).build();
-//        StudentDTO studentDTO = StudentDTO.builder().name("n").surname("s").age(1).build();
-//        Sorter sorter = new Sorter(0, 1, Sort.Direction.ASC, "id");
-//        PaginationStudentDto pagination = PaginationStudentDto.builder().sorter(sorter).build();
-//        List<Student> studentPage = Collections.singletonList(student);
-//        when(mongoTemplate.find(any(), any())).thenReturn(Collections.singletonList(student));
-//        when(mapper.toDto(studentPage)).thenReturn(Collections.singletonList(studentDTO));
-//
-//        studentService.getAll(pagination);
-//
-//        verify(mongoTemplate, times(1)).
-//                find(any(), any());
-//        verify(mapper, times(1)).toDto(Collections.singletonList(student));
-//    }
-//
-//
-//    @Test
-//    public void testGetById() {
-//        StudentDTO studentDTO = StudentDTO.builder().id("1").name("n").surname("s").age(1).build();
-//        Student student = Student.builder().id("1").name("n").surname("s").age(1).build();
-//        when(studentRepository.findById("1")).thenReturn(java.util.Optional.ofNullable(student));
-//        when(mapper.toDto(student)).thenReturn(studentDTO);
-//
-//        studentService.getById(studentDTO.getId());
-//
-//        verify(studentService, times(1)).getById(studentDTO.getId());
-//        verify(mapper, times(1)).toDto(student);
-//    }
-//
-//    @Test
-//    public void testExistById() {
-//        when(studentRepository.existsById("1")).thenReturn(true);
-//
-//        studentService.validateExistingById("1");
-//
-//        verify(studentRepository, times(1)).existsById("1");
-//    }
-//
-//    @Test
-//    public void testExistByIds() {
-//        when(studentRepository.existsById(any())).thenReturn(true);
-//
-//        studentService.existsByIds(Arrays.asList("1","2"));
-//
-//        verify(studentRepository, times(2)).existsById(any());
-//    }
-//
-//    @Test
-//    public void testCreate() {
-//        StudentDTO studentDTO = StudentDTO.builder().name("name").surname("surname").age(25).build();
-//        Student student = Student.builder().id("1").name("n").surname("s").age(1).build();
-//        when(mapper.studentDTOToStudent(studentDTO)).thenReturn(student);
-//        when(studentRepository.save(student)).thenReturn(student);
-//        when(mapper.toDto(student)).thenReturn(studentDTO);
-//
-//        studentService.create(studentDTO);
-//
-//        verify(mapper, times(1)).studentDTOToStudent(studentDTO);
-//        verify(studentRepository, times(1)).save(student);
-//        verify(mapper, times(1)).toDto(student);
-//    }
-//
-//    @Test
-//    public void testUpdate() {
-//        StudentDTO studentDTO = StudentDTO.builder().name("name").surname("surname").age(25).build();
-//        Student student = Student.builder().id("1").name("n").surname("s").age(1).build();
-//        doReturn(true).when(studentService).validateExistingById(any());
-//        when(mapper.studentDTOToStudent(studentDTO)).thenReturn(student);
-//        when(studentRepository.save(student)).thenReturn(student);
-//        when(mapper.toDto(student)).thenReturn(studentDTO);
-//
-//        studentService.update(studentDTO);
-//
-//        verify(studentService, times(1)).validateExistingById(any());
-//        verify(mapper, times(1)).studentDTOToStudent(studentDTO);
-//        verify(studentRepository, times(1)).save(student);
-//        verify(mapper, times(1)).toDto(student);
-//    }
-//
-//    @Test
-//    public void testRemove() {
-//        doReturn(true).when(studentService).validateExistingById(any());
-//
-//        studentService.remove("1");
-//
-//        verify(studentService, times(1)).validateExistingById(any());
-//    }
+
+    @Test
+    public void testGetAll() {
+        Student student = Student.builder()
+                .name("n")
+                .surname("s")
+                .age(1)
+                .build();
+        StudentOutComeDto studentOutComeDto = StudentOutComeDto.builder()
+                .name("n")
+                .surname("s")
+                .age(1)
+                .build();
+        StudentFindDto findDto = StudentFindDto.builder().build();
+        PageRequest pageable = PageRequest.of(0, 10);
+        when(mongoTemplate.find(any(), any())).thenReturn(Collections.singletonList(student));
+        when(mapper.toDto(Collections.singletonList(student))).thenReturn(Collections.singletonList(studentOutComeDto));
+
+        studentService.getAll(findDto, pageable);
+
+        verify(mongoTemplate, times(1)).
+                find(any(), any());
+        verify(mapper, times(1)).toDto(Collections.singletonList(student));
+    }
+
+
+    @Test
+    public void testGetById() {
+        String id = "1";
+        Student student = Student.builder()
+                .name("n")
+                .surname("s")
+                .age(1)
+                .build();
+        StudentOutComeDto studentOutComeDto = StudentOutComeDto.builder()
+                .name("n")
+                .surname("s")
+                .age(1)
+                .build();
+        when(studentRepository.findById(id)).thenReturn(java.util.Optional.ofNullable(student));
+        when(mapper.toDto(student)).thenReturn(studentOutComeDto);
+
+        studentService.getById(id);
+
+        verify(studentRepository, times(1)).findById(id);
+        verify(mapper, times(1)).toDto(student);
+    }
+
+    @Test
+    public void testCreate() {
+        Student student = Student.builder()
+                .name("n")
+                .surname("s")
+                .age(1)
+                .build();
+        StudentCreateDto studentCreateDto = StudentCreateDto.builder()
+                .name("n")
+                .surname("s")
+                .age(1)
+                .build();
+        StudentOutComeDto studentOutComeDto = StudentOutComeDto.builder()
+                .id("1")
+                .name("n")
+                .surname("s")
+                .age(1)
+                .build();
+        when(mapper.toEntity(studentCreateDto)).thenReturn(student);
+        when(studentRepository.save(student)).thenReturn(student);
+        when(mapper.toDto(student)).thenReturn(studentOutComeDto);
+
+        studentService.create(studentCreateDto);
+
+        verify(mapper, times(1)).toEntity(studentCreateDto);
+        verify(studentRepository, times(1)).save(student);
+        verify(mapper, times(1)).toDto(student);
+    }
+
+    @Test
+    public void testUpdate() {
+        Student student = Student.builder()
+                .name("n")
+                .surname("s")
+                .age(1)
+                .build();
+        StudentUpdateDto studentUpdateDto = StudentUpdateDto.builder()
+                .id("1")
+                .name("n")
+                .surname("s")
+                .age(1)
+                .build();
+        StudentOutComeDto studentOutComeDto = StudentOutComeDto.builder()
+                .id("1")
+                .name("n")
+                .surname("s")
+                .age(1)
+                .build();
+        doReturn(studentOutComeDto).when(studentService).getById("1");
+        when(mapper.toEntity(studentOutComeDto)).thenReturn(student);
+        when(studentRepository.save(student)).thenReturn(student);
+        when(mapper.toDto(student)).thenReturn(studentOutComeDto);
+
+        studentService.update(studentUpdateDto);
+
+        verify(studentService, times(1)).getById("1");
+        verify(mapper, times(1)).toEntity(studentOutComeDto);
+        verify(studentRepository, times(1)).save(student);
+        verify(mapper, times(1)).toDto(student);
+    }
+
+    @Test
+    public void testRemove() {
+        String id= "1";
+        when(studentRepository.existsById(id)).thenReturn(true);
+        doNothing().when(studentRepository).deleteById(id);
+
+        studentService.remove("1");
+
+        verify(studentRepository, times(1)).existsById(id);
+        verify(studentRepository, times(1)).deleteById(id);
+    }
+
+
+    @Test
+    public void testExistByIds() {
+        Set<String> ids = Sets.newLinkedHashSet("1", "2");
+        when(studentRepository.existsById("1")).thenReturn(true);
+        when(studentRepository.existsById("2")).thenReturn(true);
+
+        studentService.existsByIds(ids);
+
+        verify(studentRepository, times(1)).existsById("1");
+        verify(studentRepository, times(1)).existsById("2");
+    }
 }
