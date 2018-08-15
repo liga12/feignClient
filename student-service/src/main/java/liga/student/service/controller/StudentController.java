@@ -4,20 +4,23 @@ import liga.student.service.transport.dto.PaginationStudentSearchTextDto;
 import liga.student.service.transport.dto.PaginationStudentDto;
 import liga.student.service.transport.dto.StudentDTO;
 import liga.student.service.service.StudentService;
+import liga.student.service.transport.dto.StudentOutComeDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/student")
+@RequestMapping("/students")
 @RequiredArgsConstructor
 public class StudentController {
 
     private final StudentService studentService;
 
-    @PostMapping("/")
-    public List<StudentDTO> getStudents(@RequestBody PaginationStudentDto dto) {
+    @GetMapping
+    public List<StudentOutComeDto> getStudents(@PageableDefault(size = 5) Pageable pageable) {
         return studentService.getAll(dto);
     }
 

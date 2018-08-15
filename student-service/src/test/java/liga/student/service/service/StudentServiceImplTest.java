@@ -54,13 +54,13 @@ public class StudentServiceImplTest {
         when(studentRepository.
                 searchByNamesAndSurname(paginationSearch.getText(), paginationSearch.getCaseSensitive(), pageRequest)).
                 thenReturn(Collections.singletonList(student));
-        when(mapper.studentToStudentDTO(studentPage)).thenReturn(Collections.singletonList(studentDTO));
+        when(mapper.toDto(studentPage)).thenReturn(Collections.singletonList(studentDTO));
 
         studentService.getAll(paginationSearch);
 
         verify(studentRepository, times(1)).
                 searchByNamesAndSurname(paginationSearch.getText(), paginationSearch.getCaseSensitive(), pageRequest);
-        verify(mapper, times(1)).studentToStudentDTO(Collections.singletonList(student));
+        verify(mapper, times(1)).toDto(Collections.singletonList(student));
     }
 
     @Test
@@ -71,13 +71,13 @@ public class StudentServiceImplTest {
         PaginationStudentDto pagination = PaginationStudentDto.builder().sorter(sorter).build();
         List<Student> studentPage = Collections.singletonList(student);
         when(mongoTemplate.find(any(), any())).thenReturn(Collections.singletonList(student));
-        when(mapper.studentToStudentDTO(studentPage)).thenReturn(Collections.singletonList(studentDTO));
+        when(mapper.toDto(studentPage)).thenReturn(Collections.singletonList(studentDTO));
 
         studentService.getAll(pagination);
 
         verify(mongoTemplate, times(1)).
                 find(any(), any());
-        verify(mapper, times(1)).studentToStudentDTO(Collections.singletonList(student));
+        verify(mapper, times(1)).toDto(Collections.singletonList(student));
     }
 
 
@@ -86,12 +86,12 @@ public class StudentServiceImplTest {
         StudentDTO studentDTO = StudentDTO.builder().id("1").name("n").surname("s").age(1).build();
         Student student = Student.builder().id("1").name("n").surname("s").age(1).build();
         when(studentRepository.findById("1")).thenReturn(java.util.Optional.ofNullable(student));
-        when(mapper.studentToStudentDTO(student)).thenReturn(studentDTO);
+        when(mapper.toDto(student)).thenReturn(studentDTO);
 
         studentService.getById(studentDTO.getId());
 
         verify(studentService, times(1)).getById(studentDTO.getId());
-        verify(mapper, times(1)).studentToStudentDTO(student);
+        verify(mapper, times(1)).toDto(student);
     }
 
     @Test
@@ -118,13 +118,13 @@ public class StudentServiceImplTest {
         Student student = Student.builder().id("1").name("n").surname("s").age(1).build();
         when(mapper.studentDTOToStudent(studentDTO)).thenReturn(student);
         when(studentRepository.save(student)).thenReturn(student);
-        when(mapper.studentToStudentDTO(student)).thenReturn(studentDTO);
+        when(mapper.toDto(student)).thenReturn(studentDTO);
 
         studentService.create(studentDTO);
 
         verify(mapper, times(1)).studentDTOToStudent(studentDTO);
         verify(studentRepository, times(1)).save(student);
-        verify(mapper, times(1)).studentToStudentDTO(student);
+        verify(mapper, times(1)).toDto(student);
     }
 
     @Test
@@ -134,14 +134,14 @@ public class StudentServiceImplTest {
         doReturn(true).when(studentService).existsById(any());
         when(mapper.studentDTOToStudent(studentDTO)).thenReturn(student);
         when(studentRepository.save(student)).thenReturn(student);
-        when(mapper.studentToStudentDTO(student)).thenReturn(studentDTO);
+        when(mapper.toDto(student)).thenReturn(studentDTO);
 
         studentService.update(studentDTO);
 
         verify(studentService, times(1)).existsById(any());
         verify(mapper, times(1)).studentDTOToStudent(studentDTO);
         verify(studentRepository, times(1)).save(student);
-        verify(mapper, times(1)).studentToStudentDTO(student);
+        verify(mapper, times(1)).toDto(student);
     }
 
     @Test

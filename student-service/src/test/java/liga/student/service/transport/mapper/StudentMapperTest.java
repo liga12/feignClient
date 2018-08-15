@@ -29,14 +29,14 @@ public class StudentMapperTest {
 
     @Test
     public void studentToStudentDto() {
-        checkStudentData(student, mapper.studentToStudentDTO(student));
+        checkStudentData(student, mapper.toDto(student));
     }
 
     @Test
     public void studentToStudentDto1() {
         Student student2 = new Student("122", "name2", "surname2", 22);
         List<Student> students = new ArrayList<>(Arrays.asList(student, student2));
-        List<StudentDTO> studentDTOS = mapper.studentToStudentDTO(students);
+        List<StudentDTO> studentDTOS = mapper.toDto(students);
         for (int i = 0; i < studentDTOS.size(); i++) {
             checkStudentData(students.get(i), studentDTOS.get(i));
         }

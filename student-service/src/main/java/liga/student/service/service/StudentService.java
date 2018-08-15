@@ -1,27 +1,25 @@
 package liga.student.service.service;
 
 
-import liga.student.service.transport.dto.PaginationStudentDto;
-import liga.student.service.transport.dto.PaginationStudentSearchTextDto;
-import liga.student.service.transport.dto.StudentDTO;
+import liga.student.service.transport.dto.*;
 
 import java.util.List;
 
 public interface StudentService {
 
-    List<StudentDTO> getAll(PaginationStudentSearchTextDto dto);
+    List<StudentOutComeDto> getAll(PaginationStudentSearchTextDto dto);
 
-    List<StudentDTO> getAll(PaginationStudentDto dto);
+    List<StudentOutComeDto> getAll(PaginationStudentDto dto);
 
-    StudentDTO getById(String id);
+    StudentOutComeDto getById(String id);
 
     boolean existsByIds(List<String> ids);
 
     boolean existsById(String id);
 
-    StudentDTO create(StudentDTO dto);
+    StudentOutComeDto create(StudentCreatrDto dto);
 
-    StudentDTO update(StudentDTO dto);
+    StudentOutComeDto update(StudentUpdateDto dto);
 
     void remove(String id);
 }

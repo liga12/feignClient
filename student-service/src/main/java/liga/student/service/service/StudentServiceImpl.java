@@ -7,6 +7,7 @@ import liga.student.service.transport.dto.PaginationStudentDto;
 import liga.student.service.transport.dto.Sorter;
 import liga.student.service.transport.dto.StudentDTO;
 import liga.student.service.exception.StudentNotFoundException;
+import liga.student.service.transport.dto.StudentOutComeDto;
 import liga.student.service.transport.mapper.StudentMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -27,13 +28,13 @@ public class StudentServiceImpl implements StudentService {
     private final MongoTemplate mongoTemplate;
 
     @Override
-    public List<StudentDTO> getAll(PaginationStudentSearchTextDto dto) {
+    public List<StudentOutComeDto> getAll(PaginationStudentSearchTextDto dto) {
         Sorter sorter = dto.getSorter();
         PageRequest pageRequest = PageRequest
                 .of(sorter.getPage(), sorter.getSize(), sorter.getSortDirection(), sorter.getSortBy());
         List<Student> students = studentRepository.
                 searchByNamesAndSurname(dto.getText(), dto.getCaseSensitive(), pageRequest);
-        return mapper.studentToStudentDTO(students);
+        return mapper.toDto(students);
     }
 
     @Override
@@ -54,7 +55,7 @@ public class StudentServiceImpl implements StudentService {
             }
         });
         List<Student> students = mongoTemplate.find(query, Student.class);
-        return mapper.studentToStudentDTO(students);
+        return mapper.toDto(students);
     }
 
     private Criteria toEquals(String param, Object paramValue) {
@@ -82,7 +83,7 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public StudentDTO getById(String id) {
-        return mapper.studentToStudentDTO(studentRepository.findById(id).orElseThrow(StudentNotFoundException::new));
+        return mapper.toDto(studentRepository.findById(id).orElseThrow(StudentNotFoundException::new));
     }
 
     @Override
@@ -101,13 +102,13 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public StudentDTO create(StudentDTO dto) {
-        return mapper.studentToStudentDTO(studentRepository.save(mapper.studentDTOToStudent(dto)));
+        return mapper.toDto(studentRepository.save(mapper.studentDTOToStudent(dto)));
     }
 
     @Override
     public StudentDTO update(StudentDTO dto) {
         existsById(dto.getId());
-        return mapper.studentToStudentDTO(studentRepository.save(mapper.studentDTOToStudent(dto)));
+        return mapper.toDto(studentRepository.save(mapper.studentDTOToStudent(dto)));
     }
 
     @Override
