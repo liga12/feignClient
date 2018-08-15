@@ -12,3 +12,5 @@ target/
 ### Idea-created folder for resources ###
 out/
 
+### local environment setup ###
+application-local-dev.yml
