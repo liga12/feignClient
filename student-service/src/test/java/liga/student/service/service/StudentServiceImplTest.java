@@ -3,19 +3,23 @@ package liga.student.service.service;
 import liga.student.service.domain.entity.Student;
 import liga.student.service.domain.repository.StudentRepository;
 import liga.student.service.transport.dto.StudentFindByTextSearchDto;
+import liga.student.service.transport.dto.StudentOutComeDto;
 import liga.student.service.transport.mapper.StudentMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runner.manipulation.Sorter;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
+import java.util.Collections;
 import java.util.List;
+
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 @SpringBootTest
@@ -33,22 +37,38 @@ public class StudentServiceImplTest {
 
     @Test
     public void testGetAllTextSearch() {
-        Student student = Student.builder().name("n").surname("s").age(1).build();
-
-        PageRequest pageRequest = PageRequest.of(page, size, sortDirection, sortBy);
-        StudentFindByTextSearchDto paginationSearch = StudentFindByTextSearchDto.builder()
-                .sorter(sorter).caseSensitive(false).text("n").build();
-        List<Student> studentPage = Collections.singletonList(student);
+        Student student = Student.builder()
+                .name("n")
+                .surname("s")
+                .age(1)
+                .build();
+        StudentOutComeDto studentOutComeDto = StudentOutComeDto.builder()
+                .name("n")
+                .surname("s")
+                .age(1)
+                .build();
+        StudentFindByTextSearchDto searchDto = StudentFindByTextSearchDto.builder()
+                .text("1")
+                .caseSensitive(true)
+                .build();
+        List<Student> students = Collections.singletonList(student);
+        PageRequest pageable = PageRequest.of(0, 10);
         when(studentRepository.
-                searchByNamesAndSurname(paginationSearch.getText(), paginationSearch.getCaseSensitive(), pageRequest)).
-                thenReturn(Collections.singletonList(student));
-        when(mapper.toDto(studentPage)).thenReturn(Collections.singletonList(studentDTO));
+                searchByNamesAndSurname(
+                       searchDto.getText(),
+                        searchDto.getCaseSensitive(),
+                        pageable
+                )
+        ).thenReturn(students);
+        when(mapper.toDto(students)).thenReturn(Collections.singletonList(studentOutComeDto));
 
-        studentService.getAll(paginationSearch);
+        studentService.getAll(searchDto, pageable);
 
-        verify(studentRepository, times(1)).
-                searchByNamesAndSurname(paginationSearch.getText(), paginationSearch.getCaseSensitive(), pageRequest);
-        verify(mapper, times(1)).toDto(Collections.singletonList(student));
+        verify(studentRepository, times(1))
+                .searchByNamesAndSurname(searchDto.getText(),
+                        searchDto.getCaseSensitive(),
+                        pageable);
+        verify(mapper, times(1)).toDto(students);
     }
 //
 //    @Test
