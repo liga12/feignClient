@@ -14,7 +14,6 @@ public class StudentFindDto {
     private String id;
     private String name;
     private String surname;
-    private Integer age;
-    private int startAge;
-    private int endAge;
+    private Integer startAge;
+    private Integer endAge;
 }

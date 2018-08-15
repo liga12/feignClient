@@ -100,6 +100,9 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public StudentOutComeDto update(StudentUpdateDto dto) {
         StudentOutComeDto storedStudent = getById(dto.getId());
+        storedStudent.setName(dto.getName());
+        storedStudent.setSurname(dto.getSurname());
+        storedStudent.setAge(dto.getAge());
         return mapper.toDto(
                 studentRepository.save(
                         mapper.toEntity(storedStudent)
