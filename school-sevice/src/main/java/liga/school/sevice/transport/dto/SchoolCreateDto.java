@@ -13,6 +13,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SchoolCreateDto {
+
     @NotBlank
     private String name;
 

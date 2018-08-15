@@ -26,7 +26,9 @@ import java.util.Set;
 public class SchoolServiceImpl implements SchoolService {
 
     private final SchoolRepository schoolRepository;
+
     private final SchoolMapper mapper;
+
     private final StudentService studentFeignService;
 
     @Override

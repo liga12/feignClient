@@ -14,11 +14,15 @@ import java.util.Set;
 @Data
 @Builder
 public class School {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
+
     private String address;
+
     @ElementCollection
     @CollectionTable(name = "studentIds", joinColumns = @JoinColumn(name = "school_id"))
     private Set<String> studentIds;

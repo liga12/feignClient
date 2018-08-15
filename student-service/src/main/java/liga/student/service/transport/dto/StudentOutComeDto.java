@@ -15,9 +15,12 @@ public class StudentOutComeDto {
 
     @NotBlank
     private String id;
+
     @NotBlank
     private String name;
+
     @NotBlank
     private String surname;
+
     private Integer age;
 }

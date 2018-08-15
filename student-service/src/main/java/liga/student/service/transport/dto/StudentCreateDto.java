@@ -11,7 +11,10 @@ public class StudentCreateDto {
 
     @NotBlank
     private String name;
+
     @NotBlank
+
     private String surname;
+
     private Integer age;
 }

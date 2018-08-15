@@ -13,8 +13,12 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SchoolFindDto {
+
     private Long id;
+
     private String name;
+
     private String address;
+
     private Set<String> studentIds;
 }
