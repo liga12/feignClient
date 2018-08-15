@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
@@ -15,7 +15,7 @@ public class StudentApiController implements StudentApi {
     private final StudentService studentService;
 
     @Override
-    public Boolean existsAllStudentsByIds(@RequestBody List<String> ids) {
+    public Boolean existsAllStudentsByIds(@RequestBody Set<String> ids) {
         return studentService.existsByIds(ids);
     }
 }

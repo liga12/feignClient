@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -95,7 +96,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public boolean existsByIds(List<String> ids) {
+    public boolean existsByIds(Set<String> ids) {
         return ids.stream().map(studentRepository::existsById).filter(exist -> !exist).findFirst().orElse(true);
     }
 
