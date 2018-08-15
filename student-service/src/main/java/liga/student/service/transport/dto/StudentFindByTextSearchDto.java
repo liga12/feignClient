@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PaginationStudentSearchTextDto {
-    private Sorter sorter;
+public class StudentFindByTextSearchDto {
     private String text;
     private Boolean caseSensitive;
 

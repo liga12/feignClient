@@ -1,6 +1,6 @@
 package liga.student.service.service;
 
-import liga.student.service.transport.dto.PaginationStudentSearchTextDto;
+import liga.student.service.transport.dto.StudentFindByTextSearchDto;
 import liga.student.service.domain.entity.Student;
 import liga.student.service.domain.repository.StudentRepository;
 import liga.student.service.transport.dto.PaginationStudentDto;
@@ -27,7 +27,7 @@ public class StudentServiceImpl implements StudentService {
     private final MongoTemplate mongoTemplate;
 
     @Override
-    public List<StudentOutComeDto> getAll(PaginationStudentSearchTextDto dto) {
+    public List<StudentOutComeDto> getAll(StudentFindByTextSearchDto dto) {
         Sorter sorter = dto.getSorter();
         PageRequest pageRequest = PageRequest
                 .of(sorter.getPage(), sorter.getSize(), sorter.getSortDirection(), sorter.getSortBy());

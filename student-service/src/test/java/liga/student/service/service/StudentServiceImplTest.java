@@ -3,7 +3,7 @@ package liga.student.service.service;
 import liga.student.service.domain.entity.Student;
 import liga.student.service.domain.repository.StudentRepository;
 import liga.student.service.transport.dto.PaginationStudentDto;
-import liga.student.service.transport.dto.PaginationStudentSearchTextDto;
+import liga.student.service.transport.dto.StudentFindByTextSearchDto;
 import liga.student.service.transport.dto.StudentDTO;
 import liga.student.service.transport.mapper.StudentMapper;
 import org.junit.Test;
@@ -47,7 +47,7 @@ public class StudentServiceImplTest {
         Sort.Direction sortDirection = sorter.getSortDirection();
         String sortBy = sorter.getSortBy();
         PageRequest pageRequest = PageRequest.of(page, size, sortDirection, sortBy);
-        PaginationStudentSearchTextDto paginationSearch = PaginationStudentSearchTextDto.builder()
+        StudentFindByTextSearchDto paginationSearch = StudentFindByTextSearchDto.builder()
                 .sorter(sorter).caseSensitive(false).text("n").build();
         List<Student> studentPage = Collections.singletonList(student);
         when(studentRepository.

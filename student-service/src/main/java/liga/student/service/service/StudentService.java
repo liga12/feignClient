@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface StudentService {
 
-    List<StudentOutComeDto> getAll(PaginationStudentSearchTextDto dto);
+    List<StudentOutComeDto> getAll(StudentFindByTextSearchDto dto);
 
     List<StudentOutComeDto> getAll(PaginationStudentDto dto);
 

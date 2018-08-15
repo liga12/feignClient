@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import liga.student.service.service.StudentService;
 import liga.student.service.transport.dto.PaginationStudentDto;
-import liga.student.service.transport.dto.PaginationStudentSearchTextDto;
+import liga.student.service.transport.dto.StudentFindByTextSearchDto;
 import liga.student.service.transport.dto.StudentDTO;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -67,7 +67,7 @@ public class StudentControllerTest {
         StudentDTO second = StudentDTO.builder().id("1").name("n2").surname("s2").age(20).build();
         List<StudentDTO> studentDTOS = Arrays.asList(first, second);
         Sorter sorter = new Sorter(0, 2, Sort.Direction.ASC, "id");
-        PaginationStudentSearchTextDto paginationSearch = PaginationStudentSearchTextDto.builder()
+        StudentFindByTextSearchDto paginationSearch = StudentFindByTextSearchDto.builder()
                 .sorter(sorter).caseSensitive(false).text("n").build();
         when(studentService.getAll(paginationSearch)).thenReturn(studentDTOS);
 

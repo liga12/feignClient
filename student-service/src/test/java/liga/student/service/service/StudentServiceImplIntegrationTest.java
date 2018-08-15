@@ -5,7 +5,7 @@ import liga.student.service.domain.entity.Student;
 import liga.student.service.domain.repository.StudentRepository;
 import liga.student.service.exception.StudentNotFoundException;
 import liga.student.service.transport.dto.PaginationStudentDto;
-import liga.student.service.transport.dto.PaginationStudentSearchTextDto;
+import liga.student.service.transport.dto.StudentFindByTextSearchDto;
 import liga.student.service.transport.dto.StudentDTO;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,7 +43,7 @@ public class StudentServiceImplIntegrationTest {
         StudentDTO studentDTO = studentService.create(StudentDTO.builder().name("n").surname("s").age(1).build());
         StudentDTO studentDTO2 = studentService.create(StudentDTO.builder().name("n").surname("s").age(1).build());
         Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
-        PaginationStudentSearchTextDto paginationSearch = PaginationStudentSearchTextDto.builder()
+        StudentFindByTextSearchDto paginationSearch = StudentFindByTextSearchDto.builder()
                 .sorter(sorter).caseSensitive(false).text("n").build();
 
         List<StudentDTO> all = studentService.getAll(paginationSearch);
@@ -54,7 +54,7 @@ public class StudentServiceImplIntegrationTest {
     @Test
     public void testGetAllTextSearchWithEmpty() {
         Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
-        PaginationStudentSearchTextDto paginationSearch = PaginationStudentSearchTextDto.builder()
+        StudentFindByTextSearchDto paginationSearch = StudentFindByTextSearchDto.builder()
                 .sorter(sorter).caseSensitive(false).text("n s").build();
 
         List<StudentDTO> all = studentService.getAll(paginationSearch);
@@ -67,7 +67,7 @@ public class StudentServiceImplIntegrationTest {
         StudentDTO studentDTO = studentService.create(StudentDTO.builder().name("n").surname("s").age(1).build());
         studentService.create(StudentDTO.builder().name("n2").surname("s").age(1).build());
         Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
-        PaginationStudentSearchTextDto paginationSearch = PaginationStudentSearchTextDto.builder()
+        StudentFindByTextSearchDto paginationSearch = StudentFindByTextSearchDto.builder()
                 .sorter(sorter).caseSensitive(false).text("n").build();
 
         List<StudentDTO> all = studentService.getAll(paginationSearch);
@@ -80,7 +80,7 @@ public class StudentServiceImplIntegrationTest {
         StudentDTO studentDTO = studentService.create(StudentDTO.builder().name("n1").surname("s").age(1).build());
         studentService.create(StudentDTO.builder().name("N1").surname("s").age(1).build());
         Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
-        PaginationStudentSearchTextDto paginationSearch = PaginationStudentSearchTextDto.builder()
+        StudentFindByTextSearchDto paginationSearch = StudentFindByTextSearchDto.builder()
                 .sorter(sorter).caseSensitive(true).text("n1").build();
 
         List<StudentDTO> all = studentService.getAll(paginationSearch);
@@ -93,7 +93,7 @@ public class StudentServiceImplIntegrationTest {
         StudentDTO studentDTO = studentService.create(StudentDTO.builder().name("n").surname("s").age(1).build());
         StudentDTO studentDTO2 = studentService.create(StudentDTO.builder().name("n1").surname("s").age(1).build());
         Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
-        PaginationStudentSearchTextDto paginationSearch = PaginationStudentSearchTextDto.builder()
+        StudentFindByTextSearchDto paginationSearch = StudentFindByTextSearchDto.builder()
                 .sorter(sorter).caseSensitive(false).text("n s").build();
 
         List<StudentDTO> all = studentService.getAll(paginationSearch);

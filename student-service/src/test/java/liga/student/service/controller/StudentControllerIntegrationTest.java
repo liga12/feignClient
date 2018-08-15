@@ -7,7 +7,7 @@ import liga.student.service.domain.repository.StudentRepository;
 import liga.student.service.service.MongoConfig;
 import liga.student.service.service.StudentService;
 import liga.student.service.transport.dto.PaginationStudentDto;
-import liga.student.service.transport.dto.PaginationStudentSearchTextDto;
+import liga.student.service.transport.dto.StudentFindByTextSearchDto;
 import liga.student.service.transport.dto.StudentDTO;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -98,7 +98,7 @@ public class StudentControllerIntegrationTest {
         StudentDTO first = studentService.create(StudentDTO.builder().name("n").surname("s").age(20).build());
         StudentDTO second = studentService.create(StudentDTO.builder().name("n1").surname("s").age(20).build());
         Sorter sorter = new Sorter(0, 2, Sort.Direction.ASC, "id");
-        PaginationStudentSearchTextDto paginationSearch = PaginationStudentSearchTextDto.builder()
+        StudentFindByTextSearchDto paginationSearch = StudentFindByTextSearchDto.builder()
                 .sorter(sorter).caseSensitive(false).text("n s").build();
 
         mockMvc.perform(post("/student/textSearch")
@@ -117,7 +117,7 @@ public class StudentControllerIntegrationTest {
     @Test
     public void testGetStudentsTextSearchWithNull() throws Exception {
         Sorter sorter = new Sorter(0, 1, Sort.Direction.ASC, "id");
-        PaginationStudentSearchTextDto paginationSearch = PaginationStudentSearchTextDto.builder()
+        StudentFindByTextSearchDto paginationSearch = StudentFindByTextSearchDto.builder()
                 .sorter(sorter).caseSensitive(false).text("n").build();
         mockMvc.perform(post("/student/textSearch")
                 .contentType(MediaType.APPLICATION_JSON).content(mapToJson(paginationSearch)))

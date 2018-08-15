@@ -1,10 +1,7 @@
 package liga.student.service.controller;
 
-import liga.student.service.transport.dto.PaginationStudentSearchTextDto;
-import liga.student.service.transport.dto.PaginationStudentDto;
-import liga.student.service.transport.dto.StudentDTO;
 import liga.student.service.service.StudentService;
-import liga.student.service.transport.dto.StudentOutComeDto;
+import liga.student.service.transport.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -20,28 +17,28 @@ public class StudentController {
     private final StudentService studentService;
 
     @GetMapping
-    public List<StudentOutComeDto> getStudents(@PageableDefault(size = 5) Pageable pageable) {
-        return studentService.getAll(dto);
+    public List<StudentOutComeDto> getStudents(StudentFindDto dto, @PageableDefault(size = 5) Pageable pageable) {
+        return studentService.getAll(dto, pageable);
     }
 
-    @PostMapping("/textSearch")
-    public List<StudentDTO> getStudentsTextSearch(@RequestBody PaginationStudentSearchTextDto dto) {
-        return studentService.getAll(dto);
+    @GetMapping("/textSearch")
+    public List<StudentOutComeDto> getStudentsTextSearch(StudentFindByTextSearchDto dto, @PageableDefault(size = 5) Pageable pageable) {
+        return studentService.getAll(dto, pageable);
     }
 
     @GetMapping("/{id}")
-    public StudentDTO getStudentById(@PathVariable String id) {
+    public StudentOutComeDto getStudentById(@PathVariable String id) {
         return studentService.getById(id);
     }
 
     @PutMapping
-    public StudentDTO createStudent(@RequestBody StudentDTO studentDTO) {
-        return studentService.create(studentDTO);
+    public StudentOutComeDto createStudent(@RequestBody StudentCreatrDto dto) {
+        return studentService.create(dto);
     }
 
     @PostMapping
-    public StudentDTO updateStudent(@RequestBody StudentDTO studentDTO) {
-        return studentService.update(studentDTO);
+    public StudentOutComeDto updateStudent(@RequestBody StudentUpdateDto dto) {
+        return studentService.update(dto);
     }
 
     @DeleteMapping("/{id}")
