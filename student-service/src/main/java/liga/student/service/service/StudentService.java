@@ -17,7 +17,7 @@ public interface StudentService {
 
     boolean existsByIds(Set<String> ids);
 
-    StudentOutComeDto create(StudentCreatrDto dto);
+    StudentOutComeDto create(StudentCreateDto dto);
 
     StudentOutComeDto update(StudentUpdateDto dto);
 

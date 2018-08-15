@@ -1,15 +1,16 @@
 package liga.student.service.transport.mapper;
 
 import liga.student.service.domain.entity.Student;
-import liga.student.service.transport.dto.StudentDTO;
-import org.junit.Before;
+import liga.student.service.transport.dto.StudentCreateDto;
+import liga.student.service.transport.dto.StudentOutComeDto;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -20,38 +21,71 @@ public class StudentMapperTest {
     @Autowired
     private StudentMapper mapper;
 
-    private Student student;
+    @Test
+    public void testStudentToStudentOutComeDto() {
+        Student student = Student.builder()
+                .id("1")
+                .name("name")
+                .surname("surname")
+                .age(20)
+                .build();
 
-    @Before
-    public void setUp() {
-        student = new Student("12", "name", "surname", 23);
+        StudentOutComeDto studentOutComeDto = mapper.toDto(student);
+
+        assertEquals(student.getId(), studentOutComeDto.getId());
+        assertEquals(student.getName(), studentOutComeDto.getName());
+        assertEquals(student.getSurname(), studentOutComeDto.getSurname());
+        assertEquals(student.getAge(), studentOutComeDto.getAge());
     }
 
     @Test
-    public void studentToStudentDto() {
-        checkStudentData(student, mapper.toDto(student));
-    }
+    public void testStudentsToStudentOutComeDtos() {
+        Student student = Student.builder()
+                .id("1")
+                .name("name")
+                .surname("surname")
+                .age(20)
+                .build();
+        List<Student> students = Arrays.asList(student, student);
 
-    @Test
-    public void studentToStudentDto1() {
-        Student student2 = new Student("122", "name2", "surname2", 22);
-        List<Student> students = new ArrayList<>(Arrays.asList(student, student2));
-        List<StudentDTO> studentDTOS = mapper.toDto(students);
-        for (int i = 0; i < studentDTOS.size(); i++) {
-            checkStudentData(students.get(i), studentDTOS.get(i));
+        List<StudentOutComeDto> studentOutComeDtos = mapper.toDto(students);
+
+        for (StudentOutComeDto studentOutComeDto : studentOutComeDtos) {
+            assertEquals(student.getId(), studentOutComeDto.getId());
+            assertEquals(student.getName(), studentOutComeDto.getName());
+            assertEquals(student.getSurname(), studentOutComeDto.getSurname());
+            assertEquals(student.getAge(), studentOutComeDto.getAge());
         }
     }
 
     @Test
-    public void studentDtoToStudent() {
-        StudentDTO studentDTO = new StudentDTO("12", "name", "surname", 23);
-        checkStudentData(mapper.studentDTOToStudent(studentDTO), studentDTO);
+    public void testStudentCreateDtoToStudent() {
+        StudentCreateDto studentCreateDto = StudentCreateDto.builder()
+                .name("name")
+                .surname("surname")
+                .age(20)
+                .build();
+
+        Student student = mapper.toEntity(studentCreateDto);
+
+        assertEquals(student.getName(), studentCreateDto.getName());
+        assertEquals(student.getSurname(), studentCreateDto.getSurname());
+        assertEquals(student.getAge(), studentCreateDto.getAge());
     }
 
-    private void checkStudentData(Student student, StudentDTO studentDTO) {
-        assertEquals(student.getId(), studentDTO.getId());
-        assertEquals(student.getName(), studentDTO.getName());
-        assertEquals(student.getSurname(), studentDTO.getSurname());
-        assertEquals(student.getAge(), studentDTO.getAge());
+    @Test
+    public void testStudentOutComeDtoToStudent() {
+        StudentOutComeDto studentOutComeDto = StudentOutComeDto.builder()
+                .name("name")
+                .surname("surname")
+                .age(20)
+                .build();
+
+        Student student = mapper.toEntity(studentOutComeDto);
+
+        assertEquals(student.getId(), studentOutComeDto.getId());
+        assertEquals(student.getName(), studentOutComeDto.getName());
+        assertEquals(student.getSurname(), studentOutComeDto.getSurname());
+        assertEquals(student.getAge(), studentOutComeDto.getAge());
     }
 }

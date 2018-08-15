@@ -87,7 +87,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public StudentOutComeDto create(StudentCreatrDto dto) {
+    public StudentOutComeDto create(StudentCreateDto dto) {
         return mapper.toDto(
                 studentRepository.save(
                         mapper.toEntity(dto)

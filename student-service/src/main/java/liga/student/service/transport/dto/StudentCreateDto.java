@@ -7,7 +7,7 @@ import javax.validation.constraints.NotBlank;
 
 @Data
 @Builder
-public class StudentCreatrDto {
+public class StudentCreateDto {
 
     @NotBlank
     private String name;

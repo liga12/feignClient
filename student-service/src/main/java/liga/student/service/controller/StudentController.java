@@ -33,7 +33,7 @@ public class StudentController {
     }
 
     @PutMapping
-    public StudentOutComeDto createStudent(@RequestBody StudentCreatrDto dto) {
+    public StudentOutComeDto createStudent(@RequestBody StudentCreateDto dto) {
         return studentService.create(dto);
     }
 
