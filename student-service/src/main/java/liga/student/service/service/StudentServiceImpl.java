@@ -1,19 +1,17 @@
 package liga.student.service.service;
 
-import liga.student.service.transport.dto.StudentFindByTextSearchDto;
 import liga.student.service.domain.entity.Student;
 import liga.student.service.domain.repository.StudentRepository;
-import liga.student.service.transport.dto.PaginationStudentDto;
-import liga.student.service.transport.dto.StudentDTO;
 import liga.student.service.exception.StudentNotFoundException;
-import liga.student.service.transport.dto.StudentOutComeDto;
+import liga.student.service.transport.dto.*;
 import liga.student.service.transport.mapper.StudentMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +19,7 @@ import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class StudentServiceImpl implements StudentService {
 
     private final StudentRepository studentRepository;
@@ -28,22 +27,22 @@ public class StudentServiceImpl implements StudentService {
     private final MongoTemplate mongoTemplate;
 
     @Override
-    public List<StudentOutComeDto> getAll(StudentFindByTextSearchDto dto) {
-        Sorter sorter = dto.getSorter();
-        PageRequest pageRequest = PageRequest
-                .of(sorter.getPage(), sorter.getSize(), sorter.getSortDirection(), sorter.getSortBy());
+    @Transactional(readOnly = true)
+    public List<StudentOutComeDto> getAll(StudentFindByTextSearchDto dto, Pageable pageable) {
         List<Student> students = studentRepository.
-                searchByNamesAndSurname(dto.getText(), dto.getCaseSensitive(), pageRequest);
+                searchByNamesAndSurname(
+                        dto.getText(),
+                        dto.getCaseSensitive(),
+                        pageable
+                );
         return mapper.toDto(students);
     }
 
     @Override
-    public List<StudentDTO> getAll(PaginationStudentDto dto) {
-        Sorter sorter = dto.getSorter();
-        PageRequest pageRequest = PageRequest
-                .of(sorter.getPage(), sorter.getSize(), sorter.getSortDirection(), sorter.getSortBy());
+    @Transactional(readOnly = true)
+    public List<StudentOutComeDto> getAll(StudentFindDto dto, Pageable pageable) {
         Query query = new Query();
-        query.with(pageRequest);
+        query.with(pageable);
         List<Criteria> criteriaList = new ArrayList<>();
         criteriaList.add(toEquals("id", dto.getId()));
         criteriaList.add(toLike("name", dto.getName()));
@@ -82,38 +81,45 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public StudentDTO getById(String id) {
+    @Transactional(readOnly = true)
+    public StudentOutComeDto getById(String id) {
         return mapper.toDto(studentRepository.findById(id).orElseThrow(StudentNotFoundException::new));
     }
 
     @Override
-    public boolean existsById(String id) {
-        boolean result = studentRepository.existsById(id);
-        if (!result) {
-            throw new StudentNotFoundException();
-        }
-        return true;
+    public StudentOutComeDto create(StudentCreatrDto dto) {
+        return mapper.toDto(
+                studentRepository.save(
+                        mapper.toEntity(dto)
+                )
+        );
     }
 
     @Override
-    public boolean existsByIds(Set<String> ids) {
-        return ids.stream().map(studentRepository::existsById).filter(exist -> !exist).findFirst().orElse(true);
-    }
-
-    @Override
-    public StudentDTO create(StudentDTO dto) {
-        return mapper.toDto(studentRepository.save(mapper.studentDTOToStudent(dto)));
-    }
-
-    @Override
-    public StudentDTO update(StudentDTO dto) {
-        existsById(dto.getId());
-        return mapper.toDto(studentRepository.save(mapper.studentDTOToStudent(dto)));
+    public StudentOutComeDto update(StudentUpdateDto dto) {
+        StudentOutComeDto storedStudent = getById(dto.getId());
+        return mapper.toDto(
+                studentRepository.save(
+                        mapper.toEntity(storedStudent)
+                )
+        );
     }
 
     @Override
     public void remove(String id) {
-        existsById(id);
+        validateExistingById(id);
         studentRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean existsByIds(Set<String> ids) {
+        return ids.stream().map(studentRepository::existsById).filter(exist -> !exist).findFirst().orElse(true);
+    }
+
+    private void validateExistingById(String id) {
+        if (!studentRepository.existsById(id)) {
+            throw new StudentNotFoundException();
+        }
     }
 }

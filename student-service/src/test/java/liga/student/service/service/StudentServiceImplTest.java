@@ -97,7 +97,7 @@ public class StudentServiceImplTest {
     public void testExistById() {
         when(studentRepository.existsById("1")).thenReturn(true);
 
-        studentService.existsById("1");
+        studentService.validateExistingById("1");
 
         verify(studentRepository, times(1)).existsById("1");
     }
@@ -130,14 +130,14 @@ public class StudentServiceImplTest {
     public void testUpdate() {
         StudentDTO studentDTO = StudentDTO.builder().name("name").surname("surname").age(25).build();
         Student student = Student.builder().id("1").name("n").surname("s").age(1).build();
-        doReturn(true).when(studentService).existsById(any());
+        doReturn(true).when(studentService).validateExistingById(any());
         when(mapper.studentDTOToStudent(studentDTO)).thenReturn(student);
         when(studentRepository.save(student)).thenReturn(student);
         when(mapper.toDto(student)).thenReturn(studentDTO);
 
         studentService.update(studentDTO);
 
-        verify(studentService, times(1)).existsById(any());
+        verify(studentService, times(1)).validateExistingById(any());
         verify(mapper, times(1)).studentDTOToStudent(studentDTO);
         verify(studentRepository, times(1)).save(student);
         verify(mapper, times(1)).toDto(student);
@@ -145,10 +145,10 @@ public class StudentServiceImplTest {
 
     @Test
     public void testRemove() {
-        doReturn(true).when(studentService).existsById(any());
+        doReturn(true).when(studentService).validateExistingById(any());
 
         studentService.remove("1");
 
-        verify(studentService, times(1)).existsById(any());
+        verify(studentService, times(1)).validateExistingById(any());
     }
 }

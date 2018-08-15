@@ -22,7 +22,8 @@ public class StudentController {
     }
 
     @GetMapping("/textSearch")
-    public List<StudentOutComeDto> getStudentsTextSearch(StudentFindByTextSearchDto dto, @PageableDefault(size = 5) Pageable pageable) {
+    public List<StudentOutComeDto> getStudentsTextSearch(StudentFindByTextSearchDto dto,
+                                                         @PageableDefault(size = 5) Pageable pageable) {
         return studentService.getAll(dto, pageable);
     }
 
