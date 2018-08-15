@@ -4,7 +4,6 @@ import liga.student.service.domain.entity.Student;
 import liga.student.service.domain.repository.StudentRepository;
 import liga.student.service.transport.dto.PaginationStudentDto;
 import liga.student.service.transport.dto.PaginationStudentSearchTextDto;
-import liga.student.service.transport.dto.Sorter;
 import liga.student.service.transport.dto.StudentDTO;
 import liga.student.service.transport.mapper.StudentMapper;
 import org.junit.Test;

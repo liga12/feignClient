@@ -8,7 +8,6 @@ import liga.student.service.service.MongoConfig;
 import liga.student.service.service.StudentService;
 import liga.student.service.transport.dto.PaginationStudentDto;
 import liga.student.service.transport.dto.PaginationStudentSearchTextDto;
-import liga.student.service.transport.dto.Sorter;
 import liga.student.service.transport.dto.StudentDTO;
 import org.junit.AfterClass;
 import org.junit.Before;

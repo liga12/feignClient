@@ -4,15 +4,15 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.domain.Sort;
 
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class Sorter {
-    private int page;
-    private int size;
-    private Sort.Direction sortDirection;
-    private String sortBy;
+public class StudentFindDto {
+
+    private String id;
+    private String name;
+    private String surname;
+    private Integer age;
 }

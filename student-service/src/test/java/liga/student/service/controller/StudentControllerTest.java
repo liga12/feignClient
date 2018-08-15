@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import liga.student.service.service.StudentService;
 import liga.student.service.transport.dto.PaginationStudentDto;
 import liga.student.service.transport.dto.PaginationStudentSearchTextDto;
-import liga.student.service.transport.dto.Sorter;
 import liga.student.service.transport.dto.StudentDTO;
 import org.junit.Test;
 import org.junit.runner.RunWith;
