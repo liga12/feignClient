@@ -28,10 +28,6 @@ public class SchoolMapper {
         return mapper.map(school, SchoolOutComeDto.class);
     }
 
-     List<SchoolOutComeDto> toDto(final List<School> schools) {
-        return mapper.mapAsList(schools, SchoolOutComeDto.class);
-    }
-
     public School toEntity(final SchoolCreateDto dto) {
         return mapper.map(dto, School.class);
     }
