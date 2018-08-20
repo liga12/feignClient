@@ -30,11 +30,11 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<StudentOutComeDto> getAll(StudentFindByTextSearchDto dto, Pageable pageable) {
+    public List<StudentOutcomeDto> getAll(StudentFindByTextSearchDto dto, Pageable pageable) {
         List<Student> students = studentRepository.
                 searchByNamesAndSurname(
                         dto.getText(),
-                        dto.getCaseSensitive(),
+                        dto.isCaseSensitive(),
                         pageable
                 );
         return mapper.toDto(students);
@@ -42,7 +42,7 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<StudentOutComeDto> getAll(StudentFindDto dto, Pageable pageable) {
+    public List<StudentOutcomeDto> getAll(StudentFindDto dto, Pageable pageable) {
         Query query = new Query();
         query.with(pageable);
         List<Criteria> criteriaList = new ArrayList<>();
@@ -84,12 +84,12 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     @Transactional(readOnly = true)
-    public StudentOutComeDto getById(String id) {
+    public StudentOutcomeDto getById(String id) {
         return mapper.toDto(studentRepository.findById(id).orElseThrow(StudentNotFoundException::new));
     }
 
     @Override
-    public StudentOutComeDto create(StudentCreateDto dto) {
+    public StudentOutcomeDto create(StudentCreateDto dto) {
         return mapper.toDto(
                 studentRepository.save(
                         mapper.toEntity(dto)
@@ -98,8 +98,8 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public StudentOutComeDto update(StudentUpdateDto dto) {
-        StudentOutComeDto storedStudent = getById(dto.getId());
+    public StudentOutcomeDto update(StudentUpdateDto dto) {
+        StudentOutcomeDto storedStudent = getById(dto.getId());
         storedStudent.setName(dto.getName());
         storedStudent.setSurname(dto.getSurname());
         storedStudent.setAge(dto.getAge());

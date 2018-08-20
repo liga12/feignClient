@@ -2,7 +2,7 @@ package liga.student.service.transport.mapper;
 
 import liga.student.service.domain.entity.Student;
 import liga.student.service.transport.dto.StudentCreateDto;
-import liga.student.service.transport.dto.StudentOutComeDto;
+import liga.student.service.transport.dto.StudentOutcomeDto;
 import org.mapstruct.Mapper;
 
 import java.util.List;
@@ -11,11 +11,11 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface StudentMapper {
 
-    StudentOutComeDto toDto(Student student);
+    StudentOutcomeDto toDto(Student student);
 
-    List<StudentOutComeDto> toDto(List<Student> students);
+    List<StudentOutcomeDto> toDto(List<Student> students);
 
     Student toEntity(StudentCreateDto dto);
 
-    Student toEntity(StudentOutComeDto dto);
+    Student toEntity(StudentOutcomeDto dto);
 }

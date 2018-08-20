@@ -4,6 +4,7 @@ import liga.student.service.domain.entity.Student;
 import liga.student.service.domain.repository.StudentRepository;
 import liga.student.service.transport.dto.*;
 import liga.student.service.transport.mapper.StudentMapper;
+import org.assertj.core.util.Lists;
 import org.assertj.core.util.Sets;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,13 +14,17 @@ import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+
 
 @RunWith(MockitoJUnitRunner.class)
 @SpringBootTest
@@ -42,33 +47,38 @@ public class StudentServiceImplTest {
                 .surname("s")
                 .age(1)
                 .build();
-        StudentOutComeDto studentOutComeDto = StudentOutComeDto.builder()
+        StudentOutcomeDto studentOutComeDto = StudentOutcomeDto.builder()
                 .name("n")
                 .surname("s")
                 .age(1)
                 .build();
+        List<Student> students = Lists.newArrayList(student);
         StudentFindByTextSearchDto searchDto = StudentFindByTextSearchDto.builder()
-                .text("1")
-                .caseSensitive(true)
+                .text("n")
                 .build();
-        List<Student> students = Collections.singletonList(student);
         PageRequest pageable = PageRequest.of(0, 10);
         when(studentRepository.
                 searchByNamesAndSurname(
-                        searchDto.getText(),
-                        searchDto.getCaseSensitive(),
-                        pageable
+                        eq("n"),
+                        anyBoolean(),
+                        any(Pageable.class)
                 )
         ).thenReturn(students);
-        when(mapper.toDto(students)).thenReturn(Collections.singletonList(studentOutComeDto));
+        List<StudentOutcomeDto> studentOutcomeDtos = Lists.newArrayList(studentOutComeDto);
+        when(mapper.toDto(students)).thenReturn(studentOutcomeDtos);
 
-        studentService.getAll(searchDto, pageable);
+        List<StudentOutcomeDto> result = studentService.getAll(
+                searchDto,
+                pageable
+        );
 
         verify(studentRepository, times(1))
-                .searchByNamesAndSurname(searchDto.getText(),
-                        searchDto.getCaseSensitive(),
-                        pageable);
+                .searchByNamesAndSurname(
+                        eq("n"),
+                        anyBoolean(),
+                        any(Pageable.class));
         verify(mapper, times(1)).toDto(students);
+        assertEquals(studentOutcomeDtos, result);
     }
 
     @Test
@@ -78,21 +88,20 @@ public class StudentServiceImplTest {
                 .surname("s")
                 .age(1)
                 .build();
-        StudentOutComeDto studentOutComeDto = StudentOutComeDto.builder()
+        StudentOutcomeDto studentOutComeDto = StudentOutcomeDto.builder()
                 .name("n")
                 .surname("s")
                 .age(1)
                 .build();
-        StudentFindDto findDto = StudentFindDto.builder().build();
-        PageRequest pageable = PageRequest.of(0, 10);
-        when(mongoTemplate.find(any(), any())).thenReturn(Collections.singletonList(student));
-        when(mapper.toDto(Collections.singletonList(student))).thenReturn(Collections.singletonList(studentOutComeDto));
+        when(mongoTemplate.find(any(Query.class), any())).thenReturn(Lists.newArrayList(student));
+        when(mapper.toDto(Lists.newArrayList(student))).thenReturn(Lists.newArrayList(studentOutComeDto));
 
-        studentService.getAll(findDto, pageable);
+        List<StudentOutcomeDto> result = studentService.getAll(StudentFindDto.builder().build(), PageRequest.of(0,1));
 
         verify(mongoTemplate, times(1)).
-                find(any(), any());
-        verify(mapper, times(1)).toDto(Collections.singletonList(student));
+                find(any(Query.class), any());
+        verify(mapper, times(1)).toDto(Lists.newArrayList(student));
+        assertEquals(Lists.newArrayList(studentOutComeDto), result);
     }
 
 
@@ -104,7 +113,7 @@ public class StudentServiceImplTest {
                 .surname("s")
                 .age(1)
                 .build();
-        StudentOutComeDto studentOutComeDto = StudentOutComeDto.builder()
+        StudentOutcomeDto studentOutComeDto = StudentOutcomeDto.builder()
                 .name("n")
                 .surname("s")
                 .age(1)
@@ -112,10 +121,11 @@ public class StudentServiceImplTest {
         when(studentRepository.findById(id)).thenReturn(java.util.Optional.ofNullable(student));
         when(mapper.toDto(student)).thenReturn(studentOutComeDto);
 
-        studentService.getById(id);
+        StudentOutcomeDto result = studentService.getById(id);
 
         verify(studentRepository, times(1)).findById(id);
         verify(mapper, times(1)).toDto(student);
+        assertEquals(studentOutComeDto, result);
     }
 
     @Test
@@ -130,7 +140,7 @@ public class StudentServiceImplTest {
                 .surname("s")
                 .age(1)
                 .build();
-        StudentOutComeDto studentOutComeDto = StudentOutComeDto.builder()
+        StudentOutcomeDto studentOutComeDto = StudentOutcomeDto.builder()
                 .id("1")
                 .name("n")
                 .surname("s")
@@ -140,11 +150,12 @@ public class StudentServiceImplTest {
         when(studentRepository.save(student)).thenReturn(student);
         when(mapper.toDto(student)).thenReturn(studentOutComeDto);
 
-        studentService.create(studentCreateDto);
+        StudentOutcomeDto result = studentService.create(studentCreateDto);
 
         verify(mapper, times(1)).toEntity(studentCreateDto);
         verify(studentRepository, times(1)).save(student);
         verify(mapper, times(1)).toDto(student);
+        assertEquals(studentOutComeDto, result);
     }
 
     @Test
@@ -160,7 +171,7 @@ public class StudentServiceImplTest {
                 .surname("s")
                 .age(1)
                 .build();
-        StudentOutComeDto studentOutComeDto = StudentOutComeDto.builder()
+        StudentOutcomeDto studentOutComeDto = StudentOutcomeDto.builder()
                 .id("1")
                 .name("n")
                 .surname("s")
@@ -171,17 +182,18 @@ public class StudentServiceImplTest {
         when(studentRepository.save(student)).thenReturn(student);
         when(mapper.toDto(student)).thenReturn(studentOutComeDto);
 
-        studentService.update(studentUpdateDto);
+        StudentOutcomeDto result = studentService.update(studentUpdateDto);
 
         verify(studentService, times(1)).getById("1");
         verify(mapper, times(1)).toEntity(studentOutComeDto);
         verify(studentRepository, times(1)).save(student);
         verify(mapper, times(1)).toDto(student);
+        assertEquals(studentOutComeDto, result);
     }
 
     @Test
     public void testRemove() {
-        String id= "1";
+        String id = "1";
         when(studentRepository.existsById(id)).thenReturn(true);
         doNothing().when(studentRepository).deleteById(id);
 
@@ -194,13 +206,13 @@ public class StudentServiceImplTest {
 
     @Test
     public void testExistByIds() {
-        Set<String> ids = Sets.newLinkedHashSet("1", "2");
         when(studentRepository.existsById("1")).thenReturn(true);
         when(studentRepository.existsById("2")).thenReturn(true);
 
-        studentService.existsByIds(ids);
+        boolean result = studentService.existsByIds(Sets.newLinkedHashSet("1", "2"));
 
         verify(studentRepository, times(1)).existsById("1");
         verify(studentRepository, times(1)).existsById("2");
+        assertTrue(result);
     }
 }

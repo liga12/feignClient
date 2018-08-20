@@ -2,7 +2,7 @@ package liga.student.service.transport.mapper;
 
 import liga.student.service.domain.entity.Student;
 import liga.student.service.transport.dto.StudentCreateDto;
-import liga.student.service.transport.dto.StudentOutComeDto;
+import liga.student.service.transport.dto.StudentOutcomeDto;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ public class StudentMapperTest {
                 .age(20)
                 .build();
 
-        StudentOutComeDto studentOutComeDto = mapper.toDto(student);
+        StudentOutcomeDto studentOutComeDto = mapper.toDto(student);
 
         assertEquals(student.getId(), studentOutComeDto.getId());
         assertEquals(student.getName(), studentOutComeDto.getName());
@@ -48,9 +48,9 @@ public class StudentMapperTest {
                 .build();
         List<Student> students = Arrays.asList(student, student);
 
-        List<StudentOutComeDto> studentOutComeDtos = mapper.toDto(students);
+        List<StudentOutcomeDto> studentOutcomeDtos = mapper.toDto(students);
 
-        for (StudentOutComeDto studentOutComeDto : studentOutComeDtos) {
+        for (StudentOutcomeDto studentOutComeDto : studentOutcomeDtos) {
             assertEquals(student.getId(), studentOutComeDto.getId());
             assertEquals(student.getName(), studentOutComeDto.getName());
             assertEquals(student.getSurname(), studentOutComeDto.getSurname());
@@ -75,7 +75,7 @@ public class StudentMapperTest {
 
     @Test
     public void testStudentOutComeDtoToStudent() {
-        StudentOutComeDto studentOutComeDto = StudentOutComeDto.builder()
+        StudentOutcomeDto studentOutComeDto = StudentOutcomeDto.builder()
                 .name("name")
                 .surname("surname")
                 .age(20)

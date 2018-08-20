@@ -1,39 +1,55 @@
 package liga.student.service.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import liga.student.service.service.StudentService;
+import org.assertj.core.util.Sets;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-@RunWith(SpringRunner.class)
-@WebMvcTest(value = StudentApiController.class, secure = false)
+import javax.ws.rs.core.MediaType;
+import java.util.LinkedHashSet;
+
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static liga.student.service.util.Converter.mapToJson;
+
+@RunWith(MockitoJUnitRunner.class)
 public class StudentApiControllerTest {
 
-    @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
-    StudentService studentService;
+    @Mock
+    private StudentService studentService;
 
-//    @Test
-//    public void testGetStudentById() throws Exception {
-//        StudentDTO first = StudentDTO.builder().id("1").name("n").surname("s").age(20).build();
-//        when(studentService.existsByIds(Collections.singletonList(first.getId()))).thenReturn(true);
-//
-//        mockMvc.perform(post("/student-api").contentType(MediaType.APPLICATION_JSON)
-//                .content(mapToJson(Collections.singletonList(first.getId()))))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$").value("true"));
-//
-//        verify(studentService).existsByIds(Collections.singletonList(first.getId()));
-//    }
+    @InjectMocks
+    private StudentApiController studentApiController;
 
-    private String mapToJson(Object object) throws JsonProcessingException {
-        return new ObjectMapper().writeValueAsString(object);
+    @Before
+    public void setUp() {
+        mockMvc = MockMvcBuilders.standaloneSetup(studentApiController)
+                .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
+                .build();
+    }
+
+    @Test
+    public void testExistsAllStudentsByIds() throws Exception {
+        LinkedHashSet<String> studentIds = Sets.newLinkedHashSet("1", "2");
+        when(studentService.existsByIds(studentIds)).thenReturn(true);
+
+        mockMvc.perform(post("/student-api").contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(mapToJson(studentIds)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value("true"));
+
+        verify(studentService, times(1)).existsByIds(studentIds);
     }
 }

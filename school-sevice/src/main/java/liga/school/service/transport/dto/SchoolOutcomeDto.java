@@ -1,29 +1,25 @@
-package liga.student.service.transport.dto;
+package liga.school.service.transport.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.Set;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class StudentCreateDto {
+public class SchoolOutcomeDto {
 
-    @NotBlank
+    private Long id;
+
     private String name;
 
-    @NotBlank
-    private String surname;
+    private String address;
 
-    @Min(1)
-    @Max(120)
-    @NotNull
-    private Integer age;
+    private Set<String> studentIds;
 }

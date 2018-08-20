@@ -2,10 +2,11 @@ package liga.student.service.service;
 
 import liga.student.service.domain.entity.Student;
 import liga.student.service.domain.repository.StudentRepository;
-import liga.student.service.transport.dto.StudentFindByTextSearchDto;
-import liga.student.service.transport.dto.StudentFindDto;
-import liga.student.service.transport.dto.StudentOutComeDto;
+import liga.student.service.exception.StudentNotFoundException;
+import liga.student.service.transport.dto.*;
 import liga.student.service.transport.mapper.StudentMapper;
+import org.assertj.core.util.Lists;
+import org.assertj.core.util.Sets;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,11 +15,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
+import static liga.student.service.asserts.Asserts.assertEqualStudentAndDto;
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertFalse;
+import static junit.framework.TestCase.assertTrue;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -32,6 +36,9 @@ public class StudentServiceImplIntegrationTest {
 
     @Autowired
     private StudentMapper studentMapper;
+
+    @Autowired
+    StudentMapper mapper;
 
     @Before
     public void setUp() {
@@ -52,41 +59,40 @@ public class StudentServiceImplIntegrationTest {
                 .build();
         studentRepository.save(student);
         studentRepository.save(student2);
+        List<Student> students = studentRepository.findAll();
         StudentFindByTextSearchDto searchDto = StudentFindByTextSearchDto.builder()
                 .text("n")
                 .caseSensitive(false)
                 .build();
-        List<StudentOutComeDto> students = studentMapper.toDto(Arrays.asList(student2, student));
         PageRequest pageable = PageRequest.of(0, 10);
 
-        List<StudentOutComeDto> all = studentService.getAll(searchDto, pageable);
+        List<StudentOutcomeDto> result = studentService.getAll(searchDto, pageable);
+        Collections.reverse(result);
 
-        assertEquals(students, all);
+        assertEqualStudentAndDto(mapper.toDto(students), result);
     }
 
     @Test
     public void testGetAllTextSearchWithEmpty() {
-        Student student = Student.builder()
+        Student.builder()
                 .name("n")
                 .surname("s")
                 .age(1)
                 .build();
-        Student student2 = Student.builder()
+        Student.builder()
                 .name("s")
                 .surname("n")
                 .age(1)
                 .build();
-        studentRepository.save(student);
-        studentRepository.save(student2);
         StudentFindByTextSearchDto searchDto = StudentFindByTextSearchDto.builder()
                 .text("a")
                 .caseSensitive(false)
                 .build();
         PageRequest pageable = PageRequest.of(0, 10);
 
-        List<StudentOutComeDto> all = studentService.getAll(searchDto, pageable);
+        List<StudentOutcomeDto> result = studentService.getAll(searchDto, pageable);
 
-        assertEquals(Collections.emptyList(), all);
+        assertEqualStudentAndDto(Lists.emptyList(), result);
     }
 
     @Test
@@ -103,16 +109,16 @@ public class StudentServiceImplIntegrationTest {
                 .build();
         studentRepository.save(student);
         studentRepository.save(student2);
-        List<StudentOutComeDto> students = studentMapper.toDto(Collections.singletonList(student));
+        List<StudentOutcomeDto> students = studentMapper.toDto(Lists.newArrayList(student));
         StudentFindByTextSearchDto searchDto = StudentFindByTextSearchDto.builder()
                 .text("d")
                 .caseSensitive(false)
                 .build();
         PageRequest pageable = PageRequest.of(0, 10);
 
-        List<StudentOutComeDto> all = studentService.getAll(searchDto, pageable);
+        List<StudentOutcomeDto> result = studentService.getAll(searchDto, pageable);
 
-        assertEquals(students, all);
+        assertEqualStudentAndDto(students, result);
     }
 
     @Test
@@ -129,16 +135,16 @@ public class StudentServiceImplIntegrationTest {
                 .build();
         studentRepository.save(student);
         studentRepository.save(student2);
-        List<StudentOutComeDto> students = studentMapper.toDto(Collections.singletonList(student2));
+        List<StudentOutcomeDto> students = studentMapper.toDto(Lists.newArrayList(student2));
         StudentFindByTextSearchDto searchDto = StudentFindByTextSearchDto.builder()
                 .text("n")
                 .caseSensitive(true)
                 .build();
         PageRequest pageable = PageRequest.of(0, 10);
 
-        List<StudentOutComeDto> all = studentService.getAll(searchDto, pageable);
+        List<StudentOutcomeDto> result = studentService.getAll(searchDto, pageable);
 
-        assertEquals(students, all);
+        assertEqualStudentAndDto(students, result);
     }
 
     @Test
@@ -155,16 +161,16 @@ public class StudentServiceImplIntegrationTest {
                 .build();
         studentRepository.save(student);
         studentRepository.save(student2);
-        List<StudentOutComeDto> students = studentMapper.toDto(Arrays.asList(student2, student));
+        List<StudentOutcomeDto> students = studentMapper.toDto(Lists.newArrayList(student2, student));
         StudentFindByTextSearchDto searchDto = StudentFindByTextSearchDto.builder()
                 .text("n")
                 .caseSensitive(true)
                 .build();
         PageRequest pageable = PageRequest.of(0, 10);
 
-        List<StudentOutComeDto> all = studentService.getAll(searchDto, pageable);
+        List<StudentOutcomeDto> result = studentService.getAll(searchDto, pageable);
 
-        assertEquals(students, all);
+        assertEqualStudentAndDto(students, result);
     }
 
     @Test
@@ -181,273 +187,352 @@ public class StudentServiceImplIntegrationTest {
                 .build();
         studentRepository.save(student);
         studentRepository.save(student2);
-        List<StudentOutComeDto> students = studentMapper.toDto(Arrays.asList(student, student2));
+        List<StudentOutcomeDto> students = studentMapper.toDto(Lists.newArrayList(student, student2));
         StudentFindDto searchDto = StudentFindDto.builder()
                 .build();
         PageRequest pageable = PageRequest.of(0, 10);
 
-        List<StudentOutComeDto> all = studentService.getAll(searchDto, pageable);
+        List<StudentOutcomeDto> result = studentService.getAll(searchDto, pageable);
 
-        assertEquals(students, all);
+        assertEqualStudentAndDto(students, result);
     }
 
-//    @Test
-//    public void testGetAllWithId() {
-//        StudentDTO studentDTO = studentService.create(StudentDTO.builder().name("n").surname("s").age(1).build());
-//        studentService.create(StudentDTO.builder().name("n1").surname("s").age(1).build());
-//        Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
-//        PaginationStudentDto pagination = PaginationStudentDto.builder().sorter(sorter).id(studentDTO.getId()).build();
-//
-//        List<StudentDTO> all = studentService.getAll(pagination);
-//
-//        assertEquals(Collections.singletonList(studentDTO), all);
-//    }
-//
-//    @Test
-//    public void testGetAllWithIdEmpty() {
-//        Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
-//        PaginationStudentDto pagination = PaginationStudentDto.builder().sorter(sorter).id("1L").build();
-//
-//        List<StudentDTO> all = studentService.getAll(pagination);
-//
-//        assertEquals(Collections.emptyList(), all);
-//    }
-//
-//    @Test
-//    public void testGetAllWithName() {
-//        StudentDTO studentDTO = studentService.create(StudentDTO.builder().name("n").surname("s").age(1).build());
-//        StudentDTO studentDTO2 = studentService.create(StudentDTO.builder().name("n1").surname("s").age(1).build());
-//        Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
-//        PaginationStudentDto pagination = PaginationStudentDto.builder().sorter(sorter).name("n").build();
-//
-//        List<StudentDTO> all = studentService.getAll(pagination);
-//
-//        assertEquals(Arrays.asList(studentDTO, studentDTO2), all);
-//    }
-//
-//    @Test
-//    public void testGetAllWithNameEmpty() {
-//        studentService.create(StudentDTO.builder().name("gg").surname("s").age(1).build());
-//        studentService.create(StudentDTO.builder().name("s").surname("s").age(1).build());
-//        Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
-//        PaginationStudentDto pagination = PaginationStudentDto.builder().sorter(sorter).name("n").build();
-//
-//        List<StudentDTO> all = studentService.getAll(pagination);
-//
-//        assertEquals(Collections.emptyList(), all);
-//    }
-//
-//    @Test
-//    public void testGetAllWithSurname() {
-//        StudentDTO studentDTO = studentService.create(StudentDTO.builder().name("n").surname("s").age(1).build());
-//        StudentDTO studentDTO2 = studentService.create(StudentDTO.builder().name("n1").surname("s2").age(1).build());
-//        Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
-//        PaginationStudentDto pagination = PaginationStudentDto.builder().sorter(sorter).surname("s").build();
-//
-//        List<StudentDTO> all = studentService.getAll(pagination);
-//
-//        assertEquals(Arrays.asList(studentDTO, studentDTO2), all);
-//    }
-//
-//    @Test
-//    public void testGetAllWithSurnameEmpty() {
-//        studentService.create(StudentDTO.builder().name("gg").surname("s").age(1).build());
-//        studentService.create(StudentDTO.builder().name("s").surname("s").age(1).build());
-//        Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
-//        PaginationStudentDto pagination = PaginationStudentDto.builder().sorter(sorter).surname("n").build();
-//
-//        List<StudentDTO> all = studentService.getAll(pagination);
-//
-//        assertEquals(Collections.emptyList(), all);
-//    }
-//
-//    @Test
-//    public void testGetAllWithStartAge() {
-//        StudentDTO studentDTO = studentService.create(StudentDTO.builder().name("n").surname("s").age(1).build());
-//        StudentDTO studentDTO2 = studentService.create(StudentDTO.builder().name("n1").surname("s2").age(4).build());
-//        Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
-//        PaginationStudentDto pagination = PaginationStudentDto.builder().sorter(sorter).startAge(1).build();
-//
-//        List<StudentDTO> all = studentService.getAll(pagination);
-//
-//        assertEquals(Arrays.asList(studentDTO, studentDTO2), all);
-//    }
-//
-//    @Test
-//    public void testGetAllWithStartAgeEmpty() {
-//        studentService.create(StudentDTO.builder().name("gg").surname("s").age(1).build());
-//        studentService.create(StudentDTO.builder().name("s").surname("s").age(2).build());
-//        Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
-//        PaginationStudentDto pagination = PaginationStudentDto.builder().sorter(sorter).startAge(3).build();
-//
-//        List<StudentDTO> all = studentService.getAll(pagination);
-//
-//        assertEquals(Collections.emptyList(), all);
-//    }
-//
-//    @Test
-//    public void testGetAllWithEndAge() {
-//        StudentDTO studentDTO = studentService.create(StudentDTO.builder().name("n").surname("s").age(1).build());
-//        StudentDTO studentDTO2 = studentService.create(StudentDTO.builder().name("n1").surname("s2").age(4).build());
-//        Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
-//        PaginationStudentDto pagination = PaginationStudentDto.builder().sorter(sorter).endAge(5).build();
-//
-//        List<StudentDTO> all = studentService.getAll(pagination);
-//
-//        assertEquals(Arrays.asList(studentDTO, studentDTO2), all);
-//    }
-//
-//    @Test
-//    public void testGetAllWithEndAgeEmpty() {
-//        studentService.create(StudentDTO.builder().name("gg").surname("s").age(3).build());
-//        studentService.create(StudentDTO.builder().name("s").surname("s").age(2).build());
-//        Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
-//        PaginationStudentDto pagination = PaginationStudentDto.builder().sorter(sorter).endAge(1).build();
-//
-//        List<StudentDTO> all = studentService.getAll(pagination);
-//
-//        assertEquals(Collections.emptyList(), all);
-//    }
-//
-//    @Test
-//    public void testGetAllWithStartAgeAndEndAge() {
-//        StudentDTO studentDTO = studentService.create(StudentDTO.builder().name("n").surname("s").age(1).build());
-//        StudentDTO studentDTO2 = studentService.create(StudentDTO.builder().name("n1").surname("s2").age(4).build());
-//        Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
-//        PaginationStudentDto pagination = PaginationStudentDto.builder().sorter(sorter).startAge(1).endAge(9).build();
-//
-//        List<StudentDTO> all = studentService.getAll(pagination);
-//
-//        assertEquals(Arrays.asList(studentDTO, studentDTO2), all);
-//    }
-//
-//    @Test
-//    public void testGetAllWithStartAgeAndEndAgeEmpty() {
-//        studentService.create(StudentDTO.builder().name("gg").surname("s").age(3).build());
-//        studentService.create(StudentDTO.builder().name("s").surname("s").age(2).build());
-//        Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
-//        PaginationStudentDto pagination = PaginationStudentDto.builder().
-//                sorter(sorter).startAge(1).endAge(1).build();
-//
-//        List<StudentDTO> all = studentService.getAll(pagination);
-//
-//        assertEquals(Collections.emptyList(), all);
-//    }
-//
-//    @Test
-//    public void testGetAllWithNameAndSurnameStartAgeAndEndAge() {
-//        StudentDTO studentDTO = studentService.create(StudentDTO.builder().name("n").surname("qw").age(1).build());
-//        studentService.create(StudentDTO.builder().name("a").surname("q").age(4).build());
-//        studentService.create(StudentDTO.builder().name("fd").surname("s").age(1).build());
-//        studentService.create(StudentDTO.builder().name("f").surname("s2").age(2).build());
-//        Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
-//        PaginationStudentDto pagination = PaginationStudentDto.builder().
-//                sorter(sorter).name("n").surname("q").startAge(1).endAge(1).build();
-//
-//        List<StudentDTO> all = studentService.getAll(pagination);
-//
-//        assertEquals(Collections.singletonList(studentDTO), all);
-//    }
-//
-//    @Test
-//    public void testGetAllWithNameAndSurnameStartAgeAndEndAgeEmpty() {
-//        studentService.create(StudentDTO.builder().name("n").surname("qw").age(1).build());
-//        studentService.create(StudentDTO.builder().name("a").surname("q").age(4).build());
-//        studentService.create(StudentDTO.builder().name("fd").surname("s").age(1).build());
-//        studentService.create(StudentDTO.builder().name("f").surname("s2").age(2).build());
-//        Sorter sorter = new Sorter(0, 10, Sort.Direction.ASC, "id");
-//        PaginationStudentDto pagination = PaginationStudentDto.builder().
-//                sorter(sorter).name("n").surname("k").startAge(1).endAge(1).build();
-//
-//        List<StudentDTO> all = studentService.getAll(pagination);
-//
-//        assertEquals(Collections.emptyList(), all);
-//    }
-//
-//    @Test
-//    public void testGetById() {
-//        StudentDTO studentDTO = studentService.
-//                create(StudentDTO.builder().name("name").surname("surname").age(25).build());
-//
-//        StudentDTO all = studentService.getById(studentDTO.getId());
-//
-//        assertEquals(studentDTO, all);
-//    }
-//
-//    @Test(expected = StudentNotFoundException.class)
-//    public void testGetByIdWithStudentNotFound() {
-//        studentService.getById("1");
-//    }
-//
-//    @Test
-//    public void testExistById() {
-//        StudentDTO studentDTO = studentService.
-//                create(StudentDTO.builder().name("name").surname("surname").age(25).build());
-//
-//        assertTrue(studentService.validateExistingById(studentDTO.getId()));
-//    }
-//
-//    @Test(expected = StudentNotFoundException.class)
-//    public void testExistByIdWithFalse() {
-//        studentService.validateExistingById("1");
-//    }
-//
-//    @Test
-//    public void testExistByIds() {
-//        StudentDTO studentDTO = studentService.
-//                create(StudentDTO.builder().name("name").surname("surname").age(25).build());
-//        assertTrue(studentService.existsByIds(Collections.singletonList(studentDTO.getId())));
-//    }
-//
-//    @Test
-//    public void testExistByIdsWithFalse() {
-//        List<String> ids = Collections.singletonList("1");
-//
-//        boolean result = studentService.existsByIds(ids);
-//
-//        assertFalse(result);
-//    }
-//
-//    @Test
-//    public void testCreate() {
-//        StudentDTO studentDTO = studentService.
-//                create(StudentDTO.builder().name("name").surname("surname").age(25).build());
-//        assertTrue(studentService.validateExistingById(studentDTO.getId()));
-//    }
-//
-//    @Test
-//    public void testUpdate() {
-//        StudentDTO studentDTO = studentService.
-//                create(StudentDTO.builder().name("name").surname("surname").age(25).build());
-//        studentDTO.setName("n");
-//        studentDTO.setSurname("s");
-//        studentDTO.setAge(20);
-//
-//        StudentDTO updatedStudentDTO = studentService.update(studentDTO);
-//
-//        assertEquals(studentDTO, updatedStudentDTO);
-//    }
-//
-//    @Test(expected = StudentNotFoundException.class)
-//    public void testUpdateWithStudentNotFound() {
-//        StudentDTO studentDTO = studentService.
-//                create(StudentDTO.builder().name("name").surname("surname").age(25).build());
-//        studentDTO.setName("n");
-//        studentDTO.setSurname("s");
-//        studentDTO.setAge(20);
-//
-//        studentService.update(StudentDTO.builder().id("23").build());
-//    }
-//
-//
-//    @Test
-//    public void testRemove() {
-//        StudentDTO studentDTO = studentService.
-//                create(StudentDTO.builder().name("name").surname("surname").age(25).build());
-//        studentService.remove(studentDTO.getId());
-//
-//        List<Student> all = studentRepository.findAll();
-//
-//        assertTrue(all.isEmpty());
-//    }
+    @Test
+    public void testGetAllById() {
+        Student student = Student.builder()
+                .name("n")
+                .surname("s")
+                .age(1)
+                .build();
+        Student saveStudent = studentRepository.save(student);
+        StudentFindDto searchDto = StudentFindDto.builder()
+                .id(saveStudent.getId())
+                .build();
+        PageRequest pageable = PageRequest.of(0, 10);
+
+        List<StudentOutcomeDto> result = studentService.getAll(searchDto, pageable);
+
+        assertEqualStudentAndDto(mapper.toDto(
+                Lists.newArrayList(
+                        saveStudent)
+                ),
+                result);
+    }
+
+    @Test
+    public void testGetAllWithIdEmpty() {
+        StudentFindDto searchDto = StudentFindDto.builder()
+                .id("1")
+                .build();
+        PageRequest pageable = PageRequest.of(0, 10);
+
+        List<StudentOutcomeDto> result = studentService.getAll(searchDto, pageable);
+
+        assertEqualStudentAndDto(Lists.newArrayList(), result);
+    }
+
+    @Test
+    public void testGetAllWithName() {
+        Student student = Student.builder()
+                .name("n")
+                .surname("s")
+                .age(1)
+                .build();
+        Student student2 = Student.builder()
+                .name("n1")
+                .surname("n")
+                .age(1)
+                .build();
+        studentRepository.save(student);
+        studentRepository.save(student2);
+        List<StudentOutcomeDto> students = studentMapper.toDto(Lists.newArrayList(student, student2));
+        StudentFindDto searchDto = StudentFindDto.builder()
+                .name("n")
+                .build();
+        PageRequest pageable = PageRequest.of(0, 10);
+
+        List<StudentOutcomeDto> result = studentService.getAll(searchDto, pageable);
+
+        assertEqualStudentAndDto(students, result);
+    }
+
+    @Test
+    public void testGetAllWithNameEmpty() {
+        List<StudentOutcomeDto> students = studentMapper.toDto(Lists.newArrayList());
+        StudentFindDto searchDto = StudentFindDto.builder()
+                .name("n")
+                .build();
+        PageRequest pageable = PageRequest.of(0, 10);
+
+        List<StudentOutcomeDto> result = studentService.getAll(searchDto, pageable);
+
+        assertEqualStudentAndDto(students, result);
+    }
+
+    @Test
+    public void testGetAllWithSurname() {
+        Student student = Student.builder()
+                .name("n")
+                .surname("s")
+                .age(1)
+                .build();
+        Student student2 = Student.builder()
+                .name("n1")
+                .surname("ns")
+                .age(1)
+                .build();
+        studentRepository.save(student);
+        studentRepository.save(student2);
+        List<StudentOutcomeDto> students = studentMapper.toDto(Lists.newArrayList(student, student2));
+        StudentFindDto searchDto = StudentFindDto.builder()
+                .surname("s")
+                .build();
+        PageRequest pageable = PageRequest.of(0, 10);
+
+        List<StudentOutcomeDto> result = studentService.getAll(searchDto, pageable);
+
+        assertEqualStudentAndDto(students, result);
+    }
+
+    @Test
+    public void testGetAllWithSurnameEmpty() {
+        List<StudentOutcomeDto> students = studentMapper.toDto(Lists.newArrayList());
+        StudentFindDto searchDto = StudentFindDto.builder()
+                .surname("n")
+                .build();
+        PageRequest pageable = PageRequest.of(0, 10);
+
+        List<StudentOutcomeDto> result = studentService.getAll(searchDto, pageable);
+
+        assertEqualStudentAndDto(students, result);
+    }
+
+    @Test
+    public void testGetAllWithStartAge() {
+        Student student = Student.builder()
+                .name("n")
+                .surname("s")
+                .age(1)
+                .build();
+        Student student2 = Student.builder()
+                .name("n1")
+                .surname("ns")
+                .age(2)
+                .build();
+        studentRepository.save(student);
+        studentRepository.save(student2);
+        List<StudentOutcomeDto> students = studentMapper.toDto(Lists.newArrayList(student, student2));
+        StudentFindDto searchDto = StudentFindDto.builder()
+                .startAge(1)
+                .build();
+        PageRequest pageable = PageRequest.of(0, 10);
+
+        List<StudentOutcomeDto> result = studentService.getAll(searchDto, pageable);
+
+        assertEqualStudentAndDto(students, result);
+    }
+
+    @Test
+    public void testGetAllWithStartAgeEmpty() {
+        List<StudentOutcomeDto> students = studentMapper.toDto(Lists.newArrayList());
+        StudentFindDto searchDto = StudentFindDto.builder()
+                .startAge(1)
+                .build();
+        PageRequest pageable = PageRequest.of(0, 10);
+
+        List<StudentOutcomeDto> result = studentService.getAll(searchDto, pageable);
+
+        assertEqualStudentAndDto(students, result);
+    }
+
+    @Test
+    public void testGetAllWithEndAge() {
+        Student student = Student.builder()
+                .name("n")
+                .surname("s")
+                .age(1)
+                .build();
+        Student student2 = Student.builder()
+                .name("n1")
+                .surname("ns")
+                .age(2)
+                .build();
+        studentRepository.save(student);
+        studentRepository.save(student2);
+        List<StudentOutcomeDto> students = studentMapper.toDto(Lists.newArrayList(student, student2));
+        StudentFindDto searchDto = StudentFindDto.builder()
+                .endAge(2)
+                .build();
+        PageRequest pageable = PageRequest.of(0, 10);
+
+        List<StudentOutcomeDto> result = studentService.getAll(searchDto, pageable);
+
+        assertEqualStudentAndDto(students, result);
+    }
+
+    @Test
+    public void testGetAllWithEndAgeEmpty() {
+        List<StudentOutcomeDto> students = studentMapper.toDto(Lists.newArrayList());
+        StudentFindDto searchDto = StudentFindDto.builder()
+                .endAge(1)
+                .build();
+        PageRequest pageable = PageRequest.of(0, 10);
+
+        List<StudentOutcomeDto> result = studentService.getAll(searchDto, pageable);
+
+        assertEqualStudentAndDto(students, result);
+    }
+
+    @Test
+    public void testGetAllWithStartAgeAndEndAge() {
+        Student student = Student.builder()
+                .name("n")
+                .surname("s")
+                .age(1)
+                .build();
+        Student student2 = Student.builder()
+                .name("n1")
+                .surname("ns")
+                .age(2)
+                .build();
+        studentRepository.save(student);
+        studentRepository.save(student2);
+        List<StudentOutcomeDto> students = studentMapper.toDto(Lists.newArrayList(student, student2));
+        StudentFindDto searchDto = StudentFindDto.builder()
+                .startAge(1)
+                .endAge(2)
+                .build();
+        PageRequest pageable = PageRequest.of(0, 10);
+
+        List<StudentOutcomeDto> result = studentService.getAll(searchDto, pageable);
+
+        assertEqualStudentAndDto(students, result);
+    }
+
+    @Test
+    public void testGetAllWithStartAgeAndEndAgeEmpty() {
+        List<StudentOutcomeDto> students = studentMapper.toDto(Lists.newArrayList());
+        StudentFindDto searchDto = StudentFindDto.builder()
+                .startAge(1)
+                .endAge(2)
+                .build();
+        PageRequest pageable = PageRequest.of(0, 10);
+
+        List<StudentOutcomeDto> result = studentService.getAll(searchDto, pageable);
+
+        assertEqualStudentAndDto(students, result);
+    }
+
+    @Test
+    public void testGetById() {
+        Student student = Student.builder()
+                .name("n")
+                .surname("s")
+                .age(1)
+                .build();
+        Student save = studentRepository.save(student);
+        List<StudentOutcomeDto> students = studentMapper.toDto(Lists.newArrayList(student));
+
+        StudentOutcomeDto result = studentService.getById(save.getId());
+
+        assertEqualStudentAndDto(students, Lists.newArrayList(result));
+    }
+
+    @Test(expected = StudentNotFoundException.class)
+    public void testGetByIdWithStudentNotFound() {
+        studentService.getById("1");
+    }
+
+    @Test
+    public void testExistByIds() {
+        Student student = Student.builder()
+                .name("n")
+                .surname("s")
+                .age(1)
+                .build();
+        Student save = studentRepository.save(student);
+        Student student1 = Student.builder()
+                .name("n")
+                .surname("s")
+                .age(1)
+                .build();
+        Student save1 = studentRepository.save(student1);
+        Set<String> ids = Sets.newLinkedHashSet(save.getId(), save1.getId());
+
+        boolean result = studentService.existsByIds(ids);
+
+        assertTrue(result);
+    }
+
+    @Test
+    public void testExistByIdsWithFalse() {
+        boolean result = studentService.existsByIds(Sets.newLinkedHashSet("1"));
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void testCreate() {
+        StudentCreateDto studentCreateDto = StudentCreateDto.builder()
+                .name("n")
+                .surname("s")
+                .age(1)
+                .build();
+
+        StudentOutcomeDto result = studentService.create(studentCreateDto);
+
+        assertEquals(studentService.getById(result.getId()), result );
+    }
+
+    @Test
+    public void testUpdate() {
+        Student student = Student.builder()
+                .name("n")
+                .surname("s")
+                .age(1)
+                .build();
+        Student save = studentRepository.save(student);
+        StudentUpdateDto updateDto = StudentUpdateDto.builder()
+                .id(save.getId())
+                .name("n")
+                .surname("ss")
+                .age(1)
+                .build();
+
+        StudentOutcomeDto result = studentService.update(updateDto);
+
+        assertEquals(studentService.getById(result.getId()), result);
+    }
+
+    @Test(expected = StudentNotFoundException.class)
+    public void testUpdateWithStudentNotFound() {
+        StudentUpdateDto updateDto = StudentUpdateDto.builder()
+                .id("1")
+                .name("n")
+                .surname("ss")
+                .age(1)
+                .build();
+
+        studentService.update(updateDto);
+    }
+
+    @Test
+    public void testRemove() {
+        Student student = Student.builder()
+                .name("n")
+                .surname("s")
+                .age(1)
+                .build();
+        String id = studentRepository.save(student).getId();
+
+        studentService.remove(id);
+
+        assertFalse(studentRepository.existsById(id));
+    }
+
+    @Test(expected = StudentNotFoundException.class)
+    public void testRemoveWithStudentNotFound() {
+
+        studentService.remove("1");
+    }
 }
