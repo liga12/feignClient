@@ -29,6 +29,6 @@ interface SchoolSearchSpecification {
     }
 
     static Predicate toEqualsPredicate(Root<School> root, String param, Set<String> paramValue) {
-        return paramValue != null ?root.join(param).in(paramValue):null;
+        return paramValue != null ? root.join(param).in(paramValue) : null;
     }
 }

@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import static liga.school.service.util.Converter.mapToJson;
+import static org.junit.Assert.assertFalse;
 import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -285,9 +286,12 @@ public class SchoolControllerIntegrationTest {
     @Sql("/scripts/initSchools.sql")
     public void deleteSchool() throws Exception {
         when(studentFeignService.existsAllStudentsByIds(anySet())).thenReturn(true);
+        long schoolId = 1L;
 
-        mockMvc.perform(delete("/schools/{id}", 1L))
+        mockMvc.perform(delete("/schools/{id}", schoolId))
                 .andExpect(status().isOk());
+
+        assertFalse(schoolRepository.existsById(schoolId));
     }
 
     @Test
