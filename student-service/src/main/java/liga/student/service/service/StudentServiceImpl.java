@@ -1,40 +1,130 @@
 package liga.student.service.service;
 
-import liga.student.service.domain.Student;
-import liga.student.service.domain.StudentDao;
-import liga.student.service.dto.StudentDto;
-import liga.student.service.mapper.StudentMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import liga.student.service.domain.entity.Student;
+import liga.student.service.domain.repository.StudentRepository;
+import liga.student.service.exception.StudentNotFoundException;
+import liga.student.service.transport.dto.*;
+import liga.student.service.transport.mapper.StudentMapper;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 @Service
+@RequiredArgsConstructor
+@Transactional
 public class StudentServiceImpl implements StudentService {
 
-    @Autowired
-    StudentMapper studentMapper;
+    private final StudentRepository studentRepository;
 
-    @Autowired
-    StudentDao studentDao;
+    private final StudentMapper mapper;
+
+    private final MongoTemplate mongoTemplate;
 
     @Override
-    public Map<String, List<StudentDto>> createStudentsDto() {
-        Map<String, List<StudentDto>> studentsDto = new HashMap<>();
-        Map<String, List<Student>> students = studentDao.getStudents();
-        List<StudentDto> lst;
-        for (Map.Entry<String, List<Student>> stringListEntry : students.entrySet()) {
-            lst=new ArrayList<>();
-            String shoolName = stringListEntry.getKey();
-            List<Student> value = stringListEntry.getValue();
-            for (Student student : value) {
-                lst.add(studentMapper.studentToStudentDTO(student));
+    @Transactional(readOnly = true)
+    public List<StudentOutcomeDto> getAll(StudentFindByTextSearchDto dto, Pageable pageable) {
+        List<Student> students = studentRepository.
+                searchByNamesAndSurname(
+                        dto.getText(),
+                        dto.isCaseSensitive(),
+                        pageable
+                );
+        return mapper.toDto(students);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<StudentOutcomeDto> getAll(StudentFindDto dto, Pageable pageable) {
+        Query query = new Query();
+        query.with(pageable);
+        List<Criteria> criteriaList = new ArrayList<>();
+        criteriaList.add(toEquals("id", dto.getId()));
+        criteriaList.add(toLike("name", dto.getName()));
+        criteriaList.add(toLike("surname", dto.getSurname()));
+        criteriaList.add(toBetween("age", dto.getStartAge(), dto.getEndAge()));
+        criteriaList.forEach(q -> {
+            if (q != null) {
+                query.addCriteria(q);
             }
-            studentsDto.put(shoolName,lst);
+        });
+        List<Student> students = mongoTemplate.find(query, Student.class);
+        return mapper.toDto(students);
+    }
+
+    private Criteria toEquals(String param, Object paramValue) {
+        return param != null && paramValue != null ? Criteria.where(param).is(paramValue) : null;
+    }
+
+    private Criteria toLike(String param, String paramValue) {
+        return param != null && paramValue != null ? Criteria.where(param).regex(paramValue) : null;
+    }
+
+    private Criteria toBetween(String param, Object startParamValue, Object endParamValue) {
+        Criteria criteria = null;
+        if (startParamValue != null && endParamValue != null) {
+            criteria = Criteria.where(param).gte(startParamValue).lte(endParamValue);
+        } else {
+            if (startParamValue != null) {
+                criteria = Criteria.where(param).gte(startParamValue);
+            }
+            if (endParamValue != null) {
+                criteria = Criteria.where(param).lte(endParamValue);
+            }
         }
-        return studentsDto;
+        return criteria;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public StudentOutcomeDto getById(String id) {
+        return mapper.toDto(studentRepository.findById(id).orElseThrow(StudentNotFoundException::new));
+    }
+
+    @Override
+    public StudentOutcomeDto create(StudentCreateDto dto) {
+        return mapper.toDto(
+                studentRepository.save(
+                        mapper.toEntity(dto)
+                )
+        );
+    }
+
+    @Override
+    public StudentOutcomeDto update(StudentUpdateDto dto) {
+        StudentOutcomeDto storedStudent = getById(dto.getId());
+        storedStudent.setName(dto.getName());
+        storedStudent.setSurname(dto.getSurname());
+        storedStudent.setAge(dto.getAge());
+        return mapper.toDto(
+                studentRepository.save(
+                        mapper.toEntity(storedStudent)
+                )
+        );
+    }
+
+    @Override
+    public void remove(String id) {
+        validateExistingById(id);
+        studentRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean existsByIds(Set<String> ids) {
+        return ids.stream().map(studentRepository::existsById).filter(exist -> !exist).findFirst().orElse(true);
+    }
+
+    private void validateExistingById(String id) {
+        if (!studentRepository.existsById(id)) {
+            throw new StudentNotFoundException();
+        }
     }
 }

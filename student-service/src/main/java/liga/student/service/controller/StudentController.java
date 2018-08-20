@@ -1,36 +1,50 @@
 package liga.student.service.controller;
 
-import liga.student.service.api.StudentApi;
-import liga.student.service.domain.Student;
-import liga.student.service.dto.StudentDto;
-import liga.student.service.mapper.StudentMapper;
 import liga.student.service.service.StudentService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import liga.student.service.transport.dto.*;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-public class StudentController implements StudentApi {
+@RequestMapping("/students")
+@RequiredArgsConstructor
+public class StudentController {
 
-    @Autowired
-    StudentService studentService;
+    private final StudentService studentService;
 
-    @Autowired
-    private StudentMapper studentMapper;
+    @GetMapping
+    public List<StudentOutcomeDto> getStudents(@Valid StudentFindDto dto, @PageableDefault(size = 5) Pageable pageable) {
+        return studentService.getAll(dto, pageable);
+    }
 
-    @GetMapping(value = "/getStudentDetails/{schoolname}")
-    public List<StudentDto> getStudent(@PathVariable("schoolname") String schoolname) {
-        System.out.println("Getting CreatorStudent details for " + schoolname);
-        List<StudentDto> studentList = studentService.createStudentsDto().get(schoolname);
-        if (studentList == null) {
-            studentList = new ArrayList<>();
-            Student std = new Student("Not Found", "N/A");
-            studentList.add(studentMapper.studentToStudentDTO(std));
-        }
-        return studentList;
+    @GetMapping("/textSearch")
+    public List<StudentOutcomeDto> getStudentsTextSearch(@Valid StudentFindByTextSearchDto dto,
+                                                         @PageableDefault(size = 5) Pageable pageable) {
+        return studentService.getAll(dto, pageable);
+    }
+
+    @GetMapping("/{id}")
+    public StudentOutcomeDto getStudentById(@PathVariable String id) {
+        return studentService.getById(id);
+    }
+
+    @PutMapping
+    public StudentOutcomeDto createStudent(@RequestBody @Valid StudentCreateDto dto) {
+        return studentService.create(dto);
+    }
+
+    @PostMapping
+    public StudentOutcomeDto updateStudent(@RequestBody @Valid StudentUpdateDto dto) {
+        return studentService.update(dto);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteStudent(@PathVariable String id) {
+        studentService.remove(id);
     }
 }
